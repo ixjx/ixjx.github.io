@@ -1,0 +1,484 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>黑科技之Andriod LAMP网站服务器 | CodeShurrik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="shurrik">
+    
+
+    
+    <meta name="description" content="河畔上看到的，感觉折腾下这个可以有。。。
+　　曾经你想建站，可是免费的不好，收费的太贵，　　曾经你想用自己主机搞定，可是笔记本要用，台式太费电。　　好吧，你换手机就跟换衣服一样，一定有旧手机在墙角落灰了吧？ 那就拿来用用吧。　　跟着下面的步骤，你的手机就和VPS一样，可以远程访问，远程上传，远程管理，可以建站。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="黑科技之Andriod LAMP网站服务器">
+<meta property="og:url" content="http://ixjx.gitcafe.io/blog/2015/01/04/黑科技之Andriod LAMP网站服务器/index.html">
+<meta property="og:site_name" content="CodeShurrik">
+<meta property="og:description" content="河畔上看到的，感觉折腾下这个可以有。。。
+　　曾经你想建站，可是免费的不好，收费的太贵，　　曾经你想用自己主机搞定，可是笔记本要用，台式太费电。　　好吧，你换手机就跟换衣服一样，一定有旧手机在墙角落灰了吧？ 那就拿来用用吧。　　跟着下面的步骤，你的手机就和VPS一样，可以远程访问，远程上传，远程管理，可以建站。">
+<meta property="og:image" content="http://ixjx-sae.stor.sinaapp.com/uploads/pws-action-17.jpg">
+<meta property="og:image" content="http://ixjx-sae.stor.sinaapp.com/uploads/08b0f53c94a476d676d4eabfa9a0e0ab20141226074413.png">
+<meta property="og:image" content="http://ixjx-sae.stor.sinaapp.com/uploads/e36f4046bae5014779fb89c5faaefe5d20141226074416.png">
+<meta property="og:updated_time" content="2015-06-20T12:13:32.434Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="黑科技之Andriod LAMP网站服务器">
+<meta name="twitter:description" content="河畔上看到的，感觉折腾下这个可以有。。。
+　　曾经你想建站，可是免费的不好，收费的太贵，　　曾经你想用自己主机搞定，可是笔记本要用，台式太费电。　　好吧，你换手机就跟换衣服一样，一定有旧手机在墙角落灰了吧？ 那就拿来用用吧。　　跟着下面的步骤，你的手机就和VPS一样，可以远程访问，远程上传，远程管理，可以建站。">
+
+    
+    <link rel="alternative" href="/atom.xml" title="CodeShurrik" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/blog/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/blog/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				 <img src="/blog/img/logo.jpg" alt="CodeShurrik" title="CodeShurrik"/>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/blog/" title="CodeShurrik">CodeShurrik</a></h1>
+				<h2 class="blog-motto">shurrik`s blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/blog/">首页</a></li>
+					
+						<li><a href="/blog/archives">归档</a></li>
+					
+						<li><a href="/blog/fm">电台</a></li>
+					
+						<li><a href="/blog/about">关于</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="http://www.baidu.com/" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value=  ><input type="text" name="wd" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015/01/04/黑科技之Andriod LAMP网站服务器/" title="黑科技之Andriod LAMP网站服务器" itemprop="url">黑科技之Andriod LAMP网站服务器</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2015-01-04T14:31:40.000Z" itemprop="datePublished"> 发表于 2015-01-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>　　河畔上看到的，感觉折腾下这个可以有。。。</p>
+<p>　　曾经你想建站，可是免费的不好，收费的太贵，<br>　　曾经你想用自己主机搞定，可是笔记本要用，台式太费电。<br>　　好吧，你换手机就跟换衣服一样，一定有旧手机在墙角落灰了吧？ 那就拿来用用吧。<br>　　跟着下面的步骤，你的手机就和VPS一样，可以远程访问，远程上传，远程管理，可以建站。</p>
+<a id="more"></a>
+<p>　　神器1请到此下载<a href="http://alfanla.com/palapa-web-server/" target="_blank" rel="external">http://alfanla.com/palapa-web-server/</a><br>　　神器2,3请到百度助手和各大市场搜索正确的名字下载<br>　　神器4请视自己情况下载和设置。<br>　　配置好了，你就把手机插上电，和路由器丢在一起，你的个人网站服务器就这么蛋生了！！</p>
+<p>　　&gt; 神器1：啪~啦~啪<br>　　palapa web server (PWS)运行于安卓系统的web服务器。</p>
+<p>　　Turn your Android devices into a web and database server with Palapa Web Server, a suite of web developer. This application has been designed for low memory consumption and CPU usage, specially used for smartphone and tablet. Hey, it’s free and you don’t need a root access to run Palapa Web Server!<br>　　# Requirements<br>　　- Internal memory should not be less than 50MB!<br>　　- ARM based processor<br>　　- Minimum Android 2.2 Froyo</p>
+<p>　　# Features<br>　　- Lighttpd 1.4.32<br>　　- PHP 5.5.1<br>　　- MySQL 5.1.69<br>　　- Msmtp 1.4.31<br>　　- phpMyAdmin 4.0.4.1<br>　　- Web Admin 1.0.1</p>
+<p>　　# Default Document Root<br>　　- Path : /sdcard/pws/www/</p>
+<p>　　# Default URL<br>　　- Address : <a href="http://127.0.0.1:8080/" target="_blank" rel="external">http://127.0.0.1:8080/</a></p>
+<p>　　# Web Admin Informations<br>　　- Address : <a href="http://127.0.0.1:9999" target="_blank" rel="external">http://127.0.0.1:9999</a><br>　　- Username : admin<br>　　- Password : admin</p>
+<p>　　# MySQL Informations<br>　　- Host : localhost (127.0.0.1)<br>　　- Port : 3306<br>　　- Username : root<br>　　- Password : adminadmin</p>
+<p>　　# phpMyAdmin Informations<br>　　- Address : <a href="http://127.0.0.1:9999/phpmyadmin" target="_blank" rel="external">http://127.0.0.1:9999/phpmyadmin</a><br>　　- Username : root<br>　　- Password : adminadmin</p>
+<p>　　# Problem?<br>　　If something is not working properly, please try to restart your phone.</p>
+<p>　　# Known Issues<br>　　As you know, compatibility issue is a big problem of Android phone, I can’t test it in all phones. So if it can’t work for your phone, just uninstall it, I’m sorry to waste your time. You also can send a mail to let me know your phone model, if I solve it, I will let you know.</p>
+<p>　　<a href="http://ixjx.sinaapp.com/%e9%bb%91%e7%a7%91%e6%8a%80%e4%b9%8bandriod-lamp%e7%bd%91%e7%ab%99%e6%9c%8d%e5%8a%a1%e5%99%a8/pws-action-17/" target="_blank" rel="external"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/pws-action-17.jpg" alt="" title="pws-action-17"></a></p>
+<blockquote>
+<p>神器2：SSH Server</p>
+</blockquote>
+<p>　　安装在手机上保持常开，<br>　　让你能够通过诸如winSCP的软件管理手机内的文件夹。<br>　　将这个在手机上设置好后，电脑上安装WINSCP或FTP软件并设置好链接即可。<br>　　<a href="http://ixjx.sinaapp.com/%e9%bb%91%e7%a7%91%e6%8a%80%e4%b9%8bandriod-lamp%e7%bd%91%e7%ab%99%e6%9c%8d%e5%8a%a1%e5%99%a8/08b0f53c94a476d676d4eabfa9a0e0ab20141226074413/" target="_blank" rel="external"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/08b0f53c94a476d676d4eabfa9a0e0ab20141226074413.png" alt="" title="08b0f53c94a476d676d4eabfa9a0e0ab20141226074413"></a></p>
+<blockquote>
+<p>神器3： VMlite VNC Server</p>
+</blockquote>
+<p>　　让你能够远程控制你的手机<br>　　将这个安装好后启动保持常开，电脑上通过VNC Viewer访问你的手机<br>　　<a href="http://ixjx.sinaapp.com/%e9%bb%91%e7%a7%91%e6%8a%80%e4%b9%8bandriod-lamp%e7%bd%91%e7%ab%99%e6%9c%8d%e5%8a%a1%e5%99%a8/e36f4046bae5014779fb89c5faaefe5d20141226074416/" target="_blank" rel="external"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/e36f4046bae5014779fb89c5faaefe5d20141226074416.png" alt="" title="e36f4046bae5014779fb89c5faaefe5d20141226074416"></a></p>
+<blockquote>
+<p>神器4： 极路由自带的DDNS 或者 花生壳DDNS</p>
+</blockquote>
+<p>　　解析你的动态IP从而能使你的手机远程访问。<br>　　请直接在路由器设置花生壳，并设置端口映射到你的手机<br>　　极路由：安装动态域名和端口转发插件。</p>
+<p>　　其他路由设置花生壳和端口转发：请看自己路由器的支持情况。<br>　　<a href="http://hsk.oray.com/" target="_blank" rel="external"> http://hsk.oray.com/</a></p>
+<p>　　现在万事具备只差一部android手机。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/转载/">转载</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/黑科技/">黑科技</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://ixjx.gitcafe.io/blog/2015/01/04/黑科技之Andriod LAMP网站服务器/" data-title="黑科技之Andriod LAMP网站服务器 | CodeShurrik" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015/03/12/OpenVPN性能优化-MTU/" title="OpenVPN性能优化-MTU">
+  <strong>上一篇：</strong><br/>
+  <span>
+  OpenVPN性能优化-MTU</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2014/12/30/帝都5日游/"  title="帝都5日游">
+ <strong>下一篇：</strong><br/> 
+ <span>帝都5日游
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/01/04/黑科技之Andriod LAMP网站服务器/" data-title="黑科技之Andriod LAMP网站服务器" data-url="http://ixjx.gitcafe.io/blog/2015/01/04/黑科技之Andriod LAMP网站服务器/"></div>
+	 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+	var duoshuoQuery = {short_name:"ixjx"};
+		(function() {
+			var ds = document.createElement('script');
+			ds.type = 'text/javascript';ds.async = true;
+			ds.src = 'http://ixjx.gitcafe.io/blog/js/duoshuo.js';
+			ds.charset = 'UTF-8';
+			(document.getElementsByTagName('head')[0] 
+		 	|| document.getElementsByTagName('body')[0]).appendChild(ds);
+		})();
+	</script>
+    <!-- 多说公共JS代码 end -->
+
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/blog/categories/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/水/" title="水">水<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/游戏/" title="游戏">游戏<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/灌水/" title="灌水">灌水<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/网络/" title="网络">网络<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/读书/" title="读书">读书<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/转载/" title="转载">转载<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/软件/" title="软件">软件<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/随编/" title="随编">随编<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/blog/tags/Chrome/" style="font-size: 10px;">Chrome</a> <a href="/blog/tags/IP-QAM/" style="font-size: 10px;">IP QAM</a> <a href="/blog/tags/JAVA/" style="font-size: 12px;">JAVA</a> <a href="/blog/tags/JavaScript/" style="font-size: 12px;">JavaScript</a> <a href="/blog/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/blog/tags/MFC/" style="font-size: 10px;">MFC</a> <a href="/blog/tags/RSA/" style="font-size: 12px;">RSA</a> <a href="/blog/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/blog/tags/SQL注入/" style="font-size: 10px;">SQL注入</a> <a href="/blog/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/blog/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/blog/tags/Windows/" style="font-size: 10px;">Windows</a> <a href="/blog/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/blog/tags/vpn/" style="font-size: 12px;">vpn</a> <a href="/blog/tags/三层交换机/" style="font-size: 12px;">三层交换机</a> <a href="/blog/tags/买了个表/" style="font-size: 12px;">买了个表</a> <a href="/blog/tags/前端之路/" style="font-size: 18px;">前端之路</a> <a href="/blog/tags/呵呵/" style="font-size: 16px;">呵呵</a> <a href="/blog/tags/囧瑟夫问题/" style="font-size: 10px;">囧瑟夫问题</a> <a href="/blog/tags/存储/" style="font-size: 10px;">存储</a> <a href="/blog/tags/异步模式/" style="font-size: 10px;">异步模式</a> <a href="/blog/tags/影评/" style="font-size: 10px;">影评</a> <a href="/blog/tags/有限状态机/" style="font-size: 10px;">有限状态机</a> <a href="/blog/tags/毕业/" style="font-size: 14px;">毕业</a> <a href="/blog/tags/毕设/" style="font-size: 10px;">毕设</a> <a href="/blog/tags/游戏/" style="font-size: 10px;">游戏</a> <a href="/blog/tags/炉石传说/" style="font-size: 12px;">炉石传说</a> <a href="/blog/tags/翻墙/" style="font-size: 10px;">翻墙</a> <a href="/blog/tags/读书/" style="font-size: 12px;">读书</a> <a href="/blog/tags/黑科技/" style="font-size: 10px;">黑科技</a>
+    </div>
+  </div>
+
+<br>
+
+  <div>
+<p class="asidetitle">revolver map</p>
+<script type="text/javascript" src="http://jd.revolvermaps.com/2/1.js?i=34br242j94k&amp;s=233s&amp;m=0&amp;v=true&amp;r=false&amp;b=000000&amp;n=false&amp;c=ff0000" async="async"></script>
+</div>
+
+  <br>
+<div>
+<h3 class="asidetitle">最近访客</h3>
+<br>
+<ul class="ds-recent-visitors list" data-num-items="15" data-avatar-size="45"></ul>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe id="sina_widget_3056064675" style="width:100%; height:500px;" frameborder="0" scrolling="no" src="http://v.t.sina.com.cn/widget/widget_blog.php?uid=3056064675&height=500&skin=wd_01&showpic=1"></iframe>
+
+</div>
+
+
+  <div class="blogroll">
+<h3 class="asidetitle">友情链接</h3>
+<ul>
+<li><a href="http://bbs.ngacn.cc/" title="ngacn" target=_blank>NGA著名精英论坛</a></li>
+<li><a href="http://bbs.uestc.edu.cn/" title="河畔" target=_blank>清水河畔</a></li>
+<li><a href="http://guosu.sinaapp.com/" title="二郭" target=_blank>二郭</a></li>
+<li><a href="http://www.duanzhihe.com/" title="占鹤" target=_blank>占鹤</a></li>
+<li><a href="http://www.puwenlong.com/" title="CP" target=_blank>蒲蒲</a></li> 
+<li><a href="http://www.chengege.com/" title="琛JJ" target=_blank>琛GG</a></li>
+<li><a href="http://blog.dandyweng.com/" title="Dandy Weng" target=_blank>翁天信的博客</a></li>
+
+</ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" class="copyright" >
+	
+	<p>Copyright &#169;&nbsp;2015&nbsp;<a href="http://ixjx.gitcafe.io">CodeShurrik</a></p>
+	<p>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</p>
+		
+</div>
+</footer>
+    <script src="/blog/js/jquery-2.0.3.min.js"></script>
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"shurrik"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/blog/img/scrollup.png"/></a>
+	</div>
+	<script src="/blog/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

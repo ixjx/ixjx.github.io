@@ -1,0 +1,558 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>JavaScript与有限状态机 | CodeShurrik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="shurrik">
+    
+
+    
+    <meta name="description" content="有限状态机（Finite-state machine）是一个非常有用的模型，可以模拟世界上大部分事物。
+
+简单说，它有三个特征：
+
+
+状态总数（state）是有限的。
+
+
+任一时刻，只处在一种状态之中。
+
+
+某种条件下，会从一种状态转变（transition）到另一种状态。它对JavaScript的意义在于，很多对象可以写成有限状态机。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript与有限状态机">
+<meta property="og:url" content="http://ixjx.gitcafe.io/blog/2013/09/07/JavaScript与有限状态机/index.html">
+<meta property="og:site_name" content="CodeShurrik">
+<meta property="og:description" content="有限状态机（Finite-state machine）是一个非常有用的模型，可以模拟世界上大部分事物。
+
+简单说，它有三个特征：
+
+
+状态总数（state）是有限的。
+
+
+任一时刻，只处在一种状态之中。
+
+
+某种条件下，会从一种状态转变（transition）到另一种状态。它对JavaScript的意义在于，很多对象可以写成有限状态机。">
+<meta property="og:image" content="http://image.beekka.com/blog/201309/bg2013090201.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blog/images/rmb_32.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blog/images/dollar_32.png">
+<meta property="og:updated_time" content="2015-06-20T11:30:06.344Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaScript与有限状态机">
+<meta name="twitter:description" content="有限状态机（Finite-state machine）是一个非常有用的模型，可以模拟世界上大部分事物。
+
+简单说，它有三个特征：
+
+
+状态总数（state）是有限的。
+
+
+任一时刻，只处在一种状态之中。
+
+
+某种条件下，会从一种状态转变（transition）到另一种状态。它对JavaScript的意义在于，很多对象可以写成有限状态机。">
+
+    
+    <link rel="alternative" href="/atom.xml" title="CodeShurrik" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/blog/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/blog/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				 <img src="/blog/img/logo.jpg" alt="CodeShurrik" title="CodeShurrik"/>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/blog/" title="CodeShurrik">CodeShurrik</a></h1>
+				<h2 class="blog-motto">shurrik`s blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/blog/">首页</a></li>
+					
+						<li><a href="/blog/archives">归档</a></li>
+					
+						<li><a href="/blog/fm">电台</a></li>
+					
+						<li><a href="/blog/about">关于</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="http://www.baidu.com/" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value=  ><input type="text" name="wd" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2013/09/07/JavaScript与有限状态机/" title="JavaScript与有限状态机" itemprop="url">JavaScript与有限状态机</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2013-09-06T16:00:24.000Z" itemprop="datePublished"> 发表于 2013-09-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p><a href="http://zh.wikipedia.org/wiki/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA" target="_blank" rel="external">有限状态机</a>（Finite-state machine）是一个非常有用的模型，可以模拟世界上大部分事物。</p>
+<p><img src="http://image.beekka.com/blog/201309/bg2013090201.png" alt=""></p>
+<p>简单说，它有三个特征：</p>
+<blockquote>
+<ul>
+<li>状态总数（state）是有限的。</li>
+</ul>
+<ul>
+<li>任一时刻，只处在一种状态之中。</li>
+</ul>
+<ul>
+<li>某种条件下，会从一种状态转变（transition）到另一种状态。<br>它对JavaScript的意义在于，很多对象可以写成有限状态机。</li>
+</ul>
+</blockquote>
+<a id="more"></a>
+<p>举例来说，网页上有一个菜单元素。鼠标悬停的时候，菜单显示；鼠标移开的时候，菜单隐藏。如果使用有限状态机描述，就是这个菜单只有两种状态（显示和隐藏），鼠标会引发状态转变。</p>
+<p>代码可以写成下面这样：</p>
+<p><pre class="brush:javascript">var menu = {</pre></p>
+<p>　　　　// 当前状态<br>　　　　currentState: &#39;hide&#39;,</p>
+<p>　　　　// 绑定事件<br>　　　　initialize: function() {<br>　　　　　　var self = this;<br>　　　　　　self.on(&quot;hover&quot;, self.transition);<br>　　　　},</p>
+<p>　　　　// 状态转换<br>　　　　transition: function(event){<br>　　　　　　switch(this.currentState) {<br>　　　　　　　　case &quot;hide&quot;:<br>　　　　　　　　　　this.currentState = &#39;show&#39;;<br>　　　　　　　　　　doSomething();<br>　　　　　　　　　　break;<br>　　　　　　　　case &quot;show&quot;:<br>　　　　　　　　　　this.currentState = &#39;hide&#39;;<br>　　　　　　　　　　doSomething();<br>　　　　　　　　　　break;<br>　　　　　　　　default:<br>　　　　　　　　　　console.log(&#39;Invalid State!&#39;);<br>　　　　　　　　　　break;<br>　　　　　　}<br>　　　　}</p>
+<p>　　};<br>　　<br>可以看到，有限状态机的写法，逻辑清晰，表达力强，有利于封装事件。一个对象的状态越多、发生的事件越多，就越适合采用有限状态机的写法。</p>
+<p>另外，JavaScript语言是一种<a href="http://www.ruanyifeng.com/blog/2012/12/asynchronous%EF%BC%BFjavascript.html" target="_blank" rel="external">异步操作</a>特别多的语言，常用的解决方法是指定回调函数，但这样会造成代码结构混乱、难以测试和除错等问题。有限状态机提供了<a href="http://tech.pro/blog/1402/five-patterns-to-help-you-tame-asynchronous-javascript" target="_blank" rel="external">更好的办法</a>：把异步操作与对象的状态改变挂钩，当异步操作结束的时候，发生相应的状态改变，由此再触发其他操作。这要比回调函数、事件监听、发布/订阅等解决方案，在逻辑上更合理，更易于降低代码的复杂度。</p>
+<p>下面介绍一个有限状态机的函数库<a href="https://github.com/jakesgordon/javascript-state-machine" target="_blank" rel="external">Javascript Finite State Machine</a>。这个库非常好懂，可以帮助我们加深理解，而且功能一点都不弱。</p>
+<p>该库提供一个全局对象StateMachine，使用该对象的create方法，可以生成有限状态机的实例。<br><code>var fsm = StateMachine.create();</code><br>生成的时候，需要提供一个参数对象，用来描述实例的性质。比如，交通信号灯（红绿灯）可以这样描述：</p>
+<p><pre class="brush:javascript">　var fsm = StateMachine.create({</pre></p>
+<p>　　　　initial: &#39;green&#39;,</p>
+<p>　　　　events: [<br>　　　　　　{ name: &#39;warn&#39;,  from: &#39;green&#39;,  to: &#39;yellow&#39; },<br>　　　　　　{ name: &#39;stop&#39;, from: &#39;yellow&#39;, to: &#39;red&#39; },<br>　　　　　　{ name: &#39;ready&#39;,  from: &#39;red&#39;,    to: &#39;yellow&#39; },<br>　　　　　　{ name: &#39;go&#39;, from: &#39;yellow&#39;, to: &#39;green&#39; }<br>　　　　]</p>
+<p>　　});<br>交通信号灯的初始状态（initial）为green，events属性是触发状态改变的各种事件，比如warn事件使得green状态变成yellow状态，stop事件使得yellow状态变成red状态等等。</p>
+<p>生成实例以后，就可以随时查询当前状态。</p>
+<blockquote>
+<ul>
+<li>fsm.current ：返回当前状态。</li>
+</ul>
+<ul>
+<li>fsm.is(s) ：返回一个布尔值，表示状态s是否为当前状态。</li>
+</ul>
+<ul>
+<li>fsm.can(e) ：返回一个布尔值，表示事件e是否能在当前状态触发。</li>
+</ul>
+<ul>
+<li>fsm.cannot(e) ：返回一个布尔值，表示事件e是否不能在当前状态触发。<br>Javascript Finite State Machine允许为每个事件指定两个回调函数，以warn事件为例：</li>
+<li>onbeforewarn：在warn事件发生之前触发。</li>
+</ul>
+<ul>
+<li>onafterwarn（可简写成onwarn） ：在warn事件发生之后触发。<br>同时，它也允许为每个状态指定两个回调函数，以green状态为例：</li>
+<li>onleavegreen ：在离开green状态时触发。</li>
+</ul>
+<ul>
+<li>onentergreen（可简写成ongreen） ：在进入green状态时触发。<br>假定warn事件使得状态从green变为yellow，上面四类回调函数的发生顺序如下：onbeforewarn → onleavegreen → onenteryellow → onafterwarn。</li>
+</ul>
+</blockquote>
+<p>除了为每个事件和状态单独指定回调函数，还可以为所有的事件和状态指定通用的回调函数。</p>
+<blockquote>
+<ul>
+<li>onbeforeevent ：任一事件发生之前触发。</li>
+</ul>
+<ul>
+<li>onleavestate ：离开任一状态时触发。</li>
+</ul>
+<ul>
+<li>onenterstate ：进入任一状态时触发。</li>
+</ul>
+<ul>
+<li>onafterevent ：任一事件结束后触发。<br>如果事件的回调函数里面有异步操作（比如与服务器进行Ajax通信），这时我们可能希望等到异步操作结束，再发生状态改变。这就要用到transition方法。<br><pre class="brush:javascript">　fsm.onleavegreen = function(){<br>　　　　light.fadeOut(&#39;slow&#39;, function() {<br>　　　　　　fsm.transition();<br>　　　　});<br>　　　　return StateMachine.ASYNC;<br>　　};</pre><br>上面代码的回调函数里面，有一个异步操作（light.fadeOut）。如果不希望状态立即改变，就要让回调函数返回StateMachine.ASYNC，表示状态暂时不改变；等到异步操作结束，再调用transition方法，使得状态发生改变。</li>
+</ul>
+</blockquote>
+<p>Javascript Finite State Machine还允许指定错误处理函数，当发生了当前状态不可能发生的事件时自动触发。</p>
+<p><pre class="brush:javascript">var fsm = StateMachine.create({<br>　　　　// …<br>　　　　error: function(eventName, from, to, args, errorCode, errorMessage) {<br>　　　　　　return &#39;event &#39; + eventName + &#39;: &#39; + errorMessage;<br>　　　　},<br>　　　　// …<br>　　});</pre><br>比如，当前状态是green，理论上这时只可能发生warn事件。要是这时发生了stop事件，就会触发上面的错误处理函数。</p>
+<p>Javascript Finite State Machine的基本用法就是上面这些，更详细的介绍可以参见它的<a href="https://github.com/jakesgordon/javascript-state-machine" target="_blank" rel="external">主页</a>。</p>
+<p>（完）</p>
+<div><br><br>### 文档信息<br><br><em>   版权声明：自由转载-非商用-非衍生-保持署名 | <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank" rel="external">Creative Commons BY-NC-ND 3.0</a>
+</em>   原文网址：<a href="http://www.ruanyifeng.com/blog/2013/09/finite-state_machine_for_javascript.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2013/09/finite-state_machine_for_javascript.html</a><br><em>   最后修改时间：2013年9月 4日 10:55
+</em>   付费支持：<a href="https://me.alipay.com/ruanyf" target="_blank" rel="external"><img src="http://www.ruanyifeng.com/blog/images/rmb_32.png" alt="人民币 - 支付宝" title="人民币"></a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=yifeng.ruan@gmail.com&amp;currency_code=USD&amp;amount=0.99&amp;return=http://www.ruanyifeng.com/thank.html&amp;item_name=Ruan%20YiFeng" target="_blank" rel="external"><img src="http://www.ruanyifeng.com/blog/images/dollar_32.png" alt="美元 - paypal" title="美元"></a><br></div>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/转载/">转载</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/JavaScript/">JavaScript</a><a href="/blog/tags/有限状态机/">有限状态机</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://ixjx.gitcafe.io/blog/2013/09/07/JavaScript与有限状态机/" data-title="JavaScript与有限状态机 | CodeShurrik" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2013/09/15/囧瑟夫问题/" title="囧瑟夫问题">
+  <strong>上一篇：</strong><br/>
+  <span>
+  囧瑟夫问题</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2013/08/18/Linux 的启动流程/"  title="Linux 的启动流程">
+ <strong>下一篇：</strong><br/> 
+ <span>Linux 的启动流程
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2013/09/07/JavaScript与有限状态机/" data-title="JavaScript与有限状态机" data-url="http://ixjx.gitcafe.io/blog/2013/09/07/JavaScript与有限状态机/"></div>
+	 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+	var duoshuoQuery = {short_name:"ixjx"};
+		(function() {
+			var ds = document.createElement('script');
+			ds.type = 'text/javascript';ds.async = true;
+			ds.src = 'http://ixjx.gitcafe.io/blog/js/duoshuo.js';
+			ds.charset = 'UTF-8';
+			(document.getElementsByTagName('head')[0] 
+		 	|| document.getElementsByTagName('body')[0]).appendChild(ds);
+		})();
+	</script>
+    <!-- 多说公共JS代码 end -->
+
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/blog/categories/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/水/" title="水">水<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/游戏/" title="游戏">游戏<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/灌水/" title="灌水">灌水<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/网络/" title="网络">网络<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/读书/" title="读书">读书<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/转载/" title="转载">转载<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/软件/" title="软件">软件<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/随编/" title="随编">随编<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/blog/tags/Chrome/" style="font-size: 10px;">Chrome</a> <a href="/blog/tags/IP-QAM/" style="font-size: 10px;">IP QAM</a> <a href="/blog/tags/JAVA/" style="font-size: 12px;">JAVA</a> <a href="/blog/tags/JavaScript/" style="font-size: 12px;">JavaScript</a> <a href="/blog/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/blog/tags/MFC/" style="font-size: 10px;">MFC</a> <a href="/blog/tags/RSA/" style="font-size: 12px;">RSA</a> <a href="/blog/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/blog/tags/SQL注入/" style="font-size: 10px;">SQL注入</a> <a href="/blog/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/blog/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/blog/tags/Windows/" style="font-size: 10px;">Windows</a> <a href="/blog/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/blog/tags/vpn/" style="font-size: 12px;">vpn</a> <a href="/blog/tags/三层交换机/" style="font-size: 12px;">三层交换机</a> <a href="/blog/tags/买了个表/" style="font-size: 12px;">买了个表</a> <a href="/blog/tags/前端之路/" style="font-size: 18px;">前端之路</a> <a href="/blog/tags/呵呵/" style="font-size: 16px;">呵呵</a> <a href="/blog/tags/囧瑟夫问题/" style="font-size: 10px;">囧瑟夫问题</a> <a href="/blog/tags/存储/" style="font-size: 10px;">存储</a> <a href="/blog/tags/异步模式/" style="font-size: 10px;">异步模式</a> <a href="/blog/tags/影评/" style="font-size: 10px;">影评</a> <a href="/blog/tags/有限状态机/" style="font-size: 10px;">有限状态机</a> <a href="/blog/tags/毕业/" style="font-size: 14px;">毕业</a> <a href="/blog/tags/毕设/" style="font-size: 10px;">毕设</a> <a href="/blog/tags/游戏/" style="font-size: 10px;">游戏</a> <a href="/blog/tags/炉石传说/" style="font-size: 12px;">炉石传说</a> <a href="/blog/tags/翻墙/" style="font-size: 10px;">翻墙</a> <a href="/blog/tags/读书/" style="font-size: 12px;">读书</a> <a href="/blog/tags/黑科技/" style="font-size: 10px;">黑科技</a>
+    </div>
+  </div>
+
+<br>
+
+  <div>
+<p class="asidetitle">revolver map</p>
+<script type="text/javascript" src="http://jd.revolvermaps.com/2/1.js?i=34br242j94k&amp;s=233s&amp;m=0&amp;v=true&amp;r=false&amp;b=000000&amp;n=false&amp;c=ff0000" async="async"></script>
+</div>
+
+  <br>
+<div>
+<h3 class="asidetitle">最近访客</h3>
+<br>
+<ul class="ds-recent-visitors list" data-num-items="15" data-avatar-size="45"></ul>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe id="sina_widget_3056064675" style="width:100%; height:500px;" frameborder="0" scrolling="no" src="http://v.t.sina.com.cn/widget/widget_blog.php?uid=3056064675&height=500&skin=wd_01&showpic=1"></iframe>
+
+</div>
+
+
+  <div class="blogroll">
+<h3 class="asidetitle">友情链接</h3>
+<ul>
+<li><a href="http://bbs.ngacn.cc/" title="ngacn" target=_blank>NGA著名精英论坛</a></li>
+<li><a href="http://bbs.uestc.edu.cn/" title="河畔" target=_blank>清水河畔</a></li>
+<li><a href="http://guosu.sinaapp.com/" title="二郭" target=_blank>二郭</a></li>
+<li><a href="http://www.duanzhihe.com/" title="占鹤" target=_blank>占鹤</a></li>
+<li><a href="http://www.puwenlong.com/" title="CP" target=_blank>蒲蒲</a></li> 
+<li><a href="http://www.chengege.com/" title="琛JJ" target=_blank>琛GG</a></li>
+<li><a href="http://blog.dandyweng.com/" title="Dandy Weng" target=_blank>翁天信的博客</a></li>
+
+</ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" class="copyright" >
+	
+	<p>Copyright &#169;&nbsp;2015&nbsp;<a href="http://ixjx.gitcafe.io">CodeShurrik</a></p>
+	<p>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</p>
+		
+</div>
+</footer>
+    <script src="/blog/js/jquery-2.0.3.min.js"></script>
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"shurrik"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/blog/img/scrollup.png"/></a>
+	</div>
+	<script src="/blog/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,492 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>磁盘阵列RAID | CodeShurrik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="shurrik">
+    
+
+    
+    <meta name="description" content="最近有个项目用到EMC的存储，用的是RAID1+0，这些都忘得差不多了，回家翻出鸟哥复习下。
+　　什么是 RAID">
+<meta property="og:type" content="article">
+<meta property="og:title" content="磁盘阵列RAID">
+<meta property="og:url" content="http://ixjx.gitcafe.io/blog/2014/10/08/磁盘阵列RAID/index.html">
+<meta property="og:site_name" content="CodeShurrik">
+<meta property="og:description" content="最近有个项目用到EMC的存储，用的是RAID1+0，这些都忘得差不多了，回家翻出鸟哥复习下。
+　　什么是 RAID">
+<meta property="og:image" content="http://ixjx-sae.stor.sinaapp.com/uploads/raid0.gif">
+<meta property="og:image" content="http://ixjx-sae.stor.sinaapp.com/uploads/raid1.gif">
+<meta property="og:image" content="http://ixjx-sae.stor.sinaapp.com/uploads/raid01.gif">
+<meta property="og:image" content="http://ixjx-sae.stor.sinaapp.com/uploads/raid5.gif">
+<meta property="og:updated_time" content="2015-06-20T12:11:46.076Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="磁盘阵列RAID">
+<meta name="twitter:description" content="最近有个项目用到EMC的存储，用的是RAID1+0，这些都忘得差不多了，回家翻出鸟哥复习下。
+　　什么是 RAID">
+
+    
+    <link rel="alternative" href="/atom.xml" title="CodeShurrik" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/blog/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/blog/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				 <img src="/blog/img/logo.jpg" alt="CodeShurrik" title="CodeShurrik"/>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/blog/" title="CodeShurrik">CodeShurrik</a></h1>
+				<h2 class="blog-motto">shurrik`s blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/blog/">首页</a></li>
+					
+						<li><a href="/blog/archives">归档</a></li>
+					
+						<li><a href="/blog/fm">电台</a></li>
+					
+						<li><a href="/blog/about">关于</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="http://www.baidu.com/" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value=  ><input type="text" name="wd" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2014/10/08/磁盘阵列RAID/" title="磁盘阵列RAID" itemprop="url">磁盘阵列RAID</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2014-10-08T12:15:41.000Z" itemprop="datePublished"> 发表于 2014-10-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>　　最近有个项目用到EMC的存储，用的是RAID1+0，这些都忘得差不多了，回家翻出鸟哥复习下。</p>
+<p>　　<strong>什么是 RAID</strong></p>
+<a id="more"></a>
+<p>　　磁盘阵列全名是『 Redundant Arrays of Inexpensive Disks』，英翻中的意思是：容错式廉价磁盘阵列。 RAID 可以透过一个技术(软件或硬件)，将多个较小的磁盘整合成为一个较大的磁盘装置； 而这个较大的磁盘功能可不止是储存而已，他还具有数据保护的功能呢。整个 RAID 由于选择的等级 (level) 不同，而使得整合后的磁盘具有不同的功能， 基本常见的 level 有这几种：</p>
+<blockquote>
+<p>RAID-0 (等量模式, stripe)：效能最佳<br>　　<code>这种模式如果使用相同型号与容量的磁盘来组成时，效果较佳。</code>这种模式的 RAID 会将磁盘先切出等量的区块 (举例来说， 4KB)， 然后当一个文件要写入 RAID 时，该文件会依据区块的大小切割好，之后再依序放到各个磁盘里面去。由于每个磁盘会交错的存放数据， 因此当你的数据要写入 RAID 时，数据会被等量的放置在各个磁盘上面。举例来说，你有两颗磁盘组成 RAID-0 ， 当你有 100MB 的数据要写入时，每个磁盘会各被分配到 50MB 的储存量。RAID-0 的示意图如下所示：</p>
+</blockquote>
+<p><a href="http://ixjx.sinaapp.com/%e7%a3%81%e7%9b%98%e9%98%b5%e5%88%97raid/raid0/" target="_blank" rel="external"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/raid0.gif" alt="" title="raid0"></a></p>
+<p>　　上图的意思是，在组成 RAID-0 时，每颗磁盘 (Disk A 与 Disk B) 都会先被区隔成为小区块 (chunk)。 当有数据要写入 RAID 时，数据会先被切割成符合小区块的大小，然后再依序一个一个的放置到不同的磁盘去。 鱼鱼数据已经先被切割并且依序放置到不同的磁盘上面，因此每颗磁盘所负责的数据量都降低了！照这样的情况来看， <code>越多颗磁盘组成的 RAID-0 效能会越好，因为每颗负责的数据量就更低了！</code> 这表示我们的数据可以分散让多颗磁盘来储存，当然效能会变的更好啊！此外，磁盘总容量也变大了！ 因为每颗磁盘的容量最终会加总成为 RAID-0 的总容量！</p>
+<p>　　只是使用此等级你必须要自行负担数据损毁的风险，由上图我们知道文件是被切割成为适合每颗磁盘分区区块的大小， 然后再依序放置到各个磁盘中。想一想，如果某一颗磁盘损毁了，那么文件数据将缺一块，此时这个文件就损毁了。 由于每个文件都是这样存放的，因此 RAID-0 只要有任何一颗磁盘损毁，在 RAID 上面的所有数据都会遗失而无法读取。</p>
+<p>　　另外，如果使用不同容量的磁盘来组成 RAID-0 时，由于数据是一直等量的依序放置到不同磁盘中，当小容量磁盘的区块被用完了， 那么所有的数据都将被写入到最大的那颗磁盘去。举例来说，我用 200G 与 500G 组成 RAID-0 ， 那么最初的 400GB 数据可同时写入两颗磁盘 (各消耗 200G 的容量)，后来再加入的数据就只能写入 500G 的那颗磁盘中了。 此时的效能就变差了，因为只剩下一颗可以存放数据嘛。</p>
+<blockquote>
+<p>RAID-1 (映射模式, mirror)：完整备份<br>　　<code>这种模式也是需要相同的磁盘容量的，最好是一模一样的磁盘啦！如果是不同容量的磁盘组成 RAID-1 时，那么总容量将以最小的那一颗磁盘为主！</code>这种模式主要是『让同一份数据，完整的保存在两颗磁盘上头』。举例来说，如果我有一个 100MB 的文件，且我仅有两颗磁盘组成 RAID-1 时， 那么这两颗磁盘将会同步写入 100MB 到他们的储存空间去。 因此，整体 RAID 的容量几乎少了 50%。由于两颗硬盘内容一模一样，好像镜子映照出来一样， 所以我们也称他为 mirror 模式，也就是1：1模式咯。</p>
+</blockquote>
+<p><a href="http://ixjx.sinaapp.com/%e7%a3%81%e7%9b%98%e9%98%b5%e5%88%97raid/raid1/" target="_blank" rel="external"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/raid1.gif" alt="" title="raid1"></a></p>
+<p>　　如上图所示，一份数据传送到 RAID-1 之后会被分为两股，并分别写入到各个磁盘里头去。 由于同一份数据会被分别写入到其他不同磁盘，因此如果要写入 100MB 时，数据传送到 I/O 总线后会被复制多份到各个磁盘， 结果就是数据量感觉变大了！因此在大量写入 RAID-1 的情况下，写入的效能可能会变的非常差 (因为我们只有一个南桥啊！)。 好在如果你使用的是硬件 RAID (磁盘阵列卡) 时，磁盘阵列卡会主动的复制一份而不使用系统的 I/O 总线，效能方面则还可以。 如果使用软件磁盘阵列，可能效能就不好了。</p>
+<p>　　由于两颗磁盘内的数据一模一样，所以任何一颗硬盘损毁时，你的数据还是可以完整的保留下来的！ 所以我们可以说， <code>RAID-1 最大的优点大概就在于数据的备份吧！不过由于磁盘容量有一半用在备份， 因此总容量会是全部磁盘容量的一半而已。</code>虽然 RAID-1 的写入效能不佳，不过读取的效能则还可以啦！这是因为数据有两份在不同的磁盘上面，如果多个 processes 在读取同一笔数据时， RAID-1 会自行取得最佳的读取平衡。</p>
+<blockquote>
+<p>RAID 0+1，RAID 1+0<br>　　RAID-0 的效能佳但是数据不安全，RAID-1 的数据安全但是效能不佳，那么能不能将这两者整合起来配置 RAID 呢？ 可以啊！那就是 RAID 0+1 或 RAID 1+0。所谓的 RAID 0+1 就是： (1)先让两颗磁盘组成 RAID 0，并且这样的配置共有两组； (2)将这两组 RAID 0 再组成一组 RAID 1。这就是 RAID 0+1 罗！反过来说，RAID 1+0 就是先组成 RAID-1 再组成 RAID-0 的意思。</p>
+</blockquote>
+<p><a href="http://ixjx.sinaapp.com/%e7%a3%81%e7%9b%98%e9%98%b5%e5%88%97raid/raid01/" target="_blank" rel="external"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/raid01.gif" alt="" title="raid01"></a></p>
+<p>　　如上图所示，Disk A + Disk B 组成第一组 RAID 0，Disk C + Disk D 组成第二组 RAID 0， 然后这两组再整合成为一组 RAID 1。如果我有 100MB 的数据要写入，则由于 RAID 1 的关系， 两组 RAID 0 都会写入 100MB，但由于 RAID 0 的关系，因此每颗磁盘仅会写入 50MB 而已。 如此一来不论哪一组 RAID 0 的磁盘损毁，只要另外一组 RAID 0 还存在，那么就能够透过 RAID 1 的机制来回复数据。</p>
+<blockquote>
+<p>RAID 5：效能与数据备份的均衡考量<br>　　RAID-5 至少需要三颗以上的磁盘才能够组成这种类型的磁盘阵列。这种磁盘阵列的数据写入有点类似 RAID-0 ， 不过每个循环的写入过程中，在每颗磁盘还加入一个同位检查数据 (Parity) ，这个数据会记录其他磁盘的备份数据， 用于当有磁盘损毁时的救援。RAID-5 读写的情况有点像底下这样：</p>
+</blockquote>
+<p><a href="http://ixjx.sinaapp.com/%e7%a3%81%e7%9b%98%e9%98%b5%e5%88%97raid/raid5/" target="_blank" rel="external"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/raid5.gif" alt="" title="raid5"></a></p>
+<p>　　如上图所示，每个循环写入时，都会有部分的同位检查码 (parity) 被记录起来，并且记录的同位检查码每次都记录在不同的磁盘， 因此，任何一个磁盘损毁时都能够藉由其他磁盘的检查码来重建原本磁盘内的数据喔！不过需要注意的是， 由于有同位检查码，<code>因此 RAID 5 的总容量会是整体磁盘数量减一颗。以上图为例， 原本的 3 颗磁盘只会剩下 (3-1)=2 颗磁盘的容量。而且当损毁的磁盘数量大于等于两颗时，这整组 RAID 5 的数据就损毁了。 因为 RAID 5 默认仅能支持一颗磁盘的损毁情况。</code></p>
+<p>　　在读写效能的比较上，读取的效能还不赖！与 RAID-0 有的比！不过写的效能就不见得能够添加很多！ 这是因为要写入 RAID 5 的数据还得要经过计算同位检查码 (parity) 的关系。由于加上这个计算的动作， 所以写入的效能与系统的硬件关系较大！尤其当使用软件磁盘阵列时，同位检查码是透过 CPU 去计算而非专职的磁盘阵列卡， 因此效能方面还需要评估。</p>
+<p>　　另外，由于 RAID 5 仅能支持一颗磁盘的损毁，因此近来还有发展出另外一种等级，就是 RAID 6 ，这个 RAID 6 则使用两颗磁盘的容量作为 parity 的储存，因此整体的磁盘容量就会少两颗，但是允许出错的磁盘数量就可以达到两颗了！ 也就是在 RAID 6 的情况下，同时两颗磁盘损毁时，数据还是可以救回来！</p>
+<blockquote>
+<p>Spare Disk：预备磁盘的功能：<br>　　当磁盘阵列的磁盘损毁时，就得要将坏掉的磁盘拔除，然后换一颗新的磁盘。换成新磁盘并且顺利启动磁盘阵列后， 磁盘阵列就会开始主动的重建 (rebuild) 原本坏掉的那颗磁盘数据到新的磁盘上！然后你磁盘阵列上面的数据就复原了！ 这就是磁盘阵列的优点。不过，我们还是得要动手拔插硬盘，此时通常得要关机才能这么做。</p>
+</blockquote>
+<p>　　为了让系统可以即时的在坏掉硬盘时主动的重建，因此就需要预备磁盘 (spare disk) 的辅助。 所谓的 spare disk 就是一颗或多颗没有包含在原本磁盘阵列等级中的磁盘，这颗磁盘平时并不会被磁盘阵列所使用， 当磁盘阵列有任何磁盘损毁时，则这颗 spare disk 会被主动的拉进磁盘阵列中，并将坏掉的那颗硬盘移出磁盘阵列！ 然后立即重建数据系统。如此你的系统则可以永保安康啊！若你的磁盘阵列有支持热拔插那就更完美了！ 直接将坏掉的那颗磁盘拔除换一颗新的，再将那颗新的配置成为 spare disk ，就完成了！</p>
+<blockquote>
+<p>磁盘阵列的优点<br>　　JJYY说了这么多，重点在哪里呢？其实你的系统如果需要磁盘阵列的话，其实重点在于：<br>　　<code>数据安全与可靠性：指的并非信息安全，而是当硬件 (指磁盘) 损毁时，数据是否还能够安全的救援或使用之意；</code><br>　　<code>读写效能：例如 RAID 0 可以加强读写效能，让你的系统 I/O 部分得以改善；</code>　　<br>　　<code>容量：可以让多颗磁盘组合起来，故单一文件系统可以有相当大的容量。</code><br>　　尤其数据的可靠性与完整性更是使用 RAID 的考量重点！毕竟硬件坏掉换掉就好了，软件数据损毁那可真不是闹着玩的～～</p>
+</blockquote>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/网络/">网络</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/存储/">存储</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://ixjx.gitcafe.io/blog/2014/10/08/磁盘阵列RAID/" data-title="磁盘阵列RAID | CodeShurrik" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2014/12/30/帝都5日游/" title="帝都5日游">
+  <strong>上一篇：</strong><br/>
+  <span>
+  帝都5日游</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2014/09/12/SDN网络之Mininet/"  title="SDN网络之Mininet">
+ <strong>下一篇：</strong><br/> 
+ <span>SDN网络之Mininet
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2014/10/08/磁盘阵列RAID/" data-title="磁盘阵列RAID" data-url="http://ixjx.gitcafe.io/blog/2014/10/08/磁盘阵列RAID/"></div>
+	 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+	var duoshuoQuery = {short_name:"ixjx"};
+		(function() {
+			var ds = document.createElement('script');
+			ds.type = 'text/javascript';ds.async = true;
+			ds.src = 'http://ixjx.gitcafe.io/blog/js/duoshuo.js';
+			ds.charset = 'UTF-8';
+			(document.getElementsByTagName('head')[0] 
+		 	|| document.getElementsByTagName('body')[0]).appendChild(ds);
+		})();
+	</script>
+    <!-- 多说公共JS代码 end -->
+
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/blog/categories/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/水/" title="水">水<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/游戏/" title="游戏">游戏<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/灌水/" title="灌水">灌水<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/网络/" title="网络">网络<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/读书/" title="读书">读书<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/转载/" title="转载">转载<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/软件/" title="软件">软件<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/随编/" title="随编">随编<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/blog/tags/Chrome/" style="font-size: 10px;">Chrome</a> <a href="/blog/tags/IP-QAM/" style="font-size: 10px;">IP QAM</a> <a href="/blog/tags/JAVA/" style="font-size: 12px;">JAVA</a> <a href="/blog/tags/JavaScript/" style="font-size: 12px;">JavaScript</a> <a href="/blog/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/blog/tags/MFC/" style="font-size: 10px;">MFC</a> <a href="/blog/tags/RSA/" style="font-size: 12px;">RSA</a> <a href="/blog/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/blog/tags/SQL注入/" style="font-size: 10px;">SQL注入</a> <a href="/blog/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/blog/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/blog/tags/Windows/" style="font-size: 10px;">Windows</a> <a href="/blog/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/blog/tags/vpn/" style="font-size: 12px;">vpn</a> <a href="/blog/tags/三层交换机/" style="font-size: 12px;">三层交换机</a> <a href="/blog/tags/买了个表/" style="font-size: 12px;">买了个表</a> <a href="/blog/tags/前端之路/" style="font-size: 18px;">前端之路</a> <a href="/blog/tags/呵呵/" style="font-size: 16px;">呵呵</a> <a href="/blog/tags/囧瑟夫问题/" style="font-size: 10px;">囧瑟夫问题</a> <a href="/blog/tags/存储/" style="font-size: 10px;">存储</a> <a href="/blog/tags/异步模式/" style="font-size: 10px;">异步模式</a> <a href="/blog/tags/影评/" style="font-size: 10px;">影评</a> <a href="/blog/tags/有限状态机/" style="font-size: 10px;">有限状态机</a> <a href="/blog/tags/毕业/" style="font-size: 14px;">毕业</a> <a href="/blog/tags/毕设/" style="font-size: 10px;">毕设</a> <a href="/blog/tags/游戏/" style="font-size: 10px;">游戏</a> <a href="/blog/tags/炉石传说/" style="font-size: 12px;">炉石传说</a> <a href="/blog/tags/翻墙/" style="font-size: 10px;">翻墙</a> <a href="/blog/tags/读书/" style="font-size: 12px;">读书</a> <a href="/blog/tags/黑科技/" style="font-size: 10px;">黑科技</a>
+    </div>
+  </div>
+
+<br>
+
+  <div>
+<p class="asidetitle">revolver map</p>
+<script type="text/javascript" src="http://jd.revolvermaps.com/2/1.js?i=34br242j94k&amp;s=233s&amp;m=0&amp;v=true&amp;r=false&amp;b=000000&amp;n=false&amp;c=ff0000" async="async"></script>
+</div>
+
+  <br>
+<div>
+<h3 class="asidetitle">最近访客</h3>
+<br>
+<ul class="ds-recent-visitors list" data-num-items="15" data-avatar-size="45"></ul>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe id="sina_widget_3056064675" style="width:100%; height:500px;" frameborder="0" scrolling="no" src="http://v.t.sina.com.cn/widget/widget_blog.php?uid=3056064675&height=500&skin=wd_01&showpic=1"></iframe>
+
+</div>
+
+
+  <div class="blogroll">
+<h3 class="asidetitle">友情链接</h3>
+<ul>
+<li><a href="http://bbs.ngacn.cc/" title="ngacn" target=_blank>NGA著名精英论坛</a></li>
+<li><a href="http://bbs.uestc.edu.cn/" title="河畔" target=_blank>清水河畔</a></li>
+<li><a href="http://guosu.sinaapp.com/" title="二郭" target=_blank>二郭</a></li>
+<li><a href="http://www.duanzhihe.com/" title="占鹤" target=_blank>占鹤</a></li>
+<li><a href="http://www.puwenlong.com/" title="CP" target=_blank>蒲蒲</a></li> 
+<li><a href="http://www.chengege.com/" title="琛JJ" target=_blank>琛GG</a></li>
+<li><a href="http://blog.dandyweng.com/" title="Dandy Weng" target=_blank>翁天信的博客</a></li>
+
+</ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" class="copyright" >
+	
+	<p>Copyright &#169;&nbsp;2015&nbsp;<a href="http://ixjx.gitcafe.io">CodeShurrik</a></p>
+	<p>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</p>
+		
+</div>
+</footer>
+    <script src="/blog/js/jquery-2.0.3.min.js"></script>
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"shurrik"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/blog/img/scrollup.png"/></a>
+	</div>
+	<script src="/blog/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,535 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>计算机是如何启动的？ | CodeShurrik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="shurrik">
+    
+
+    
+    <meta name="description" content="从打开电源到开始操作，计算机的启动是一个非常复杂的过程。
+
+我一直搞不清楚，这个过程到底是怎么回事，只看见屏幕快速滚动各种提示…… 这几天，我查了一些资料，试图搞懂它。下面就是我整理的笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机是如何启动的？">
+<meta property="og:url" content="http://ixjx.gitcafe.io/blog/2013/07/04/计算机是如何启动的？/index.html">
+<meta property="og:site_name" content="CodeShurrik">
+<meta property="og:description" content="从打开电源到开始操作，计算机的启动是一个非常复杂的过程。
+
+我一直搞不清楚，这个过程到底是怎么回事，只看见屏幕快速滚动各种提示…… 这几天，我查了一些资料，试图搞懂它。下面就是我整理的笔记。">
+<meta property="og:image" content="http://image.beekka.com/blog/201302/bg2013021501.jpg">
+<meta property="og:image" content="http://image.beekka.com/blog/201302/bg2013021502.jpg">
+<meta property="og:image" content="http://image.beekka.com/blog/201302/bg2013021503.png">
+<meta property="og:image" content="http://image.beekka.com/blog/201302/bg2013021504.jpg">
+<meta property="og:image" content="http://image.beekka.com/blog/201302/bg2013021505.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blog/images/rmb_32.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blog/images/dollar_32.png">
+<meta property="og:updated_time" content="2015-06-20T12:13:01.459Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机是如何启动的？">
+<meta name="twitter:description" content="从打开电源到开始操作，计算机的启动是一个非常复杂的过程。
+
+我一直搞不清楚，这个过程到底是怎么回事，只看见屏幕快速滚动各种提示…… 这几天，我查了一些资料，试图搞懂它。下面就是我整理的笔记。">
+
+    
+    <link rel="alternative" href="/atom.xml" title="CodeShurrik" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/blog/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/blog/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				 <img src="/blog/img/logo.jpg" alt="CodeShurrik" title="CodeShurrik"/>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/blog/" title="CodeShurrik">CodeShurrik</a></h1>
+				<h2 class="blog-motto">shurrik`s blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/blog/">首页</a></li>
+					
+						<li><a href="/blog/archives">归档</a></li>
+					
+						<li><a href="/blog/fm">电台</a></li>
+					
+						<li><a href="/blog/about">关于</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="http://www.baidu.com/" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value=  ><input type="text" name="wd" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2013/07/04/计算机是如何启动的？/" title="计算机是如何启动的？" itemprop="url">计算机是如何启动的？</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2013-07-04T01:27:07.000Z" itemprop="datePublished"> 发表于 2013-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>从打开电源到开始操作，计算机的启动是一个非常复杂的过程。</p>
+<p><img src="http://image.beekka.com/blog/201302/bg2013021501.jpg" alt=""></p>
+<p>我一直搞不清楚，这个过程到底是怎么回事，只看见屏幕快速滚动各种提示…… 这几天，我查了一些资料，试图搞懂它。下面就是我整理的笔记。</p>
+<a id="more"></a>
+<p><strong>零、boot的含义</strong></p>
+<p>先问一个问题，”启动”用英语怎么说？</p>
+<p>回答是boot。可是，boot原来的意思是靴子，”启动”与靴子有什么关系呢？ 原来，这里的boot是bootstrap（鞋带）的缩写，它来自一句谚语：</p>
+<blockquote>
+<p>“pull oneself up by one’s bootstraps”<br>字面意思是”拽着鞋带把自己拉起来”，这当然是不可能的事情。最早的时候，工程师们用它来比喻，计算机启动是一个很矛盾的过程：必须先运行程序，然后计算机才能启动，但是计算机不启动就无法运行程序！</p>
+</blockquote>
+<p>早期真的是这样，必须想尽各种办法，把一小段程序装进内存，然后计算机才能正常运行。所以，工程师们把这个过程叫做”拉鞋带”，久而久之就简称为boot了。</p>
+<p>计算机的整个启动过程分成四个阶段。</p>
+<p><strong>一、第一阶段：BIOS</strong></p>
+<p>上个世纪70年代初，”只读内存”（read-only memory，缩写为ROM）发明，开机程序被刷入ROM芯片，计算机通电后，第一件事就是读取它。</p>
+<p><img src="http://image.beekka.com/blog/201302/bg2013021502.jpg" alt=""></p>
+<p>这块芯片里的程序叫做”基本輸出輸入系統”（Basic Input/Output System），简称为<a href="http://en.wikipedia.org/wiki/BIOS" target="_blank" rel="external">BIOS</a>。</p>
+<p><strong>1.1 硬件自检</strong></p>
+<p>BIOS程序首先检查，计算机硬件能否满足运行的基本条件，这叫做”硬件自检”（Power-On Self-Test），缩写为<a href="http://en.wikipedia.org/wiki/Power-on_self-test" target="_blank" rel="external">POST</a>。</p>
+<p>如果硬件出现问题，主板会发出不同含义的<a href="http://en.wikipedia.org/wiki/Power-on_self-test#Original_IBM_POST_beep_codes" target="_blank" rel="external">蜂鸣</a>，启动中止。如果没有问题，屏幕就会显示出CPU、内存、硬盘等信息。</p>
+<p><img src="http://image.beekka.com/blog/201302/bg2013021503.png" alt=""></p>
+<p><strong>1.2 启动顺序</strong></p>
+<p>硬件自检完成后，BIOS把控制权转交给下一阶段的启动程序。</p>
+<p>这时，BIOS需要知道，”下一阶段的启动程序”具体存放在哪一个设备。也就是说，BIOS需要有一个外部储存设备的排序，排在前面的设备就是优先转交控制权的设备。这种排序叫做”启动顺序”（Boot Sequence）。</p>
+<p>打开BIOS的操作界面，里面有一项就是”设定启动顺序”。</p>
+<p><img src="http://image.beekka.com/blog/201302/bg2013021504.jpg" alt=""></p>
+<p><strong>二、第二阶段：主引导记录</strong></p>
+<p>BIOS按照”启动顺序”，把控制权转交给排在第一位的储存设备。</p>
+<p>这时，计算机读取该设备的第一个扇区，也就是读取最前面的512个字节。如果这512个字节的最后两个字节是0x55和0xAA，表明这个设备可以用于启动；如果不是，表明设备不能用于启动，控制权于是被转交给”启动顺序”中的下一个设备。</p>
+<p>这最前面的512个字节，就叫做<a href="http://en.wikipedia.org/wiki/Master_boot_record" target="_blank" rel="external">“主引导记录”</a>（Master boot record，缩写为MBR）。</p>
+<p><strong>2.1 主引导记录的结构</strong></p>
+<p>“主引导记录”只有512个字节，放不了太多东西。它的主要作用是，告诉计算机到硬盘的哪一个位置去找操作系统。</p>
+<p>主引导记录由三个部分组成：</p>
+<blockquote>
+<p>（1） 第1-446字节：调用操作系统的机器码。</p>
+<p>（2） 第447-510字节：分区表（Partition table）。</p>
+<p>（3） 第511-512字节：主引导记录签名（0x55和0xAA）。<br>其中，第二部分”分区表”的作用，是将硬盘分成若干个区。</p>
+</blockquote>
+<p><strong>2.2 分区表</strong></p>
+<p>硬盘分区有很多<a href="http://en.wikipedia.org/wiki/Disk_partitioning#Benefits_of_multiple_partitions" target="_blank" rel="external">好处</a>。考虑到每个区可以安装不同的操作系统，”主引导记录”因此必须知道将控制权转交给哪个区。</p>
+<p>分区表的长度只有64个字节，里面又分成四项，每项16个字节。所以，一个硬盘最多只能分四个一级分区，又叫做”主分区”。</p>
+<p>每个主分区的16个字节，由6个部分组成：</p>
+<blockquote>
+<p>（1） 第1个字节：如果为0x80，就表示该主分区是激活分区，控制权要转交给这个分区。四个主分区里面只能有一个是激活的。</p>
+<p>（2） 第2-4个字节：主分区第一个扇区的物理位置（柱面、磁头、扇区号等等）。</p>
+<p>（3） 第5个字节：<a href="http://en.wikipedia.org/wiki/Partition_type" target="_blank" rel="external">主分区类型</a>。</p>
+<p>（4） 第6-8个字节：主分区最后一个扇区的物理位置。</p>
+<p>（5） 第9-12字节：该主分区第一个扇区的逻辑地址。</p>
+<p>（6） 第13-16字节：主分区的扇区总数。<br>最后的四个字节（”主分区的扇区总数”），决定了这个主分区的长度。也就是说，一个主分区的扇区总数最多不超过2的32次方。</p>
+</blockquote>
+<p>如果每个扇区为512个字节，就意味着单个分区最大不超过2TB。再考虑到扇区的逻辑地址也是32位，所以单个硬盘可利用的空间最大也不超过2TB。如果想使用更大的硬盘，只有2个方法：一是提高每个扇区的字节数，二是<a href="http://en.wikipedia.org/wiki/GUID_Partition_Table" target="_blank" rel="external">增加扇区总数</a>。</p>
+<p><strong>三、第三阶段：硬盘启动</strong></p>
+<p>这时，计算机的控制权就要转交给硬盘的某个分区了，这里又分成三种情况。</p>
+<p><strong>3.1 情况A：卷引导记录</strong></p>
+<p>上一节提到，四个主分区里面，只有一个是激活的。计算机会读取激活分区的第一个扇区，叫做<a href="http://en.wikipedia.org/wiki/Volume_Boot_Record" target="_blank" rel="external">“卷引导记录</a>“（Volume boot record，缩写为VBR）。</p>
+<p>“卷引导记录”的主要作用是，告诉计算机，操作系统在这个分区里的位置。然后，计算机就会加载操作系统了。</p>
+<p><strong>3.2 情况B：扩展分区和逻辑分区</strong></p>
+<p>随着硬盘越来越大，四个主分区已经不够了，需要更多的分区。但是，分区表只有四项，因此规定有且仅有一个区可以被定义成”扩展分区”（Extended partition）。</p>
+<p>所谓”扩展分区”，就是指这个区里面又分成多个区。这种分区里面的分区，就叫做”逻辑分区”（logical partition）。</p>
+<p>计算机先读取扩展分区的第一个扇区，叫做<a href="http://en.wikipedia.org/wiki/Extended_partition" target="_blank" rel="external">“扩展引导记录”</a>（Extended boot record，缩写为EBR）。它里面也包含一张64字节的分区表，但是最多只有两项（也就是两个逻辑分区）。</p>
+<p>计算机接着读取第二个逻辑分区的第一个扇区，再从里面的分区表中找到第三个逻辑分区的位置，以此类推，直到某个逻辑分区的分区表只包含它自身为止（即只有一个分区项）。因此，扩展分区可以包含无数个逻辑分区。</p>
+<p>但是，似乎很少通过这种方式启动操作系统。如果操作系统确实安装在扩展分区，一般采用下一种方式启动。</p>
+<p><strong>3.3 情况C：启动管理器</strong></p>
+<p>在这种情况下，计算机读取”主引导记录”前面446字节的机器码之后，不再把控制权转交给某一个分区，而是运行事先安装的<a href="http://en.wikipedia.org/wiki/Boot_loader#Modern_boot_loaders" target="_blank" rel="external">“启动管理器”</a>（boot loader），由用户选择启动哪一个操作系统。</p>
+<p>Linux环境中，目前最流行的启动管理器是<a href="http://en.wikipedia.org/wiki/GNU_GRUB" target="_blank" rel="external">Grub</a>。</p>
+<p><img src="http://image.beekka.com/blog/201302/bg2013021505.png" alt=""></p>
+<p><strong>四、第四阶段：操作系统</strong></p>
+<p>控制权转交给操作系统后，操作系统的内核首先被载入内存。</p>
+<p>以Linux系统为例，先载入/boot目录下面的kernel。内核加载成功后，第一个运行的程序是/sbin/init。它根据配置文件（Debian系统是/etc/initab）产生init进程。这是Linux启动后的第一个进程，pid进程编号为1，其他进程都是它的后代。</p>
+<p>然后，init线程加载系统的各个模块，比如窗口程序和网络程序，直至执行/bin/login程序，跳出登录界面，等待用户输入用户名和密码。</p>
+<p>至此，全部启动过程完成。</p>
+<p>（完）</p>
+<div><br><br>### 文档信息<br><br><em>   版权声明：自由转载-非商用-非衍生-保持署名 | <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank" rel="external">Creative Commons BY-NC-ND 3.0</a>
+</em>   原文网址：<a href="http://www.ruanyifeng.com/blog/2013/02/booting.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2013/02/booting.html</a><br><em>   最后修改时间：2013年6月27日 21:09
+</em>   付费支持：<a href="https://me.alipay.com/ruanyf" target="_blank" rel="external"><img src="http://www.ruanyifeng.com/blog/images/rmb_32.png" alt="人民币 - 支付宝" title="人民币"></a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=yifeng.ruan@gmail.com&amp;currency_code=USD&amp;amount=0.99&amp;return=http://www.ruanyifeng.com/thank.html&amp;item_name=Ruan%20YiFeng" target="_blank" rel="external"><img src="http://www.ruanyifeng.com/blog/images/dollar_32.png" alt="美元 - paypal" title="美元"></a><br></div>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/转载/">转载</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/Linux/">Linux</a><a href="/blog/tags/Windows/">Windows</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://ixjx.gitcafe.io/blog/2013/07/04/计算机是如何启动的？/" data-title="计算机是如何启动的？ | CodeShurrik" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2013/07/09/RSA算法原理（一）/" title="RSA算法原理（一）">
+  <strong>上一篇：</strong><br/>
+  <span>
+  RSA算法原理（一）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2013/06/29/走了，爱过/"  title="走了，爱过">
+ <strong>下一篇：</strong><br/> 
+ <span>走了，爱过
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2013/07/04/计算机是如何启动的？/" data-title="计算机是如何启动的？" data-url="http://ixjx.gitcafe.io/blog/2013/07/04/计算机是如何启动的？/"></div>
+	 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+	var duoshuoQuery = {short_name:"ixjx"};
+		(function() {
+			var ds = document.createElement('script');
+			ds.type = 'text/javascript';ds.async = true;
+			ds.src = 'http://ixjx.gitcafe.io/blog/js/duoshuo.js';
+			ds.charset = 'UTF-8';
+			(document.getElementsByTagName('head')[0] 
+		 	|| document.getElementsByTagName('body')[0]).appendChild(ds);
+		})();
+	</script>
+    <!-- 多说公共JS代码 end -->
+
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/blog/categories/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/水/" title="水">水<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/游戏/" title="游戏">游戏<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/灌水/" title="灌水">灌水<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/网络/" title="网络">网络<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/读书/" title="读书">读书<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/转载/" title="转载">转载<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/软件/" title="软件">软件<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/随编/" title="随编">随编<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/blog/tags/Chrome/" style="font-size: 10px;">Chrome</a> <a href="/blog/tags/IP-QAM/" style="font-size: 10px;">IP QAM</a> <a href="/blog/tags/JAVA/" style="font-size: 12px;">JAVA</a> <a href="/blog/tags/JavaScript/" style="font-size: 12px;">JavaScript</a> <a href="/blog/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/blog/tags/MFC/" style="font-size: 10px;">MFC</a> <a href="/blog/tags/RSA/" style="font-size: 12px;">RSA</a> <a href="/blog/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/blog/tags/SQL注入/" style="font-size: 10px;">SQL注入</a> <a href="/blog/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/blog/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/blog/tags/Windows/" style="font-size: 10px;">Windows</a> <a href="/blog/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/blog/tags/vpn/" style="font-size: 12px;">vpn</a> <a href="/blog/tags/三层交换机/" style="font-size: 12px;">三层交换机</a> <a href="/blog/tags/买了个表/" style="font-size: 12px;">买了个表</a> <a href="/blog/tags/前端之路/" style="font-size: 18px;">前端之路</a> <a href="/blog/tags/呵呵/" style="font-size: 16px;">呵呵</a> <a href="/blog/tags/囧瑟夫问题/" style="font-size: 10px;">囧瑟夫问题</a> <a href="/blog/tags/存储/" style="font-size: 10px;">存储</a> <a href="/blog/tags/异步模式/" style="font-size: 10px;">异步模式</a> <a href="/blog/tags/影评/" style="font-size: 10px;">影评</a> <a href="/blog/tags/有限状态机/" style="font-size: 10px;">有限状态机</a> <a href="/blog/tags/毕业/" style="font-size: 14px;">毕业</a> <a href="/blog/tags/毕设/" style="font-size: 10px;">毕设</a> <a href="/blog/tags/游戏/" style="font-size: 10px;">游戏</a> <a href="/blog/tags/炉石传说/" style="font-size: 12px;">炉石传说</a> <a href="/blog/tags/翻墙/" style="font-size: 10px;">翻墙</a> <a href="/blog/tags/读书/" style="font-size: 12px;">读书</a> <a href="/blog/tags/黑科技/" style="font-size: 10px;">黑科技</a>
+    </div>
+  </div>
+
+<br>
+
+  <div>
+<p class="asidetitle">revolver map</p>
+<script type="text/javascript" src="http://jd.revolvermaps.com/2/1.js?i=34br242j94k&amp;s=233s&amp;m=0&amp;v=true&amp;r=false&amp;b=000000&amp;n=false&amp;c=ff0000" async="async"></script>
+</div>
+
+  <br>
+<div>
+<h3 class="asidetitle">最近访客</h3>
+<br>
+<ul class="ds-recent-visitors list" data-num-items="15" data-avatar-size="45"></ul>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe id="sina_widget_3056064675" style="width:100%; height:500px;" frameborder="0" scrolling="no" src="http://v.t.sina.com.cn/widget/widget_blog.php?uid=3056064675&height=500&skin=wd_01&showpic=1"></iframe>
+
+</div>
+
+
+  <div class="blogroll">
+<h3 class="asidetitle">友情链接</h3>
+<ul>
+<li><a href="http://bbs.ngacn.cc/" title="ngacn" target=_blank>NGA著名精英论坛</a></li>
+<li><a href="http://bbs.uestc.edu.cn/" title="河畔" target=_blank>清水河畔</a></li>
+<li><a href="http://guosu.sinaapp.com/" title="二郭" target=_blank>二郭</a></li>
+<li><a href="http://www.duanzhihe.com/" title="占鹤" target=_blank>占鹤</a></li>
+<li><a href="http://www.puwenlong.com/" title="CP" target=_blank>蒲蒲</a></li> 
+<li><a href="http://www.chengege.com/" title="琛JJ" target=_blank>琛GG</a></li>
+<li><a href="http://blog.dandyweng.com/" title="Dandy Weng" target=_blank>翁天信的博客</a></li>
+
+</ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" class="copyright" >
+	
+	<p>Copyright &#169;&nbsp;2015&nbsp;<a href="http://ixjx.gitcafe.io">CodeShurrik</a></p>
+	<p>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</p>
+		
+</div>
+</footer>
+    <script src="/blog/js/jquery-2.0.3.min.js"></script>
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"shurrik"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/blog/img/scrollup.png"/></a>
+	</div>
+	<script src="/blog/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

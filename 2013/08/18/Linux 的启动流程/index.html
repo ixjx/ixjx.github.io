@@ -1,0 +1,584 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Linux 的启动流程 | CodeShurrik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="shurrik">
+    
+
+    
+    <meta name="description" content="半年前，我写了《计算机是如何启动的？》，探讨BIOS和主引导记录的作用。
+那篇文章不涉及操作系统，只与主板的板载程序有关。今天，我想接着往下写，探讨操作系统接管硬件以后发生的事情，也就是操作系统的启动流程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 的启动流程">
+<meta property="og:url" content="http://ixjx.gitcafe.io/blog/2013/08/18/Linux 的启动流程/index.html">
+<meta property="og:site_name" content="CodeShurrik">
+<meta property="og:description" content="半年前，我写了《计算机是如何启动的？》，探讨BIOS和主引导记录的作用。
+那篇文章不涉及操作系统，只与主板的板载程序有关。今天，我想接着往下写，探讨操作系统接管硬件以后发生的事情，也就是操作系统的启动流程。">
+<meta property="og:image" content="http://image.beekka.com/blog/201308/bg2013081701.png">
+<meta property="og:image" content="http://image.beekka.com/blog/201308/bg2013081702.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blog/images/rmb_32.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blog/images/dollar_32.png">
+<meta property="og:updated_time" content="2015-06-20T11:30:06.344Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux 的启动流程">
+<meta name="twitter:description" content="半年前，我写了《计算机是如何启动的？》，探讨BIOS和主引导记录的作用。
+那篇文章不涉及操作系统，只与主板的板载程序有关。今天，我想接着往下写，探讨操作系统接管硬件以后发生的事情，也就是操作系统的启动流程。">
+
+    
+    <link rel="alternative" href="/atom.xml" title="CodeShurrik" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/blog/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/blog/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				 <img src="/blog/img/logo.jpg" alt="CodeShurrik" title="CodeShurrik"/>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/blog/" title="CodeShurrik">CodeShurrik</a></h1>
+				<h2 class="blog-motto">shurrik`s blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/blog/">首页</a></li>
+					
+						<li><a href="/blog/archives">归档</a></li>
+					
+						<li><a href="/blog/fm">电台</a></li>
+					
+						<li><a href="/blog/about">关于</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="http://www.baidu.com/" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value=  ><input type="text" name="wd" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2013/08/18/Linux 的启动流程/" title="Linux 的启动流程" itemprop="url">Linux 的启动流程</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2013-08-18T07:44:33.000Z" itemprop="datePublished"> 发表于 2013-08-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>半年前，我写了《计算机是如何启动的？》，探讨BIOS和主引导记录的作用。</p>
+<p>那篇文章不涉及操作系统，只与主板的板载程序有关。今天，我想接着往下写，探讨操作系统接管硬件以后发生的事情，也就是操作系统的启动流程。<a id="more"></a></p>
+<p><img src="http://image.beekka.com/blog/201308/bg2013081701.png" alt=""></p>
+<p>这个部分比较有意思。因为在BIOS阶段，计算机的行为基本上被写死了，程序员可以做的事情并不多；但是，一旦进入操作系统，程序员几乎可以定制所有方面。所以，这个部分与程序员的关系更密切。</p>
+<p>我主要关心的是Linux操作系统，它是目前服务器端的主流操作系统。下面的内容针对的是<a href="http://en.wikipedia.org/wiki/Debian" target="_blank" rel="external">Debian</a>发行版，因为我对其他发行版不够熟悉。</p>
+<p>第一步、加载内核</p>
+<p>操作系统接管硬件以后，首先读入 /boot 目录下的内核文件。</p>
+<p><img src="http://image.beekka.com/blog/201308/bg2013081702.png" alt=""></p>
+<p>以我的电脑为例，/boot 目录下面大概是这样一些文件：</p>
+<blockquote>
+<p>$ ls /boot 　　 　　config-3.2.0-3-amd64 　　config-3.2.0-4-amd64 　　grub 　　initrd.img-3.2.0-3-amd64 　　initrd.img-3.2.0-4-amd64 　　System.map-3.2.0-3-amd64 　　System.map-3.2.0-4-amd64 　　vmlinuz-3.2.0-3-amd64 　　vmlinuz-3.2.0-4-amd64 　　 `<br>    第二步、启动初始化进程</p>
+</blockquote>
+<pre><code>内核文件加载以后，就开始运行第一个程序 /sbin/init，它的作用是初始化系统环境。
+
+![](http://image.beekka.com/blog/201308/bg2013081703.png)
+
+由于init是第一个运行的程序，它的进程编号（pid）就是1。其他所有进程都从它衍生，都是它的子进程。
+
+第三步、确定运行级别
+
+许多程序需要开机启动。它们在Windows叫做"服务"（service），在Linux就叫做"[<span class="link_label">守护进程</span>](<span class="link_url">http://zh.wikipedia.org/wiki/%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B</span>)"（daemon）。
+
+init进程的一大任务，就是去运行这些开机启动的程序。但是，不同的场合需要启动不同的程序，比如用作服务器时，需要启动Apache，用作桌面就不需要。Linux允许为不同的场合，分配不同的开机启动程序，这就叫做"[<span class="link_label">运行级别</span>](<span class="link_url">http://zh.wikipedia.org/wiki/%E8%BF%90%E8%A1%8C%E7%BA%A7%E5%88%AB</span>)"（runlevel）。也就是说，启动时根据"运行级别"，确定要运行哪些程序。
+
+![](http://image.beekka.com/blog/201308/bg2013081704.png)
+
+Linux预置七种运行级别（0-6）。一般来说，0是关机，1是单用户模式（也就是维护模式），6是重启。运行级别2-5，各个发行版不太一样，对于Debian来说，都是同样的多用户模式（也就是正常模式）。
+
+init进程首先读取文件 /etc/inittab，它是运行级别的设置文件。如果你打开它，可以看到第一行是这样的：
+<span class="blockquote">&gt; &lt;pre&gt;` 　　id:2:initdefault: 　　 `&lt;/pre&gt;</span>
+initdefault的值是2，表明系统启动时的运行级别为2。如果需要指定其他级别，可以手动修改这个值。
+
+那么，运行级别2有些什么程序呢，系统怎么知道每个级别应该加载哪些程序呢？......回答是每个运行级别在/etc目录下面，都有一个对应的子目录，指定要加载的程序。
+<span class="blockquote">&gt; &lt;pre&gt;` 　　/etc/rc0.d 　　/etc/rc1.d 　　/etc/rc2.d 　　/etc/rc3.d 　　/etc/rc4.d 　　/etc/rc5.d 　　/etc/rc6.d 　　 `&lt;/pre&gt;</span>
+上面目录名中的"rc"，表示run command（运行程序），最后的d表示directory（目录）。下面让我们看看 /etc/rc2.d 目录中到底指定了哪些程序。
+<span class="blockquote">&gt; &lt;pre&gt;` 　　$ ls /etc/rc2.d 　　 　　README 　　S01motd 　　S13rpcbind 　　S14nfs-common 　　S16binfmt-support 　　S16rsyslog 　　S16sudo 　　S17apache2 　　S18acpid 　　... 　　 `&lt;/pre&gt;</span>
+可以看到，除了第一个文件README以外，其他文件名都是"字母S+两位数字+程序名"的形式。字母S表示Start，也就是启动的意思（启动脚本的运行参数为start），如果这个位置是字母K，就代表Kill（关闭），即如果从其他运行级别切换过来，需要关闭的程序（启动脚本的运行参数为stop）。后面的两位数字表示处理顺序，数字越小越早处理，所以第一个启动的程序是motd，然后是rpcbing、nfs......数字相同时，则按照程序名的字母顺序启动，所以rsyslog会先于sudo启动。
+
+这个目录里的所有文件（除了README），就是启动时要加载的程序。如果想增加或删除某些程序，不建议手动修改 /etc/rcN.d 目录，最好是用一些专门命令进行管理（参考[<span class="link_label">这里</span>](<span class="link_url">http://www.debianadmin.com/manage-linux-init-or-startup-scripts.html</span>)和[<span class="link_label">这里</span>](<span class="link_url">http://www.debianadmin.com/remove-unwanted-startup-files-or-services-in-debian.html</span>)）。
+
+第四步、加载开机启动程序
+
+前面提到，七种预设的"运行级别"各自有一个目录，存放需要开机启动的程序。不难想到，如果多个"运行级别"需要启动同一个程序，那么这个程序的启动脚本，就会在每一个目录里都有一个拷贝。这样会造成管理上的困扰：如果要修改启动脚本，岂不是每个目录都要改一遍？
+
+Linux的解决办法，就是七个 /etc/rcN.d 目录里列出的程序，都设为链接文件，指向另外一个目录 /etc/init.d ，真正的启动脚本都统一放在这个目录中。init进程逐一加载开机启动程序，其实就是运行这个目录里的启动脚本。
+
+![](http://image.beekka.com/blog/201308/bg2013081705.png)
+
+下面就是链接文件真正的指向。
+<span class="blockquote">&gt; &lt;pre&gt;` 　　$ ls -l /etc/rc2.d 　　 　　README 　　S01motd -&amp;gt; ../init.d/motd 　　S13rpcbind -&amp;gt; ../init.d/rpcbind 　　S14nfs-common -&amp;gt; ../init.d/nfs-common 　　S16binfmt-support -&amp;gt; ../init.d/binfmt-support 　　S16rsyslog -&amp;gt; ../init.d/rsyslog 　　S16sudo -&amp;gt; ../init.d/sudo 　　S17apache2 -&amp;gt; ../init.d/apache2 　　S18acpid -&amp;gt; ../init.d/acpid 　　... 　　 `&lt;/pre&gt;</span>
+这样做的另一个好处，就是如果你要手动关闭或重启某个进程，直接到目录 /etc/init.d 中寻找启动脚本即可。比如，我要重启Apache服务器，就运行下面的命令：
+<span class="blockquote">&gt; &lt;pre&gt;` 　　$ sudo /etc/init.d/apache2 restart 　　 `&lt;/pre&gt;</span>
+/etc/init.d 这个目录名最后一个字母d，是directory的意思，表示这是一个目录，用来与程序 /etc/init 区分。
+
+第五步、用户登录
+
+开机启动程序加载完毕以后，就要让用户登录了。
+
+![](http://image.beekka.com/blog/201308/bg2013081706.png)
+
+一般来说，用户的登录方式有三种：
+<span class="blockquote">&gt; （1）命令行登录</span>
+</code></pre><blockquote>
+<pre><code>（2）ssh登录
+
+
+（3）图形界面登录
+这三种情况，都有自己的方式对用户进行认证。
+</code></pre></blockquote>
+<pre><code>（1）命令行登录：init进程调用getty程序（意为get teletype），让用户输入用户名和密码。输入完成后，再调用login程序，核对密码（Debian还会再多运行一个身份核对程序/etc/pam.<span class="keyword">d</span>/login）。如果密码正确，就从文件 /etc/passwd 读取该用户指定的<span class="keyword">shell</span>，然后启动这个<span class="keyword">shell</span>。
+
+（2）ssh登录：这时系统调用sshd程序（Debian还会再运行/etc/pam.<span class="keyword">d</span>/ssh ），取代getty和login，然后启动<span class="keyword">shell</span>。
+
+（3）图形界面登录：init进程调用显示管理器，Gnome图形界面对应的显示管理器为gdm（GNOME <span class="keyword">Display</span> Manager），然后用户输入用户名和密码。如果密码正确，就读取/etc/gdm3/Xsession，启动用户的会话。
+
+第六步、进入 login <span class="keyword">shell</span>
+
+所谓<span class="keyword">shell</span>，简单说就是命令行界面，让用户可以直接与操作系统对话。用户登录时打开的<span class="keyword">shell</span>，就叫做login <span class="keyword">shell</span>。
+
+![](http:<span class="comment">//image.beekka.com/blog/201308/bg2013081707.png)</span>
+
+Debian默认的<span class="keyword">shell</span>是[Bash](http:<span class="comment">//zh.wikipedia.org/wiki/Bash)，它会读入一系列的配置文件。上一步的三种情况，在这一步的处理，也存在差异。</span>
+
+（1）命令行登录：首先读入 /etc/profile，这是对所有用户都有效的配置；然后依次寻找下面三个文件，这是针对当前用户的配置。
+&gt; &lt;pre&gt;` 　　~/.bash_profile 　　~/.bash_login 　　~/.profile 　　 `&lt;/pre&gt;
+需要注意的是，这三个文件只要有一个存在，就不再读入后面的文件了。比如，要是 ~/.bash_profile 存在，就不会再读入后面两个文件了。
+
+（2）ssh登录：与第一种情况完全相同。
+
+（3）图形界面登录：只加载 /etc/prfile 和 ~/.profile。也就是说，~/.bash_profile 不管有没有，都不会运行。
+
+第七步，打开 non-login <span class="keyword">shell</span>
+
+老实说，上一步完成以后，Linux的启动过程就算结束了，用户已经可以看到命令行提示符或者图形界面了。但是，为了内容的完整，必须再介绍一下这一步。
+
+用户进入操作系统以后，常常会再手动开启一个<span class="keyword">shell</span>。这个<span class="keyword">shell</span>就叫做 non-login <span class="keyword">shell</span>，意思是它不同于登录时出现的那个<span class="keyword">shell</span>，不读取/etc/profile和.profile等配置文件。
+
+![](http:<span class="comment">//image.beekka.com/blog/201308/bg2013081708.png)</span>
+
+non-login <span class="keyword">shell</span>的重要性，不仅在于它是用户最常接触的那个<span class="keyword">shell</span>，还在于它会读入用户自己的bash配置文件 ~/.bashrc。大多数时候，我们对于bash的定制，都是写在这个文件里面的。
+
+你也许会问，要是不进入 non-login <span class="keyword">shell</span>，岂不是.bashrc就不会运行了，因此bash 也就不能完成定制了？事实上，Debian已经考虑到这个问题了，请打开文件 ~/.profile，可以看到下面的代码：
+&gt; &lt;pre&gt;` 　　<span class="keyword">if</span> [ -<span class="keyword">n</span> <span class="string">"$BASH_VERSION"</span> ]; then 　　　　<span class="keyword">if</span> [ -f <span class="string">"$HOME/.bashrc"</span> ]; then 　　　　　　. <span class="string">"$HOME/.bashrc"</span> 　　　　fi 　　fi 　　 `&lt;/pre&gt;
+上面代码先判断变量 <span class="label">$BASH_VERSION</span> 是否有值，然后判断主目录下是否存在 .bashrc 文件，如果存在就运行该文件。第三行开头的那个点，是source命令的简写形式，表示运行某个文件，写成<span class="string">"source ~/.bashrc"</span>也是可以的。
+
+因此，只要运行～/.profile文件，～/.bashrc文件就会连带运行。但是上一节的第一种情况提到过，如果存在～/.bash_profile文件，那么有可能不会运行～/.profile文件。解决这个问题很简单，把下面代码写入.bash_profile就行了。
+&gt; &lt;pre&gt;` 　　<span class="keyword">if</span> [ -f ~/.profile ]; then 　　　　. ~/.profile 　　fi
+</code></pre><p>这样一来，不管是哪种情况，.bashrc都会执行，用户的设置可以放心地都写入这个文件了。</p>
+<p>Bash的设置之所以如此繁琐，是由于历史原因造成的。早期的时候，计算机运行速度很慢，载入配置文件需要很长时间，Bash的作者只好把配置文件分成了几个部分，阶段性载入。系统的通用设置放在 /etc/profile，用户个人的、需要被所有子进程继承的设置放在.profile，不需要被继承的设置放在.bashrc。</p>
+<p>顺便提一下，除了Linux以外， Mac OS X 使用的shell也是Bash。但是，它只加载.bash_profile，然后在.bash_profile里面调用.bashrc。而且，不管是ssh登录，还是在图形界面里启动shell窗口，都是如此。</p>
+<p>参考链接</p>
+<blockquote>
+<p>[1] Debian Wiki, <a href="https://wiki.debian.org/EnvironmentVariables" target="_blank" rel="external">Environment Variables</a></p>
+<p>[2] Debian Wiki, <a href="https://wiki.debian.org/DotFiles" target="_blank" rel="external">Dot Files</a></p>
+<p>[3] Debian Administration, <a href="http://www.debian-administration.org/articles/212" target="_blank" rel="external">An introduction to run-levels</a></p>
+<p>[4] Debian Admin，<a href="http://www.debianadmin.com/debian-and-ubuntu-linux-run-levels.html" target="_blank" rel="external">Debian and Ubuntu Linux Run Levels</a></p>
+<p>[5] Linux Information Project (LINFO), <a href="http://www.linfo.org/runlevel_def.html" target="_blank" rel="external">Runlevel Definition</a></p>
+<p>[6] LinuxQuestions.org, <a href="http://wiki.linuxquestions.org/wiki/Run_Levels" target="_blank" rel="external">What are run levels?</a></p>
+<p>[7] Dalton Hubble, <a href="http://dghubble.com/.bashprofile-.profile-and-.bashrc-conventions.html" target="_blank" rel="external">Bash Configurations Demystified</a><br>（完）</p>
+<div>
+
+</div></blockquote>
+<h3 id="文档信息">文档信息</h3><ul>
+<li>版权声明：自由转载-非商用-非衍生-保持署名 | <a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" target="_blank" rel="external">Creative Commons BY-NC-ND 3.0</a></li>
+<li>原文网址：<a href="http://www.ruanyifeng.com/blog/2013/08/linux_boot_process.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2013/08/linux_boot_process.html</a></li>
+<li>最后修改时间：2013年8月18日 14:31</li>
+<li>付费支持：<a href="https://me.alipay.com/ruanyf" target="_blank" rel="external"><img src="http://www.ruanyifeng.com/blog/images/rmb_32.png" alt="人民币 - 支付宝" title="人民币"></a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=yifeng.ruan@gmail.com&amp;currency_code=USD&amp;amount=0.99&amp;return=http://www.ruanyifeng.com/thank.html&amp;item_name=Ruan%20YiFeng" target="_blank" rel="external"><img src="http://www.ruanyifeng.com/blog/images/dollar_32.png" alt="美元 - paypal" title="美元"></a><br></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/转载/">转载</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://ixjx.gitcafe.io/blog/2013/08/18/Linux 的启动流程/" data-title="Linux 的启动流程 | CodeShurrik" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2013/09/07/JavaScript与有限状态机/" title="JavaScript与有限状态机">
+  <strong>上一篇：</strong><br/>
+  <span>
+  JavaScript与有限状态机</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2013/07/29/再论IP QAM技术/"  title="再论IP QAM技术">
+ <strong>下一篇：</strong><br/> 
+ <span>再论IP QAM技术
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2013/08/18/Linux 的启动流程/" data-title="Linux 的启动流程" data-url="http://ixjx.gitcafe.io/blog/2013/08/18/Linux 的启动流程/"></div>
+	 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+	var duoshuoQuery = {short_name:"ixjx"};
+		(function() {
+			var ds = document.createElement('script');
+			ds.type = 'text/javascript';ds.async = true;
+			ds.src = 'http://ixjx.gitcafe.io/blog/js/duoshuo.js';
+			ds.charset = 'UTF-8';
+			(document.getElementsByTagName('head')[0] 
+		 	|| document.getElementsByTagName('body')[0]).appendChild(ds);
+		})();
+	</script>
+    <!-- 多说公共JS代码 end -->
+
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/blog/categories/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/水/" title="水">水<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/游戏/" title="游戏">游戏<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/灌水/" title="灌水">灌水<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/网络/" title="网络">网络<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/读书/" title="读书">读书<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/转载/" title="转载">转载<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/软件/" title="软件">软件<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/blog/categories/随编/" title="随编">随编<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/blog/tags/Chrome/" style="font-size: 10px;">Chrome</a> <a href="/blog/tags/IP-QAM/" style="font-size: 10px;">IP QAM</a> <a href="/blog/tags/JAVA/" style="font-size: 12px;">JAVA</a> <a href="/blog/tags/JavaScript/" style="font-size: 12px;">JavaScript</a> <a href="/blog/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/blog/tags/MFC/" style="font-size: 10px;">MFC</a> <a href="/blog/tags/RSA/" style="font-size: 12px;">RSA</a> <a href="/blog/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/blog/tags/SQL注入/" style="font-size: 10px;">SQL注入</a> <a href="/blog/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/blog/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/blog/tags/Windows/" style="font-size: 10px;">Windows</a> <a href="/blog/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/blog/tags/vpn/" style="font-size: 12px;">vpn</a> <a href="/blog/tags/三层交换机/" style="font-size: 12px;">三层交换机</a> <a href="/blog/tags/买了个表/" style="font-size: 12px;">买了个表</a> <a href="/blog/tags/前端之路/" style="font-size: 18px;">前端之路</a> <a href="/blog/tags/呵呵/" style="font-size: 16px;">呵呵</a> <a href="/blog/tags/囧瑟夫问题/" style="font-size: 10px;">囧瑟夫问题</a> <a href="/blog/tags/存储/" style="font-size: 10px;">存储</a> <a href="/blog/tags/异步模式/" style="font-size: 10px;">异步模式</a> <a href="/blog/tags/影评/" style="font-size: 10px;">影评</a> <a href="/blog/tags/有限状态机/" style="font-size: 10px;">有限状态机</a> <a href="/blog/tags/毕业/" style="font-size: 14px;">毕业</a> <a href="/blog/tags/毕设/" style="font-size: 10px;">毕设</a> <a href="/blog/tags/游戏/" style="font-size: 10px;">游戏</a> <a href="/blog/tags/炉石传说/" style="font-size: 12px;">炉石传说</a> <a href="/blog/tags/翻墙/" style="font-size: 10px;">翻墙</a> <a href="/blog/tags/读书/" style="font-size: 12px;">读书</a> <a href="/blog/tags/黑科技/" style="font-size: 10px;">黑科技</a>
+    </div>
+  </div>
+
+<br>
+
+  <div>
+<p class="asidetitle">revolver map</p>
+<script type="text/javascript" src="http://jd.revolvermaps.com/2/1.js?i=34br242j94k&amp;s=233s&amp;m=0&amp;v=true&amp;r=false&amp;b=000000&amp;n=false&amp;c=ff0000" async="async"></script>
+</div>
+
+  <br>
+<div>
+<h3 class="asidetitle">最近访客</h3>
+<br>
+<ul class="ds-recent-visitors list" data-num-items="15" data-avatar-size="45"></ul>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe id="sina_widget_3056064675" style="width:100%; height:500px;" frameborder="0" scrolling="no" src="http://v.t.sina.com.cn/widget/widget_blog.php?uid=3056064675&height=500&skin=wd_01&showpic=1"></iframe>
+
+</div>
+
+
+  <div class="blogroll">
+<h3 class="asidetitle">友情链接</h3>
+<ul>
+<li><a href="http://bbs.ngacn.cc/" title="ngacn" target=_blank>NGA著名精英论坛</a></li>
+<li><a href="http://bbs.uestc.edu.cn/" title="河畔" target=_blank>清水河畔</a></li>
+<li><a href="http://guosu.sinaapp.com/" title="二郭" target=_blank>二郭</a></li>
+<li><a href="http://www.duanzhihe.com/" title="占鹤" target=_blank>占鹤</a></li>
+<li><a href="http://www.puwenlong.com/" title="CP" target=_blank>蒲蒲</a></li> 
+<li><a href="http://www.chengege.com/" title="琛JJ" target=_blank>琛GG</a></li>
+<li><a href="http://blog.dandyweng.com/" title="Dandy Weng" target=_blank>翁天信的博客</a></li>
+
+</ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" class="copyright" >
+	
+	<p>Copyright &#169;&nbsp;2015&nbsp;<a href="http://ixjx.gitcafe.io">CodeShurrik</a></p>
+	<p>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</p>
+		
+</div>
+</footer>
+    <script src="/blog/js/jquery-2.0.3.min.js"></script>
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"shurrik"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/blog/img/scrollup.png"/></a>
+	</div>
+	<script src="/blog/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
