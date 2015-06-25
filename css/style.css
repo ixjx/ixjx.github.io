@@ -461,39 +461,37 @@ body >header a {
   display: block;
   color: #fff;
 }
-#imglogo {
+.sticker {
   float: left;
-  width: 4em;
-  height: 4em;
-}
-@media only screen and (min-width: 768px) {
-  #imglogo {
-    width: 5em;
-  }
-}
-@media only screen and (min-width: 1024px) {
-  #imglogo {
-    width: 5.5em;
-  }
-}
-#imglogo img {
+  width: 100px;
   -webkit-border-radius: 50%;
   border-radius: 50%;
-  width: 4em;
+  border: 1px solid #fff;
+  -webkit-transition: 600ms;
+  -moz-transition: 600ms;
+  -o-transition: 600ms;
+  -ms-transition: 600ms;
+  transition: 600ms;
+  -o-transition: 600ms;
+  -moz-transition: 600ms;
+  -webkit-transition: 600ms;
+  -webkit-filter: grayscale(100%);
+}
+.sticker:hover {
+  -webkit-filter: grayscale(0%);
 }
 @media only screen and (min-width: 768px) {
-  #imglogo img {
-    width: 5em;
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
+  .sticker {
+    width: 101px;
   }
 }
 @media only screen and (min-width: 1024px) {
-  #imglogo img {
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
-    width: 5.5em;
+  .sticker {
+    width: 101.5px;
   }
+}
+.sticker-img {
+  background: url("../img/logo.jpg");
 }
 #textlogo {
   font-family: "covered_by_your_graceregular";
