@@ -587,16 +587,16 @@ header nav {
   }
 }
 header nav ul li a {
-  padding: 0.2em 0 0.2em 1em;
+  padding: 0.4em 1.5em;
 }
 @media only screen and (min-width: 1024px) {
   header nav ul li a {
-    padding: 0.2em 1.5em;
+    padding: 0.4em 1.5em;
   }
 }
 header nav ul li a:hover {
-  background: #080808;
-  color: #fff;
+  background: #fff;
+  color: #2ca6cb;
 }
 .shownav {
   max-height: 40em;
