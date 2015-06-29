@@ -18,7 +18,7 @@
 <meta property="og:site_name" content="CodeShurrik">
 <meta property="og:description" content="上一次更新前端之路系列都是一年前了，这次来点干货。　　起因是发现dandy主页又改版了。看到他头像特效简直酷炫666到没朋友，我就萌生了 COPY 学习的想法。　　看了半天源码，css贝塞尔曲线神马的没看懂，js还是压缩过的，各种abchjk，无奈之下求助前端大神duanzhihe。大神果然靠谱，一眼看出实现原理，就是有一个半透明的图片，每次鼠标浮上去后就往相应的方向移动，然后提到可能有现成的插件">
 <meta property="og:image" content="http://ixjx-sae.stor.sinaapp.com/shurrik.jpg">
-<meta property="og:updated_time" content="2015-06-20T12:08:57.872Z">
+<meta property="og:updated_time" content="2015-06-29T09:46:36.767Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="前端之路_5sticker贴纸效果">
 <meta name="twitter:description" content="上一次更新前端之路系列都是一年前了，这次来点干货。　　起因是发现dandy主页又改版了。看到他头像特效简直酷炫666到没朋友，我就萌生了 COPY 学习的想法。　　看了半天源码，css贝塞尔曲线神马的没看懂，js还是压缩过的，各种abchjk，无奈之下求助前端大神duanzhihe。大神果然靠谱，一眼看出实现原理，就是有一个半透明的图片，每次鼠标浮上去后就往相应的方向移动，然后提到可能有现成的插件">
@@ -94,32 +94,36 @@
 		<p>　　上一次更新前端之路系列都是一年前了，这次来点干货。<br>　　起因是发现<a href="http://www.dandyweng.com/" target="_blank" rel="external">dandy</a>主页又改版了。看到他头像特效简直酷炫666到没朋友，我就萌生了 <del datetime="2015-03-24T15:23:33+00:00">COPY</del> 学习的想法。<br>　　看了半天源码，css贝塞尔曲线神马的没看懂，js还是压缩过的，各种abchjk，无奈之下求助前端大神<a href="http://lyhome.sinaapp.com/" target="_blank" rel="external">duanzhihe</a>。大神果然靠谱，一眼看出实现原理，就是有一个半透明的图片，每次鼠标浮上去后就往相应的方向移动，然后提到可能有现成的插件。<br>　　搜之，嘿还真有，就是题目中的sticker。<a href="http://stickerjs.cmiscm.com/" target="_blank" rel="external">sticker.js</a>是一个很小的javascript库，真的很小，github上有没压缩过的，只有200多行，作用就是创建贴纸效果，没有依赖关系（不需要 jQuery，原生js写的），大多数支持CSS3的浏览器都支持，什么你说你用的IE8？那就呵呵了。</p>
 <a id="more"></a>
 <p>　　接下来的事情很简单了，最后效果就是上方那个shurrik头像。<br>　　原来的特效是黑白化，然后鼠标放上去的时候旋转360°并且恢复彩色， <del datetime="2015-03-24T15:23:33+00:00">当时感觉很酷炫</del> 现在感觉好煞笔。。。放在下面，对比一下吧。</p>
-<p><style type="text/css"></p>
-<h1 id="old{">old{</h1><pre><code><span class="rule"><span class="attribute">float</span>:<span class="value"> none</span></span>;
-<span class="rule"><span class="attribute">width</span>:<span class="value"> <span class="number">100px</span></span></span>;
-<span class="rule"><span class="attribute">height</span>:<span class="value"> <span class="number">100px</span></span></span>;
-<span class="rule"><span class="attribute">margin</span>:<span class="value"> auto</span></span>;
-<span class="rule"><span class="attribute">max-width</span>:<span class="value"> <span class="number">100%</span></span></span>;
-<span class="rule"><span class="attribute">border-radius</span>:<span class="value"> <span class="number">50%</span></span></span>;
-<span class="rule"><span class="attribute">-webkit-user-drag</span>:<span class="value"> none</span></span>;
-<span class="rule"><span class="attribute">-webkit-user-select</span>:<span class="value"> none</span></span>;
-<span class="rule"><span class="attribute">transition</span>:<span class="value"> <span class="number">500ms</span></span></span>;
-<span class="rule"><span class="attribute">-o-transition</span>:<span class="value"> <span class="number">500ms</span></span></span>;
-<span class="rule"><span class="attribute">-moz-transition</span>:<span class="value"> <span class="number">500ms</span></span></span>;
-<span class="rule"><span class="attribute">-webkit-transition</span>:<span class="value"> <span class="number">500ms</span></span></span>;
-<span class="rule"><span class="attribute">-webkit-filter</span>:<span class="value"> <span class="function">grayscale</span>(<span class="number">100%</span>)</span></span>;
-</code></pre><p>}</p>
-<h1 id="old:hover_{">old:hover {</h1><pre><code><span class="rule"><span class="attribute">-moz-box-shadow</span>:<span class="value"> <span class="number">0px</span> <span class="number">2px</span> <span class="number">8px</span> <span class="number">2px</span> <span class="function">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.1</span>),<span class="number">1px</span> <span class="number">1px</span> <span class="number">30px</span> <span class="number">5px</span> <span class="function">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.2</span>)</span></span>;
-<span class="rule"><span class="attribute">box-shadow</span>:<span class="value"> <span class="number">0px</span> <span class="number">2px</span> <span class="number">8px</span> <span class="number">2px</span> <span class="function">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.1</span>),<span class="number">1px</span> <span class="number">1px</span> <span class="number">30px</span> <span class="number">5px</span> <span class="function">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.2</span>)</span></span>;
-<span class="rule"><span class="attribute">transform</span>:<span class="value"> <span class="function">rotate</span>(<span class="number">360deg</span>)</span></span>;
-<span class="rule"><span class="attribute">-o-transform</span>:<span class="value"> <span class="function">rotate</span>(<span class="number">360deg</span>)</span></span>;
-<span class="rule"><span class="attribute">-ms-transform</span>:<span class="value"> <span class="function">rotate</span>(<span class="number">360deg</span>)</span></span>;
-<span class="rule"><span class="attribute">-moz-transform</span>:<span class="value"> <span class="function">rotate</span>(<span class="number">360deg</span>)</span></span>;
-<span class="rule"><span class="attribute">-webkit-transform</span>:<span class="value"> <span class="function">rotate</span>(<span class="number">360deg</span>)</span></span>;
-<span class="rule"><span class="attribute">box-shadow</span>:<span class="value"> <span class="number">0px</span> <span class="number">0px</span> <span class="number">2px</span> <span class="number">3px</span> <span class="function">rgba</span>(<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">0.7</span>), <span class="number">0px</span> <span class="number">0px</span> <span class="number">30px</span> <span class="number">8px</span> <span class="function">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.5</span>)</span></span>;
-<span class="rule"><span class="attribute">-moz-box-shadow</span>:<span class="value"> <span class="number">0px</span> <span class="number">0px</span> <span class="number">2px</span> <span class="number">3px</span> <span class="function">rgba</span>(<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">0.7</span>), <span class="number">0px</span> <span class="number">0px</span> <span class="number">30px</span> <span class="number">8px</span> <span class="function">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.5</span>)</span></span>;
-<span class="rule"><span class="attribute">-webkit-filter</span>:<span class="value"> <span class="function">grayscale</span>(<span class="number">0%</span>)</span></span>;
-</code></pre><p></style><br><img src="http://ixjx-sae.stor.sinaapp.com/shurrik.jpg" alt=""></p>
+<style type="text/css">
+#old{
+    float: none;
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    max-width: 100%;
+    border-radius: 50%;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    transition: 500ms;
+    -o-transition: 500ms;
+    -moz-transition: 500ms;
+    -webkit-transition: 500ms;
+    -webkit-filter: grayscale(100%);
+}
+#old:hover {
+    -moz-box-shadow: 0px 2px 8px 2px rgba(0, 0, 0, 0.1),1px 1px 30px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 2px 8px 2px rgba(0, 0, 0, 0.1),1px 1px 30px 5px rgba(0, 0, 0, 0.2);
+    transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    box-shadow: 0px 0px 2px 3px rgba(255, 255, 255, 0.7), 0px 0px 30px 8px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0px 0px 2px 3px rgba(255, 255, 255, 0.7), 0px 0px 30px 8px rgba(0, 0, 0, 0.5);
+    -webkit-filter: grayscale(0%);
+</style>
+
+<p><img id="old" src="http://ixjx-sae.stor.sinaapp.com/shurrik.jpg"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
