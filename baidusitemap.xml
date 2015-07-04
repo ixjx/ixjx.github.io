@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     
+    
   <url>
     <loc>http://ixjx.gitcafe.io/blog/2015/03/25/%E5%89%8D%E7%AB%AF%E4%B9%8B%E8%B7%AF_5sticker%E8%B4%B4%E7%BA%B8%E6%95%88%E6%9E%9C/</loc>
     <lastmod>2015-06-29T09:46:36.767Z</lastmod>
@@ -43,7 +44,6 @@
 
     
     
-    
   <url>
     <loc>http://ixjx.gitcafe.io/blog/2013/09/15/%E5%9B%A7%E7%91%9F%E5%A4%AB%E9%97%AE%E9%A2%98/</loc>
     <lastmod>2015-06-20T17:40:08.843Z</lastmod>
@@ -60,26 +60,6 @@
            
              
               <breadCrumb title="随编" url="http://ixjx.gitcafe.io/blog/categories/%E9%9A%8F%E7%BC%96/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://ixjx.gitcafe.io/blog/2015/06/17/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAoracle%EF%BC%880%EF%BC%89/</loc>
-    <lastmod>2015-06-20T17:10:24.636Z</lastmod>
-    <data>
-        <display>
-        <title>深入浅出oracle（0）</title>
-        <pubTime>2015-06-17T14:40:33.000Z</pubTime>
-        
-        <tag>SQL </tag>
-         
-         
-           
-             
-              <breadCrumb title="Linux" url="http://ixjx.gitcafe.io/blog/categories/Linux/"/>
           
         </display>
     </data>
