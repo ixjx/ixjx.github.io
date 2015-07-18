@@ -1101,7 +1101,7 @@ article .article-content ul,
 article .article-content ol {
   padding-left: 1.5em;
   font-size: 100%;
-  padding-top: 0em;
+  padding-top: 0.7em;
 }
 @media only screen and (min-width: 768px) {
   article .article-content ul,
@@ -1154,13 +1154,13 @@ article .article-content figure img {
   max-width: 100%;
   height: auto;
   vertical-align: middle;
-  padding-top: 0.5em;
+  padding-top: 0em;
 }
 @media only screen and (min-width: 1024px) {
   article .article-content img,
   article .article-content video,
   article .article-content figure img {
-    padding-top: 0.7em;
+    padding-top: 0em;
   }
 }
 article .article-content .img-topic,
