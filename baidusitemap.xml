@@ -3,6 +3,26 @@
 
     
   <url>
+    <loc>http://ixjx.gitcafe.io/blog/2015/07/18/%E6%80%AA%E5%8C%96%E7%8C%AB/</loc>
+    <lastmod>2015-07-18T10:49:20.614Z</lastmod>
+    <data>
+        <display>
+        <title>怪化猫</title>
+        <pubTime>2015-07-18T07:37:59.000Z</pubTime>
+        
+        <tag>怪化猫 </tag>
+         
+         
+           
+             
+              <breadCrumb title="二次元" url="http://ixjx.gitcafe.io/blog/categories/%E4%BA%8C%E6%AC%A1%E5%85%83/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://ixjx.gitcafe.io/blog/2015/06/22/hexo/</loc>
     <lastmod>2015-07-18T08:44:47.118Z</lastmod>
     <data>
@@ -16,26 +36,6 @@
            
              
               <breadCrumb title="水" url="http://ixjx.gitcafe.io/blog/categories/%E6%B0%B4/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://ixjx.gitcafe.io/blog/2015/07/18/%E6%80%AA%E5%8C%96%E7%8C%AB/</loc>
-    <lastmod>2015-07-18T08:43:53.813Z</lastmod>
-    <data>
-        <display>
-        <title>怪化猫</title>
-        <pubTime>2015-07-18T07:37:59.000Z</pubTime>
-        
-        <tag>怪化猫 </tag>
-         
-         
-           
-             
-              <breadCrumb title="二次元" url="http://ixjx.gitcafe.io/blog/categories/%E4%BA%8C%E6%AC%A1%E5%85%83/"/>
           
         </display>
     </data>
