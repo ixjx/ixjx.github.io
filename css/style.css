@@ -1101,7 +1101,7 @@ article .article-content ul,
 article .article-content ol {
   padding-left: 1.5em;
   font-size: 100%;
-  padding-top: 0.7em;
+  padding-top: 0em;
 }
 @media only screen and (min-width: 768px) {
   article .article-content ul,
