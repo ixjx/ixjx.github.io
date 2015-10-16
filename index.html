@@ -79,6 +79,75 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2015/10/16/mysql日志转储的重要性/" title="log转储的重要性" itemprop="url">log转储的重要性</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-16T14:57:51.000Z" itemprop="datePublished"> 发表于 2015-10-16</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　今天MEI大师在群里说他维护的Cacti页面打不开，但是查看服务器CPU使用率、内存这些很低没什么压力，网络也是正常的，咨询我怎么解决。我问了他一些基本的系统架构问题，知道就是一台普通的Centos 5，server是Apache+PHP，数据库是MYSQL。最后发现是MYSQL日志的锅，在此整理下思路。</p>
+<p>　　由于不是什么重要的业务，压力不会在IP连接数，首先检查守护进程是否启动，ps -ef 看过后发现都是正常状态。</p>
+<p>　　然后 <code>netstat -ntu | grep 80</code> 发现80端口连接也正常。这时候顺手敲了一个df -h ，结果尼玛发现根目录使用率已经达到100%了，然后还有大概300G的LV没用。问了大师才知道这是他在网上下的虚拟机镜像，默认根目录就50G。</p>
+<p>　　既然如此，<a href="http://blog.csdn.net/andy_yf/article/details/7831482" target="_blank" rel="external">参考这里调整根目录空间大小</a> ，把没用的300G分到根目录，完事之后果然能访问web应用了。</p>
+<p>　　然并卵，以为这就解决问题就图样了，之后观察到根目录使用率以肉眼可见速度增长。此时我已经意识到应该是Cacti本身出了问题在报错，检查Cacti的日志，报错大概意思是数据库表的结构错误，需要修复。接着查看MYSQL的日志文件mysqld.log，已经达到20G左右大小，基本上1秒1行cacti表的报错。</p>
+<p>　　至此已经明白是MYSQL日志的锅，mysqlcheck之，rm mysqld.log，重启MYSQL进程，故障基本解决。</p>
+<p>　　最后，加上mysqld.log的logrotate转储。<br>　　<a href="http://ixjx.gitcafe.io/blog/pic/log1.jpg"></a></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/Linux/">Linux</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2015/10/16/mysql日志转储的重要性/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/10/16/mysql日志转储的重要性/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2015/09/21/负能量才是社会的真理/" title="负能量才是社会的真理" itemprop="url">负能量才是社会的真理</a>
   </h1>
   <p class="article-author">By
@@ -656,71 +725,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/01/04/黑科技之Andriod LAMP网站服务器/" title="黑科技之Andriod LAMP网站服务器" itemprop="url">黑科技之Andriod LAMP网站服务器</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2015-01-04T14:31:40.000Z" itemprop="datePublished"> 发表于 2015-01-04</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　河畔上看到的，感觉折腾下这个可以有。。。</p>
-<p>　　曾经你想建站，可是免费的不好，收费的太贵，<br>　　曾经你想用自己主机搞定，可是笔记本要用，台式太费电。<br>　　好吧，你换手机就跟换衣服一样，一定有旧手机在墙角落灰了吧？ 那就拿来用用吧。<br>　　跟着下面的步骤，你的手机就和VPS一样，可以远程访问，远程上传，远程管理，可以建站。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/01/04/黑科技之Andriod LAMP网站服务器/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/转载/">转载</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/黑科技/">黑科技</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/01/04/黑科技之Andriod LAMP网站服务器/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/01/04/黑科技之Andriod LAMP网站服务器/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/blog/page/2/">2</a><a class="page-number" href="/blog/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/6/">6</a><a class="extend next" rel="next" href="/blog/page/2/">Next<span></span></a>
@@ -739,7 +743,7 @@
 		<ul>
 		
 		  
-			<li><a href="/blog/categories/Linux/" title="Linux">Linux<sup>6</sup></a></li>
+			<li><a href="/blog/categories/Linux/" title="Linux">Linux<sup>7</sup></a></li>
 		  
 		
 		  
