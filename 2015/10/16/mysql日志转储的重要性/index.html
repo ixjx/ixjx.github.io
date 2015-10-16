@@ -17,7 +17,8 @@
 <meta property="og:url" content="http://ixjx.gitcafe.io/blog/2015/10/16/mysql日志转储的重要性/index.html">
 <meta property="og:site_name" content="CodeShurrik">
 <meta property="og:description" content="今天MEI大师在群里说他维护的Cacti页面打不开，但是查看服务器CPU使用率、内存这些很低没什么压力，网络也是正常的，咨询我怎么解决。我问了他一些基本的系统架构问题，知道就是一台普通的Centos 5，server是Apache+PHP，数据库是MYSQL。最后发现是MYSQL日志的锅，在此整理下思路。">
-<meta property="og:updated_time" content="2015-10-16T16:05:27.004Z">
+<meta property="og:image" content="http://ixjx.gitcafe.io/blog/pic/log1.png">
+<meta property="og:updated_time" content="2015-10-16T16:07:22.604Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="log转储的重要性">
 <meta name="twitter:description" content="今天MEI大师在群里说他维护的Cacti页面打不开，但是查看服务器CPU使用率、内存这些很低没什么压力，网络也是正常的，咨询我怎么解决。我问了他一些基本的系统架构问题，知道就是一台普通的Centos 5，server是Apache+PHP，数据库是MYSQL。最后发现是MYSQL日志的锅，在此整理下思路。">
@@ -96,7 +97,7 @@
 <p>　　既然如此，<a href="http://blog.csdn.net/andy_yf/article/details/7831482" target="_blank" rel="external">参考这里调整根目录空间大小</a> ，把没用的300G分到根目录，完事之后果然能访问web应用了。</p>
 <p>　　然并卵，以为这就解决问题就图样了，之后观察到根目录使用率以肉眼可见速度增长。此时我已经意识到应该是Cacti本身出了问题在报错，检查Cacti的日志，报错大概意思是数据库表的结构错误，需要修复。接着查看MYSQL的日志文件mysqld.log，已经达到20G左右大小，基本上1秒1行cacti表的报错。</p>
 <p>　　至此已经明白是MYSQL日志的锅，mysqlcheck之，rm mysqld.log，重启MYSQL进程，故障基本解决。</p>
-<p>　　最后，加上mysqld.log的logrotate转储。<br>　　<a href="http://ixjx.gitcafe.io/blog/pic/log1.png"></a></p>
+<p>　　最后，加上mysqld.log的logrotate转储，加上mysqld.log的logrotate转储，加上mysqld.log的logrotate转储。<br>　　<img src="http://ixjx.gitcafe.io/blog/pic/log1.png" alt=""></p>
   
 	</div>
 		<footer class="article-footer clearfix">
