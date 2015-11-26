@@ -79,6 +79,73 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/blog/2013/05/31/CFileDialog的用法/" title="CFileDialog的用法" itemprop="url">CFileDialog的用法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2013-05-31T14:19:43.000Z" itemprop="datePublished"> 发表于 2013-05-31</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>CFileDialog::CFileDialog( BOOL bOpenFileDialog,<br>LPCTSTR lpszDefExt = NULL,<br>LPCTSTR lpszFileName = NULL,<br>DWORD dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,<br>LPCTSTR lpszFilter = NULL,<br>CWnd* pParentWnd = NULL );</p>
+<p>参数意义如下：bOpenFileDialog 为TRUE则显示打开对话框，为FALSE则显示保存对话文件对话框。<br>lpszDefExt 指定默认的文件扩展名。<br>lpszFileName 指定默认的文件名。<br>dwFlags 指明一些特定风格。<br>lpszFilter 是最重要的一个参数，它指明可供选择的文件类型和相应的扩展名。参数格式如：<br>“Chart Files (<em>.xlc)|</em>.xlc|Worksheet Files (<em>.xls)|</em>.xls|Data Files (<em>.xlc;</em>.xls)|<em>.xlc; </em>.xls|All Files (<em>.</em>)|<em>.</em>||”;文件类型说明和扩展名间用 | 分隔，同种类型文件的扩展名间可以用 ; 分割，每种文件类型间用 | 分隔，末尾用 || 指明。</p>
+<p>pParentWnd 为父窗口指针。</p>
+<p>CString CFileDialog::GetPathName( ) 得到完整的文件名，包括目录名和扩展名如：c:/test/test1.txt<br>CString CFileDialog::GetFileName( ) 得到完整的文件名，如：test1<br>CString CFileDialog::GetExtName( ) 得到完整的文件扩展名，如：txt<br>CString CFileDialog::GetFileTitle ( ) 得到完整的文件名，包括目录名和扩展名如：test1.txt<br>POSITION CFileDialog::GetStartPosition( ) 对于选择了多个文件的情况得到第一个文件位置。<br>CString CFileDialog::GetNextPathName( POSITION&amp;amp; pos ) 对于选择了多个文件的情况得到下一个文件位置，并同时返回当前文件名。但必须已经调用过POSITION CFileDialog::GetStartPosition( )来得到最初的POSITION变量。<br>VC++ CFileDialog 读取多个文件<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2013/05/31/CFileDialog的用法/">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/随编/">随编</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/MFC/">MFC</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2013/05/31/CFileDialog的用法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2013/05/31/CFileDialog的用法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/blog/2013/05/31/Win7+Ubuntu12.04(EasyBCD硬盘安装)/" title="Win7+Ubuntu12.04(EasyBCD硬盘安装)" itemprop="url">Win7+Ubuntu12.04(EasyBCD硬盘安装)</a>
   </h1>
   <p class="article-author">By
@@ -300,7 +367,7 @@
 		  
 		
 		  
-			<li><a href="/blog/categories/水/" title="水">水<sup>11</sup></a></li>
+			<li><a href="/blog/categories/水/" title="水">水<sup>12</sup></a></li>
 		  
 		
 		  
@@ -339,7 +406,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/blog/tags/Chrome/" style="font-size: 10px;">Chrome</a> <a href="/blog/tags/IP-QAM/" style="font-size: 10px;">IP QAM</a> <a href="/blog/tags/JAVA/" style="font-size: 12px;">JAVA</a> <a href="/blog/tags/JavaScript/" style="font-size: 12px;">JavaScript</a> <a href="/blog/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/blog/tags/MFC/" style="font-size: 10px;">MFC</a> <a href="/blog/tags/RSA/" style="font-size: 12px;">RSA</a> <a href="/blog/tags/SQL注入/" style="font-size: 10px;">SQL注入</a> <a href="/blog/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/blog/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/blog/tags/Windows/" style="font-size: 10px;">Windows</a> <a href="/blog/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/blog/tags/vpn/" style="font-size: 12px;">vpn</a> <a href="/blog/tags/三层交换机/" style="font-size: 12px;">三层交换机</a> <a href="/blog/tags/买了个表/" style="font-size: 12px;">买了个表</a> <a href="/blog/tags/前端之路/" style="font-size: 18px;">前端之路</a> <a href="/blog/tags/呵呵/" style="font-size: 16px;">呵呵</a> <a href="/blog/tags/囧瑟夫问题/" style="font-size: 10px;">囧瑟夫问题</a> <a href="/blog/tags/存储/" style="font-size: 10px;">存储</a> <a href="/blog/tags/异步模式/" style="font-size: 10px;">异步模式</a> <a href="/blog/tags/影评/" style="font-size: 10px;">影评</a> <a href="/blog/tags/怪化猫/" style="font-size: 10px;">怪化猫</a> <a href="/blog/tags/有限状态机/" style="font-size: 10px;">有限状态机</a> <a href="/blog/tags/毕业/" style="font-size: 14px;">毕业</a> <a href="/blog/tags/毕设/" style="font-size: 10px;">毕设</a> <a href="/blog/tags/游戏/" style="font-size: 10px;">游戏</a> <a href="/blog/tags/炉石传说/" style="font-size: 12px;">炉石传说</a> <a href="/blog/tags/翻墙/" style="font-size: 10px;">翻墙</a> <a href="/blog/tags/读书/" style="font-size: 12px;">读书</a> <a href="/blog/tags/负能量/" style="font-size: 10px;">负能量</a> <a href="/blog/tags/黑科技/" style="font-size: 10px;">黑科技</a>
+       <a href="/blog/tags/Chrome/" style="font-size: 10px;">Chrome</a> <a href="/blog/tags/IP-QAM/" style="font-size: 10px;">IP QAM</a> <a href="/blog/tags/JAVA/" style="font-size: 12px;">JAVA</a> <a href="/blog/tags/JavaScript/" style="font-size: 12px;">JavaScript</a> <a href="/blog/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/blog/tags/MFC/" style="font-size: 10px;">MFC</a> <a href="/blog/tags/RSA/" style="font-size: 12px;">RSA</a> <a href="/blog/tags/SQL注入/" style="font-size: 10px;">SQL注入</a> <a href="/blog/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/blog/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/blog/tags/Windows/" style="font-size: 10px;">Windows</a> <a href="/blog/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/blog/tags/vpn/" style="font-size: 12px;">vpn</a> <a href="/blog/tags/三层交换机/" style="font-size: 12px;">三层交换机</a> <a href="/blog/tags/买了个表/" style="font-size: 14px;">买了个表</a> <a href="/blog/tags/前端之路/" style="font-size: 18px;">前端之路</a> <a href="/blog/tags/呵呵/" style="font-size: 16px;">呵呵</a> <a href="/blog/tags/囧瑟夫问题/" style="font-size: 10px;">囧瑟夫问题</a> <a href="/blog/tags/存储/" style="font-size: 10px;">存储</a> <a href="/blog/tags/异步模式/" style="font-size: 10px;">异步模式</a> <a href="/blog/tags/影评/" style="font-size: 10px;">影评</a> <a href="/blog/tags/怪化猫/" style="font-size: 10px;">怪化猫</a> <a href="/blog/tags/有限状态机/" style="font-size: 10px;">有限状态机</a> <a href="/blog/tags/毕业/" style="font-size: 14px;">毕业</a> <a href="/blog/tags/毕设/" style="font-size: 10px;">毕设</a> <a href="/blog/tags/游戏/" style="font-size: 10px;">游戏</a> <a href="/blog/tags/炉石传说/" style="font-size: 12px;">炉石传说</a> <a href="/blog/tags/翻墙/" style="font-size: 10px;">翻墙</a> <a href="/blog/tags/读书/" style="font-size: 12px;">读书</a> <a href="/blog/tags/负能量/" style="font-size: 10px;">负能量</a> <a href="/blog/tags/黑科技/" style="font-size: 10px;">黑科技</a>
     </div>
   </div>
 
