@@ -4,26 +4,26 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Shurrik·影评V1.0 | CodeShurrik</title>
+    <title>Read-only file system | CodeShurrik</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="shurrik">
     
 
     
-    <meta name="description" content="墨墨迹迹搞了快一个月，影评V1.0终于算是初步搞定了。当然还有N多功能以及界面的美化，性能的优化，这些以后有时间在慢慢完善吧。">
+    <meta name="description" content="春节过完刚上班就遇到个奇怪的问题，今天在公司发布新版本时，发布脚本突然报Read-only file system的错误，春节之前一直还用的好好的。。。登录到远程服务器上，发现只要涉及到修改/保存等需要写磁盘操作的命令都无法使用（如tar、mv、rm、chmod、chown、wget等命令），总是提示Read-only file system，也就是说系统是只读的，什么也写不了。
+　　查看服务器上">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Shurrik·影评V1.0">
-<meta property="og:url" content="http://ixjx.gitcafe.io/blog/2013/10/23/shurrik-c2-b7-e5-bd-b1-e8-af-84v1-0/index.html">
+<meta property="og:title" content="Read-only file system">
+<meta property="og:url" content="http://ixjx.gitcafe.io/blog/2016/02/15/Read-only-file-system/index.html">
 <meta property="og:site_name" content="CodeShurrik">
-<meta property="og:description" content="墨墨迹迹搞了快一个月，影评V1.0终于算是初步搞定了。当然还有N多功能以及界面的美化，性能的优化，这些以后有时间在慢慢完善吧。">
-<meta property="og:image" content="http://bcs.duapp.com/codeshurrik-123/20131023184858.jpg">
-<meta property="og:image" content="http://bcs.duapp.com/codeshurrik-123/20131023185811.jpg">
-<meta property="og:image" content="http://bcs.duapp.com/codeshurrik-123/20131023191352.jpg">
-<meta property="og:updated_time" content="2015-06-20T12:15:18.948Z">
+<meta property="og:description" content="春节过完刚上班就遇到个奇怪的问题，今天在公司发布新版本时，发布脚本突然报Read-only file system的错误，春节之前一直还用的好好的。。。登录到远程服务器上，发现只要涉及到修改/保存等需要写磁盘操作的命令都无法使用（如tar、mv、rm、chmod、chown、wget等命令），总是提示Read-only file system，也就是说系统是只读的，什么也写不了。
+　　查看服务器上">
+<meta property="og:updated_time" content="2016-02-15T13:41:26.462Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shurrik·影评V1.0">
-<meta name="twitter:description" content="墨墨迹迹搞了快一个月，影评V1.0终于算是初步搞定了。当然还有N多功能以及界面的美化，性能的优化，这些以后有时间在慢慢完善吧。">
+<meta name="twitter:title" content="Read-only file system">
+<meta name="twitter:description" content="春节过完刚上班就遇到个奇怪的问题，今天在公司发布新版本时，发布脚本突然报Read-only file system的错误，春节之前一直还用的好好的。。。登录到远程服务器上，发现只要涉及到修改/保存等需要写磁盘操作的命令都无法使用（如tar、mv、rm、chmod、chown、wget等命令），总是提示Read-only file system，也就是说系统是只读的，什么也写不了。
+　　查看服务器上">
 
     
     <link rel="alternative" href="/atom.xml" title="CodeShurrik" type="application/atom+xml">
@@ -80,30 +80,26 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/blog/2013/10/23/shurrik-c2-b7-e5-bd-b1-e8-af-84v1-0/" title="Shurrik·影评V1.0" itemprop="url">Shurrik·影评V1.0</a>
+      <a href="/blog/2016/02/15/Read-only-file-system/" title="Read-only file system" itemprop="url">Read-only file system</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
 		
   <p class="article-time">
-    <time datetime="2013-10-23T11:36:03.000Z" itemprop="datePublished"> 发表于 2013-10-23</time>
+    <time datetime="2016-02-15T13:23:37.000Z" itemprop="datePublished"> 发表于 2016-02-15</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<p>墨墨迹迹搞了快一个月，影评V1.0终于算是初步搞定了。当然还有N多功能以及界面的美化，性能的优化，这些以后有时间在慢慢完善吧。<br><a href="http://bcs.duapp.com/codeshurrik-123/20131023184858.jpg" target="_blank" rel="external"><img src="http://bcs.duapp.com/codeshurrik-123/20131023184858.jpg" alt="" title="20131023184858"></a></p>
-<a id="more"></a>
-<p>从最初纯前端HTML+CSS的实现到后来的JSP+SERVLET再到BAE+MVC，由于智商比较拙计，一路磕磕碰碰。代码很简单就不多说了，倒是CSS花了比较多的心思，欢迎前端美工大神指教。<br><a href="http://bcs.duapp.com/codeshurrik-123/20131023185811.jpg" target="_blank" rel="external"><img src="http://bcs.duapp.com/codeshurrik-123/20131023185811.jpg" alt="" title="20131023185811"></a></p>
-<p>为什么要做这个影评网站呢？一是为了装13（=。=）。二是我本身比较喜欢看电影，有时候看到了好的电影不吐不快。三是前几天在看Bootstrap的时候，发现了这个个人网站，<a href="http://www.dandyweng.com/" target="_blank" rel="external">http://www.dandyweng.com/</a>，忽然眼前一亮，不但是因为出色的设计，更因为它的主人是一个17岁的孩子，一个优秀的摄影师，一个几乎游历了全中国的旅行家，接受Homeschool教育，编程对于他来说只是一个业余爱好。自己怎么说也是神技大学毕业，连一个随便玩玩的孩子做的网站也比不上。</p>
-<p>看到他网站最下面一行写着</p>
-<blockquote>
-<p>“谢绝一切商业性摄影、设计或 Web 开发相关工作的邀请，我从不为他人进行创作，与费用无关，望理解。”<br>突然很羡慕他，他说自己只是个普普通通家庭的，我想这个“普通”至少也是中康吧，可又能怎样，家庭和背景也是实力的一部分，更何况人家的确很优秀。除了丰富的阅历，咄咄逼人的气势和文学功底，更让我看到一个精英世界的人和屌丝的想法是有多么大差距。他的经历，接受的教育和接触的人物，是屌丝一辈子也达不到的，我已经完全没有想比较的意图了。差距就是差距，不懂就是不懂。几年前我不懂，几年后我依然不懂。<br><a href="http://bcs.duapp.com/codeshurrik-123/20131023191352.jpg" target="_blank" rel="external"><img src="http://bcs.duapp.com/codeshurrik-123/20131023191352.jpg" alt="" title="20131023191352"></a></p>
-</blockquote>
-<p>跑得有点远了，总之受他的启发就创造出了这个“影评V1.0”。我现在发现看别人的BLOG是件挺有意思的事，看多了你就得相信并承认，人和人会有差距。有些人就是比你强，从物质生活，精神生活，媳妇，相貌，身体素质，思想，眼界，甚至道德水平等等等等，全方位，360度，无死角的被完爆，原因有很多，家庭比你好，基因比你好，教育比你好，机遇比你好。。一大堆，这些都不重要，比你全方位的强已经是事实，就不用再找什么借口了。</p>
-<p>工作上没有感觉，编程等能力停滞不前。依然不是很确定自己以后想走什么样的路，有些好高骛远，不太知道自己想要什么。现在想想挺喜感的，谁还记得呢，那个清水河畔，看着通信原理的少年？</p>
-<p>最后还是来点正能量吧，努力加油培养自己独立思考的能力。我就只有这些东西，就算没有人家多，甚至都是垃圾，我也不想失去，对不对？不想什么都没有。<br>——————————————————————————————————————————————————————————<br>2013.10.31<br><del datetime="2013-11-10T07:27:59+00:00">鉴于骚仑同学的建议，把menu方块位置固定了，用他的话叫培养用户访问习惯。</del><br>2013.11.3<br>换掉了几个略为浮夸的背景图片。<br>2013.11.9<br>临时做了下自适应，有空再专门写@media</p>
+		<p>　　春节过完刚上班就遇到个奇怪的问题，今天在公司发布新版本时，发布脚本突然报Read-only file system的错误，春节之前一直还用的好好的。。。登录到远程服务器上，发现只要涉及到修改/保存等需要写磁盘操作的命令都无法使用（如tar、mv、rm、chmod、chown、wget等命令），总是提示Read-only file system，也就是说系统是只读的，什么也写不了。</p>
+<p>　　查看服务器上的fstab文件，cat /etc/fstab，其中发现这样一条记录<br>　　<code>/dev/VolGroup00/LogVol00 /                       ext3    errors=remount-ro        1 1</code></p>
+<p>　　怎么根目录挂载成只读了，然后cat /proc/mounts也发现<br>　　<code>/dev/root / ext3 ro,data=ordered 0 0</code></p>
+<p>　　网上查了下，这种情况通常都是由于系统发现磁盘硬件故障或文件系统中文件被损坏之后而采取的保护机制导致的。<br>　　为了保护数据不破坏分区中已有内容，Linux在挂载文件系统时就只用read-only只读方式加载了。至于挂载的文件系统为什么会莫名地变成以只读方式挂载的具体原因，这就不知道了。</p>
+<p>　　如果能够确认数据和系统的文件没有被损坏，修复fstab文件配置后只要重新R/W加载再重启就能够恢复正常:<br>　　<code>mount -o remount rw /dev/root /</code></p>
+<p>　　如果机器上有重要文件，在重新加载文件系统前可以用scp将其备份到远程主机上：<br>　　<code>scp -r import_dir/import_file user@host:~</code></p>
+<p>　　之所以使用scp命令备份重要目录/文件到远程主机上，而不用tar命令打包压缩后再传输，因为在用tar命令打包压缩文件时会涉及到写磁盘操作，这还是会引起Read-only file system的错误。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -111,13 +107,13 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/blog/categories/水/">水</a>
+  <a class="article-category-link" href="/blog/categories/Linux/">Linux</a>
 </div>
 
 
   <div class="article-tags">
   
-  <span></span> <a href="/blog/tags/影评/">影评</a>
+  <span></span> <a href="/blog/tags/Linux/">Linux</a>
   </div>
 
 </div>
@@ -126,7 +122,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://ixjx.gitcafe.io/blog/2013/10/23/shurrik-c2-b7-e5-bd-b1-e8-af-84v1-0/" data-title="Shurrik·影评V1.0 | CodeShurrik" data-tsina="null" class="share clearfix">
+	  <div data-url="http://ixjx.gitcafe.io/blog/2016/02/15/Read-only-file-system/" data-title="Read-only file system | CodeShurrik" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -139,19 +135,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/blog/2013/11/01/虚函数、抽象函数、抽象类、接口/" title="虚函数、抽象函数、抽象类、接口">
-  <strong>上一篇：</strong><br/>
-  <span>
-  虚函数、抽象函数、抽象类、接口</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/blog/2013/09/24/喜培训/"  title="喜培训">
+<a href="/blog/2015/12/19/2015年终总结/"  title="2015年终总结">
  <strong>下一篇：</strong><br/> 
- <span>喜培训
+ <span>2015年终总结
 </span>
 </a>
 </div>
@@ -160,7 +148,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2013/10/23/shurrik-c2-b7-e5-bd-b1-e8-af-84v1-0/" data-title="Shurrik·影评V1.0" data-url="http://ixjx.gitcafe.io/blog/2013/10/23/shurrik-c2-b7-e5-bd-b1-e8-af-84v1-0/"></div>
+	<div class="ds-thread" data-thread-key="2016/02/15/Read-only-file-system/" data-title="Read-only file system" data-url="http://ixjx.gitcafe.io/blog/2016/02/15/Read-only-file-system/"></div>
 	 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
 	var duoshuoQuery = {short_name:'ixjx'};
