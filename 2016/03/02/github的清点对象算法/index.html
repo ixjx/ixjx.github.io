@@ -21,7 +21,7 @@
 <meta property="og:image" content="http://ixjx.gitcafe.io/blog/pic/github1.jpg">
 <meta property="og:image" content="http://ixjx.gitcafe.io/blog/pic/github2.png">
 <meta property="og:image" content="http://ixjx.gitcafe.io/blog/pic/github3.png">
-<meta property="og:updated_time" content="2016-03-02T13:30:38.364Z">
+<meta property="og:updated_time" content="2016-03-02T13:32:00.404Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git的清点对象算法">
 <meta name="twitter:description" content="使用github的时候，你有没有见过这样的提示？">
@@ -128,7 +128,7 @@
 <p>　　每个commit都会有一个对应的二进制值，表示当前快照包含的所有对象。这些对象对应的二进制位都为1，其他二进制位都为0。</p>
 <p>　　这样做的好处是，不用读取commit对象，只要读取这个二进制值，就会知道当前commit包含了哪些节点。更妙的是，两个二进制值只要做一次XOR运算，就会知道哪些位（即哪些对象）发生了变动。而且，因为新的对象总是添加到现有二进制位的后面，所以只要读取多出来的那些位，就知道当前commit比上一次commit多出了哪些对象。</p>
 <p>　　这样一来，”清点对象”就变成了二进制值的比较运算，因此速度极快。</p>
-<p>　　原文: <a href="http://githubengineering.com/counting-objects/" target="_blank" rel="external">http://githubengineering.com/counting-objects/</a></p>
+<p>　　&gt;原文: <a href="http://githubengineering.com/counting-objects/" target="_blank" rel="external">http://githubengineering.com/counting-objects/</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
