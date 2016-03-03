@@ -1,0 +1,14 @@
+/*********************
+ *
+ *      底部
+ *
+ *********************/
+
+footer {
+    color: #999;
+    background: #000;
+    font-size: 14px;
+    padding: 50px 0px;
+
+    text-align: center;
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>三角形和多列</title>
+</head>
+<style type="text/css">
+/*三角形*/
+.block{
+	width: 0;
+	content: '';
+	border: 50px solid transparent;
+}
+.block.red{
+	border-top-color:red;
+}
+.block.black{
+	border-right-color:black;
+}
+.block.yellow{
+	border-bottom-color:yellow;
+}
+.block.green{
+	border-left-color:green;
+}
+
+/* 50px的三角形类 */
+.triangle{
+    position: relative;
+    width: 200px;
+    height: 100px;
+}
+.triangle:after{
+    position: absolute;
+    top: 100%;
+    left: 50px;
+    z-index: 2;
+    content: '';
+    border: 50px solid transparent;
+}
+/*不同的颜色类*/
+.triangle.red{
+    background:red;
+}
+.triangle.red:after{
+    border-top-color: red;
+}
+.triangle.gray{
+    background: gray;
+}
+.triangle.gray:after{
+    left:0px;
+    border-top-color: gray;
+}
+
+
+/*  多列 */
+.container {
+    width: 80%;
+    margin: 20px auto;
+}
+/* 这一段很重要 */
+.container:after {
+    clear: both;
+    content: '';
+    display: table;
+}
+
+.container > .span {
+    /* 这一句很重要 */
+    float: left;
+    height: 100px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* 算出每种情况的宽度百分比 */
+.container > .span.span1 {
+    width: 25%;
+}
+.container > .span.span2 {
+    width: 50%;
+}
+.container > .span.span3 {
+    width: 75%;
+}
+.container > .span.span4 {
+    width: 100%;
+}
+
+/* 添加点颜色 */
+.span.blue {
+    background: blue;
+}
+.span.red {
+    background: red;
+}
+</style>
+<body>
+<div class="block red black yellow green"></div>
+<br />
+<div class="triangle red"></div>
+<div class="triangle gray"></div>
+<br />
+
+<section class="container">
+    <div class="span span1 blue"></div>
+    <div class="span span3 red"></div>
+</section>
+<section class="container">
+    <div class="span span2 blue"></div>
+    <div class="span span2 red"></div>
+</section>
+<section class="container">
+    <div class="span span3 blue"></div>
+    <div class="span span1 red"></div>
+</section>
+<section class="container">
+    <div class="span span4 blue"></div>
+</section>
+</body>
+</html>
