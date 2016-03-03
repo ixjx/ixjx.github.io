@@ -6,8 +6,474 @@
 | | \ \  | |___   / /  | | | |_| |      | | | | | |___  | | \ \  | |___  
 |_|  \_\ |_____| /_/   |_| |_____/      |_| |_| |_____| |_|  \_\ |_____| 
 
+<<<<<<< HEAD
 如果你打算复制我的代码，请先花半分钟时间看看这里
 ================================================
+=======
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>CodeShurrik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="shurrik">
+    
+
+    
+    <meta name="description" content="shurrik blog">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CodeShurrik">
+<meta property="og:url" content="http://ixjx.gitcafe.io/blog/index.html">
+<meta property="og:site_name" content="CodeShurrik">
+<meta property="og:description" content="shurrik blog">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CodeShurrik">
+<meta name="twitter:description" content="shurrik blog">
+
+    
+    <link rel="alternative" href="/atom.xml" title="CodeShurrik" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/blog/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/blog/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div class="sticker"></div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/blog/" title="CodeShurrik">CodeShurrik</a></h1>
+				<h2 class="blog-motto">shurrik`s blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/blog/">首页</a></li>
+					
+						<li><a href="/blog/archives">归档</a></li>
+					
+						<li><a href="/blog/fm">电台</a></li>
+					
+						<li><a href="/blog/about">关于</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="http://www.baidu.com/s" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value=  ><input type="text" name="wd" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+      
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016/03/02/github的清点对象算法/" title="git的清点对象算法" itemprop="url">git的清点对象算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-02T12:55:58.000Z" itemprop="datePublished"> 发表于 2016-03-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　使用github的时候，你有没有见过这样的提示？</p>
+<p><img src="http://ixjx.coding.me/img/linux.png" alt=""><br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2016/03/02/github的清点对象算法/">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/随编/">随编</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/算法/">算法</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2016/03/02/github的清点对象算法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/03/02/github的清点对象算法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016/02/15/Read-only-file-system/" title="Read-only file system" itemprop="url">Read-only file system</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-15T13:23:37.000Z" itemprop="datePublished"> 发表于 2016-02-15</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　春节过完刚上班就遇到个奇怪的问题，今天在公司艹脚本时，发布脚本突然报Read-only file system的错误，春节之前一直还用的好好的。。。登录到远程服务器上，发现只要涉及到修改/保存等需要写磁盘操作的命令都无法使用（如tar、mv、rm、chmod、chown、wget等命令），总是提示Read-only file system，也就是说系统是只读的，什么也写不了。</p>
+<p>　　查看服务器上的fstab文件，cat /etc/fstab，其中发现这样一条记录<br>　　<code>/dev/VolGroup00/LogVol00 /                       ext3    errors=remount-ro        1 1</code></p>
+<p>　　怎么根目录挂载成只读了，然后cat /proc/mounts也发现<br>　　<code>/dev/root / ext3 ro,data=ordered 0 0</code></p>
+<p>　　网上查了下，这种情况通常都是由于系统发现磁盘硬件故障或文件系统中文件被损坏之后而采取的保护机制导致的。<br>　　为了保护数据不破坏分区中已有内容，Linux在挂载文件系统时就只用read-only只读方式加载了。至于挂载的文件系统为什么会莫名地变成以只读方式挂载的具体原因，这就不知道了。</p>
+<p>　　如果能够确认数据和系统的文件没有被损坏，修复fstab文件配置后只要重新R/W加载再重启就能够恢复正常:<br>　　<code>mount -o remount rw /dev/root /</code></p>
+<p>　　如果机器上有重要文件，在重新加载文件系统前可以用scp将其备份到远程主机上：<br>　　<code>scp -r import_dir/import_file user@host:~</code></p>
+<p>　　之所以使用scp命令备份重要目录/文件到远程主机上，而不用tar命令打包压缩后再传输，因为在用tar命令打包压缩文件时会涉及到写磁盘操作，这还是会引起Read-only file system的错误。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/Linux/">Linux</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2016/02/15/Read-only-file-system/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/15/Read-only-file-system/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015/12/19/2015年终总结/" title="2015年终总结" itemprop="url">2015年终总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-19T11:12:21.000Z" itemprop="datePublished"> 发表于 2015-12-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　又到年末，刚刚在公司把年终总结写完，不过那个只是套路，还是把我真正想说的写在这里罢。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2015/12/19/2015年终总结/">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/水/">水</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/呵呵/">呵呵</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2015/12/19/2015年终总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/19/2015年终总结/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015/12/02/我就想保存个密码/" title="我就是想保存个密码" itemprop="url">我就是想保存个密码</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-02T11:49:53.000Z" itemprop="datePublished"> 发表于 2015-12-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　之前说为了提交hexo的commit下载了windows版本的git，好用到是挺好用的，比如右键的这个功能，可以直接在某个目录下打开git而不需要蛋疼的在windows目录里切来切去。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2015/12/02/我就想保存个密码/">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/Windows/">Windows</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/git/">git</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2015/12/02/我就想保存个密码/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/02/我就想保存个密码/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015/11/26/半价妇科-酷妈烈焰枪XT/" title="半价妇科-烈焰枪XT使用感受" itemprop="url">半价妇科-烈焰枪XT使用感受</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-26T11:00:22.000Z" itemprop="datePublished"> 发表于 2015-11-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　又好久没markdown了，主要是双11换了台电脑，github老是下载失败 <del>GFW万岁</del>，直接导致hexo没法提交，无奈之下怒下原版git。然后天天忙着 <del>打炉石</del> 忙得一笔，今天敲着刚剁的键盘想是不是该来一发作业。好吧，说干就干，买个青轴不就是为了打字爽YY么。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2015/11/26/半价妇科-酷妈烈焰枪XT/">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/水/">水</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/买了个表/">买了个表</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2015/11/26/半价妇科-酷妈烈焰枪XT/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/26/半价妇科-酷妈烈焰枪XT/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015/10/16/mysql日志转储的重要性/" title="log转储的重要性" itemprop="url">log转储的重要性</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-16T14:57:51.000Z" itemprop="datePublished"> 发表于 2015-10-16</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　今天MEI大师在群里说他维护的Cacti页面打不开，但是查看服务器CPU使用率、内存这些很低没什么压力，网络也是正常的，咨询我怎么解决。我问了他一些基本的系统架构问题，知道就是一台普通的Centos 5，server是Apache+PHP，数据库是MYSQL。最后发现是MYSQL日志的锅，在此整理下思路。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/blog/2015/10/16/mysql日志转储的重要性/">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/blog/categories/Linux/">Linux</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/blog/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/blog/2015/10/16/mysql日志转储的重要性/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/10/16/mysql日志转储的重要性/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+>>>>>>> bc7ccd37478cf1221fadd054dc81b76ec5672898
 
 这是一个使用HTML5/CSS3制作的个人主页，主要展示自己的设计理念和博客。主页想法和配色参考于git-建议指南，
 联系部分的图标采用修改过的Zocial。感谢qiniu提供的CDN镜像加速，主页挂在github/gitcafe上，开源是一种伟大的思想，
