@@ -1,949 +1,196 @@
+<!--
+ _____    _____       ___   _____        _   _   _____   _____    _____  
+|  _  \  | ____|     /   | |  _  \      | | | | | ____| |  _  \  | ____| 
+| |_| |  | |__      / /| | | | | |      | |_| | | |__   | |_| |  | |__   
+|  _  /  |  __|    / / | | | | | |      |  _  | |  __|  |  _  /  |  __|  
+| | \ \  | |___   / /  | | | |_| |      | | | | | |___  | | \ \  | |___  
+|_|  \_\ |_____| /_/   |_| |_____/      |_| |_| |_____| |_|  \_\ |_____| 
 
- <!DOCTYPE HTML>
-<html lang="zh-CN">
+如果你打算复制我的代码，请先花半分钟时间看看这里
+================================================
+
+这是一个使用HTML5/CSS3制作的个人主页，主要展示自己的设计理念和博客。主页想法和配色参考于git-建议指南，
+联系部分的图标采用修改过的Zocial。感谢qiniu提供的CDN镜像加速，主页挂在github/gitcafe上，开源是一种伟大的思想，
+因为人都是自私的，我也不例外。	
+
+copy的话切记将 JS、CSS 和图片等外部资源文件都保存到你自己的服务器上，不要直接外链，否则会给github的服务器增加额外的流量。
+另外，希望你能尽可能的修改页面布局和内容，不要直接使用我的文字和图片。因为我原来也喜欢这么干，但是得不到任何提高。
+
+简而言之一句话：欢迎借鉴，拒绝山寨。
+
+-->
+<!DOCTYPE html>
+<html class="iescrollbar">
 <head>
-  <meta charset="UTF-8">
-  
-    <title>CodeShurrik</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
-    
-    <meta name="author" content="shurrik">
-    
+	<meta charset="utf-8" />
+	<title>CodeShurrik</title>
+	<meta name="baidu-site-verification" content="BymKaNg9Ze" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="shortcut icon" type="image/x-icon" href="http://ixjx.coding.me/blog/img/favicon.ico" />
+	<link rel="stylesheet" type="text/css" href="css/zocial.stripped.css" />
+	<link rel="stylesheet" type="text/css" href="css/global.css" />
+	<link rel="stylesheet" type="text/css" href="css/header.css" />
+	<link rel="stylesheet" type="text/css" href="css/content.css" />
+	<link rel="stylesheet" type="text/css" href="css/footer.css" />
 
-    
-    <meta name="description" content="shurrik blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="CodeShurrik">
-<meta property="og:url" content="http://ixjx.gitcafe.io/blog/index.html">
-<meta property="og:site_name" content="CodeShurrik">
-<meta property="og:description" content="shurrik blog">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CodeShurrik">
-<meta name="twitter:description" content="shurrik blog">
-
-    
-    <link rel="alternative" href="/atom.xml" title="CodeShurrik" type="application/atom+xml">
-    
-    
-    <link rel="icon" href="/blog/img/favicon.ico">
-    
-    
-    <link rel="stylesheet" href="/blog/css/style.css" type="text/css">
 
 </head>
-
-  <body>
-    <header>
-      
-<div>
-		
-			<div class="sticker"></div>
-			
-			<div id="textlogo">
-				<h1 class="site-name"><a href="/blog/" title="CodeShurrik">CodeShurrik</a></h1>
-				<h2 class="blog-motto">shurrik`s blog</h2>
-			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
-			</a></div>
-			<nav class="animated">
-				<ul>
-					<ul>
-					 
-						<li><a href="/blog/">首页</a></li>
-					
-						<li><a href="/blog/archives">归档</a></li>
-					
-						<li><a href="/blog/fm">电台</a></li>
-					
-						<li><a href="/blog/about">关于</a></li>
-					
-					<li>
- 					
-						<form class="search" action="http://www.baidu.com/s" target="_blank">
-							<label>Search</label>
-						<input name="s" type="hidden" value=  ><input type="text" name="wd" size="30" placeholder="搜索"><br>
-						</form>
-					
-					</li>
-				</ul>
-			</nav>			
-</div>
-      
-    </header>
-    <div id="container">
-      <div id="main">
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2016/03/02/github的清点对象算法/" title="git的清点对象算法" itemprop="url">git的清点对象算法</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2016-03-02T12:55:58.000Z" itemprop="datePublished"> 发表于 2016-03-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　使用github的时候，你有没有见过这样的提示？</p>
-<p><img src="http://ixjx.gitcafe.io/img/linux.png" alt=""><br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2016/03/02/github的清点对象算法/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/随编/">随编</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/算法/">算法</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2016/03/02/github的清点对象算法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/03/02/github的清点对象算法/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2016/02/15/Read-only-file-system/" title="Read-only file system" itemprop="url">Read-only file system</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2016-02-15T13:23:37.000Z" itemprop="datePublished"> 发表于 2016-02-15</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　春节过完刚上班就遇到个奇怪的问题，今天在公司艹脚本时，发布脚本突然报Read-only file system的错误，春节之前一直还用的好好的。。。登录到远程服务器上，发现只要涉及到修改/保存等需要写磁盘操作的命令都无法使用（如tar、mv、rm、chmod、chown、wget等命令），总是提示Read-only file system，也就是说系统是只读的，什么也写不了。</p>
-<p>　　查看服务器上的fstab文件，cat /etc/fstab，其中发现这样一条记录<br>　　<code>/dev/VolGroup00/LogVol00 /                       ext3    errors=remount-ro        1 1</code></p>
-<p>　　怎么根目录挂载成只读了，然后cat /proc/mounts也发现<br>　　<code>/dev/root / ext3 ro,data=ordered 0 0</code></p>
-<p>　　网上查了下，这种情况通常都是由于系统发现磁盘硬件故障或文件系统中文件被损坏之后而采取的保护机制导致的。<br>　　为了保护数据不破坏分区中已有内容，Linux在挂载文件系统时就只用read-only只读方式加载了。至于挂载的文件系统为什么会莫名地变成以只读方式挂载的具体原因，这就不知道了。</p>
-<p>　　如果能够确认数据和系统的文件没有被损坏，修复fstab文件配置后只要重新R/W加载再重启就能够恢复正常:<br>　　<code>mount -o remount rw /dev/root /</code></p>
-<p>　　如果机器上有重要文件，在重新加载文件系统前可以用scp将其备份到远程主机上：<br>　　<code>scp -r import_dir/import_file user@host:~</code></p>
-<p>　　之所以使用scp命令备份重要目录/文件到远程主机上，而不用tar命令打包压缩后再传输，因为在用tar命令打包压缩文件时会涉及到写磁盘操作，这还是会引起Read-only file system的错误。</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/Linux/">Linux</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2016/02/15/Read-only-file-system/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/02/15/Read-only-file-system/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/12/19/2015年终总结/" title="2015年终总结" itemprop="url">2015年终总结</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2015-12-19T11:12:21.000Z" itemprop="datePublished"> 发表于 2015-12-19</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　又到年末，刚刚在公司把年终总结写完，不过那个只是套路，还是把我真正想说的写在这里罢。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/12/19/2015年终总结/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/水/">水</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/呵呵/">呵呵</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/12/19/2015年终总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/19/2015年终总结/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/12/02/我就想保存个密码/" title="我就是想保存个密码" itemprop="url">我就是想保存个密码</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2015-12-02T11:49:53.000Z" itemprop="datePublished"> 发表于 2015-12-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　之前说为了提交hexo的commit下载了windows版本的git，好用到是挺好用的，比如右键的这个功能，可以直接在某个目录下打开git而不需要蛋疼的在windows目录里切来切去。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/12/02/我就想保存个密码/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/Windows/">Windows</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/git/">git</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/12/02/我就想保存个密码/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/02/我就想保存个密码/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/11/26/半价妇科-酷妈烈焰枪XT/" title="半价妇科-烈焰枪XT使用感受" itemprop="url">半价妇科-烈焰枪XT使用感受</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-26T11:00:22.000Z" itemprop="datePublished"> 发表于 2015-11-26</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　又好久没markdown了，主要是双11换了台电脑，github老是下载失败 <del>GFW万岁</del>，直接导致hexo没法提交，无奈之下怒下原版git。然后天天忙着 <del>打炉石</del> 忙得一笔，今天敲着刚剁的键盘想是不是该来一发作业。好吧，说干就干，买个青轴不就是为了打字爽YY么。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/11/26/半价妇科-酷妈烈焰枪XT/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/水/">水</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/买了个表/">买了个表</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/11/26/半价妇科-酷妈烈焰枪XT/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/26/半价妇科-酷妈烈焰枪XT/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/10/16/mysql日志转储的重要性/" title="log转储的重要性" itemprop="url">log转储的重要性</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2015-10-16T14:57:51.000Z" itemprop="datePublished"> 发表于 2015-10-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　今天MEI大师在群里说他维护的Cacti页面打不开，但是查看服务器CPU使用率、内存这些很低没什么压力，网络也是正常的，咨询我怎么解决。我问了他一些基本的系统架构问题，知道就是一台普通的Centos 5，server是Apache+PHP，数据库是MYSQL。最后发现是MYSQL日志的锅，在此整理下思路。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/10/16/mysql日志转储的重要性/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/Linux/">Linux</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/10/16/mysql日志转储的重要性/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/10/16/mysql日志转储的重要性/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/09/21/负能量才是社会的真理/" title="负能量才是社会的真理" itemprop="url">负能量才是社会的真理</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2015-09-21T10:57:24.172Z" itemprop="datePublished"> 发表于 2015-09-21</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　<br>　　负能量集合，少年，让我们干了这碗 <del>热翔</del> 鸡汤。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/09/21/负能量才是社会的真理/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/转载/">转载</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/负能量/">负能量</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/09/21/负能量才是社会的真理/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/09/21/负能量才是社会的真理/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/08/15/关于cacti/" title="关于cacti" itemprop="url">关于cacti</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2015-08-15T11:38:38.000Z" itemprop="datePublished"> 发表于 2015-08-15</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="首先">首先</h2><p>　　一直以来只是会直接用Cacti，这次重新搭建走了不少弯路，遂搜得此文，以作记录。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/08/15/关于cacti/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/网络/">网络</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/08/15/关于cacti/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/08/15/关于cacti/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/07/18/怪化猫/" title="怪化猫" itemprop="url">怪化猫</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2015-07-18T07:37:59.000Z" itemprop="datePublished"> 发表于 2015-07-18</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　也是看了lex的安利去看的，不得不说，太TM屌了。</p>
-<p><img src="http://ixjx.gitcafe.io/blog/pic/ghm1.jpg" alt=""><br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/07/18/怪化猫/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/二次元/">二次元</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/怪化猫/">怪化猫</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/07/18/怪化猫/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/07/18/怪化猫/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/blog/2015/06/22/hexo/" title="hexo" itemprop="url">hexo</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/blog/about" title="shurrik" target="_blank" itemprop="author">shurrik</a>
-		
-  <p class="article-time">
-    <time datetime="2015-06-22T12:49:14.000Z" itemprop="datePublished"> 发表于 2015-06-22</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　端午折腾两天，把blog从sae迁移到gitcafe了，github当然不错，但是国内访问速度感人，<del>难说哪天就被墙了</del>，反正功能都差不多，之后在github上做个镜像站吧。</p>
-<p>　　主要原因是sae的免费云豆快用完了，最近又在看markdown，干脆从wordpress转成纯静态页面得了，于是选择了hexo。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/blog/2015/06/22/hexo/">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/blog/categories/水/">水</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/blog/tags/hexo/">hexo</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/blog/2015/06/22/hexo/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/22/hexo/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-
-  <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/blog/page/2/">2</a><a class="page-number" href="/blog/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/6/">6</a><a class="extend next" rel="next" href="/blog/page/2/">Next<span></span></a>
-  </nav>
-
-</div>
-      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
-
-<div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
-<aside class="clearfix">
-
-  
-<div class="categorieslist">
-	<p class="asidetitle">分类</p>
-		<ul>
-		
-		  
-			<li><a href="/blog/categories/Linux/" title="Linux">Linux<sup>8</sup></a></li>
-		  
-		
-		  
-			<li><a href="/blog/categories/Windows/" title="Windows">Windows<sup>1</sup></a></li>
-		  
-		
-		  
-			<li><a href="/blog/categories/二次元/" title="二次元">二次元<sup>1</sup></a></li>
-		  
-		
-		  
-			<li><a href="/blog/categories/水/" title="水">水<sup>15</sup></a></li>
-		  
-		
-		  
-			<li><a href="/blog/categories/游戏/" title="游戏">游戏<sup>3</sup></a></li>
-		  
-		
-		  
-			<li><a href="/blog/categories/网络/" title="网络">网络<sup>6</sup></a></li>
-		  
-		
-		  
-			<li><a href="/blog/categories/读书/" title="读书">读书<sup>2</sup></a></li>
-		  
-		
-		  
-			<li><a href="/blog/categories/转载/" title="转载">转载<sup>10</sup></a></li>
-		  
-		
-		  
-			<li><a href="/blog/categories/软件/" title="软件">软件<sup>2</sup></a></li>
-		  
-		
-		  
-			<li><a href="/blog/categories/随编/" title="随编">随编<sup>10</sup></a></li>
-		  
-		
-		</ul>
-</div>
-
-
-  
-  <div class="tagcloudlist">
-    <p class="asidetitle">标签云</p>
-    <div class="tagcloudlist clearfix">
-       <a href="/blog/tags/Chrome/" style="font-size: 10px;">Chrome</a> <a href="/blog/tags/IP-QAM/" style="font-size: 10px;">IP QAM</a> <a href="/blog/tags/JAVA/" style="font-size: 12px;">JAVA</a> <a href="/blog/tags/JavaScript/" style="font-size: 12px;">JavaScript</a> <a href="/blog/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/blog/tags/MFC/" style="font-size: 10px;">MFC</a> <a href="/blog/tags/RSA/" style="font-size: 12px;">RSA</a> <a href="/blog/tags/SQL注入/" style="font-size: 10px;">SQL注入</a> <a href="/blog/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/blog/tags/Vim/" style="font-size: 10px;">Vim</a> <a href="/blog/tags/Windows/" style="font-size: 10px;">Windows</a> <a href="/blog/tags/git/" style="font-size: 10px;">git</a> <a href="/blog/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/blog/tags/vpn/" style="font-size: 12px;">vpn</a> <a href="/blog/tags/三层交换机/" style="font-size: 12px;">三层交换机</a> <a href="/blog/tags/买了个表/" style="font-size: 14px;">买了个表</a> <a href="/blog/tags/前端之路/" style="font-size: 18px;">前端之路</a> <a href="/blog/tags/呵呵/" style="font-size: 16px;">呵呵</a> <a href="/blog/tags/囧瑟夫问题/" style="font-size: 10px;">囧瑟夫问题</a> <a href="/blog/tags/存储/" style="font-size: 10px;">存储</a> <a href="/blog/tags/异步模式/" style="font-size: 10px;">异步模式</a> <a href="/blog/tags/影评/" style="font-size: 10px;">影评</a> <a href="/blog/tags/怪化猫/" style="font-size: 10px;">怪化猫</a> <a href="/blog/tags/有限状态机/" style="font-size: 10px;">有限状态机</a> <a href="/blog/tags/毕业/" style="font-size: 14px;">毕业</a> <a href="/blog/tags/毕设/" style="font-size: 10px;">毕设</a> <a href="/blog/tags/游戏/" style="font-size: 10px;">游戏</a> <a href="/blog/tags/炉石传说/" style="font-size: 12px;">炉石传说</a> <a href="/blog/tags/算法/" style="font-size: 10px;">算法</a> <a href="/blog/tags/翻墙/" style="font-size: 10px;">翻墙</a> <a href="/blog/tags/读书/" style="font-size: 12px;">读书</a> <a href="/blog/tags/负能量/" style="font-size: 10px;">负能量</a> <a href="/blog/tags/黑科技/" style="font-size: 10px;">黑科技</a>
-    </div>
-  </div>
-
-<br>
-
-  <div>
-<p class="asidetitle">revolver map</p>
-<script type="text/javascript" src="http://jd.revolvermaps.com/2/1.js?i=34br242j94k&amp;s=233s&amp;m=0&amp;v=true&amp;r=false&amp;b=000000&amp;n=false&amp;c=ff0000" async="async"></script>
-</div>
-
-  <br>
-<div>
-<h3 class="asidetitle">最近访客</h3>
-<br>
-<ul class="ds-recent-visitors list" data-num-items="15" data-avatar-size="45"></ul>
-</div>
-
-  <div class="weiboshow">
-  <p class="asidetitle">新浪微博</p>
-    <iframe id="sina_widget_3056064675" style="width:100%; height:500px;" frameborder="0" scrolling="no" src="http://v.t.sina.com.cn/widget/widget_blog.php?uid=3056064675&height=500&skin=wd_01&showpic=1"></iframe>
-
-</div>
-
-
-  <div class="blogroll">
-<h3 class="asidetitle">友情链接</h3>
-<ul>
-<li><a href="http://bbs.ngacn.cc/" title="ngacn" target=_blank>NGA著名精英论坛</a></li>
-<li><a href="http://bbs.uestc.edu.cn/" title="河畔" target=_blank>清水河畔</a></li>
-<li><a href="http://guosu.sinaapp.com/" title="二郭" target=_blank>二郭</a></li>
-<li><a href="http://www.duanzhihe.com/" title="占鹤" target=_blank>占鹤</a></li>
-<li><a href="http://www.puwenlong.com/" title="CP" target=_blank>蒲蒲</a></li> 
-<li><a href="http://www.chengege.com/" title="琛JJ" target=_blank>琛GG</a></li>
-<li><a href="http://blog.dandyweng.com/" title="Dandy Weng" target=_blank>翁天信的博客</a></li>
-
-</ul>
-</div>
-
-</aside>
-</div>
-    </div>
-    <footer><div id="footer" class="copyright" >
-	
-	<p>Copyright &#169;&nbsp;2015&nbsp;<a href="http://ixjx.gitcafe.io">CodeShurrik</a></p>
-	<p>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</p>
-		
-</div>
-</footer>
-    <script src="/blog/js/jquery-2.0.3.min.js"></script>
-<script src="/blog/js/jquery.imagesloaded.min.js"></script>
-<script src="/blog/js/gallery.js"></script>
-<script src="/blog/js/sticker.min.js"></script>
-
-<script type="text/javascript">
-$(document).ready(function(){ 
-  $('.navbar').click(function(){
-    $('header nav').toggleClass('shownav');
-  });
-  var myWidth = 0;
-  function getSize(){
-    if( typeof( window.innerWidth ) == 'number' ) {
-      myWidth = window.innerWidth;
-    } else if( document.documentElement && document.documentElement.clientWidth) {
-      myWidth = document.documentElement.clientWidth;
-    };
-  };
-  var m = $('#main'),
-      a = $('#asidepart'),
-      c = $('.closeaside'),
-      o = $('.openaside');
-  c.click(function(){
-    a.addClass('fadeOut').css('display', 'none');
-    o.css('display', 'block').addClass('fadeIn');
-    m.addClass('moveMain');
-  });
-  o.click(function(){
-    o.css('display', 'none').removeClass('beforeFadeIn');
-    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
-    m.removeClass('moveMain');
-  });
-  $(window).scroll(function(){
-    o.css("top",Math.max(80,260-$(this).scrollTop()));
-  });
-  
-  $(window).resize(function(){
-    getSize(); 
-    if (myWidth >= 1024) {
-      $('header nav').removeClass('shownav');
-    }else{
-      m.removeClass('moveMain');
-      a.css('display', 'block').removeClass('fadeOut');
-      o.css('display', 'none');
-        
-    }
-  });
-});
-</script>
-
-
-
-
-
-
-
-
-
-
-<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){ 
-  $('.article-content').each(function(i){
-    $(this).find('img').each(function(){
-      if ($(this).parent().hasClass('fancybox')) return;
-      var alt = this.alt;
-      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
-      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
-    });
-    $(this).find('.fancybox').each(function(){
-      $(this).attr('rel', 'article' + i);
-    });
-  });
-  if($.fancybox){
-    $('.fancybox').fancybox();
-  }
-});
-Sticker.init('.sticker');
-</script>
-
-
-
-<!-- Analytics Begin -->
-
-
-
-
-
-<!-- Analytics End -->
-
-<!-- Totop Begin -->
-
-	<div id="totop">
-	<a title="返回顶部"><img src="/blog/img/scrollup.png"/></a>
+<body>
+	<!-- 导航栏开始 -->
+	<header class="navbar">
+		<div class="container">
+			<div class="navbar-left">CodeShurrik</div>
+			<nav class="navbar-nav">
+				<a href="#home" class="active">首页</a>
+				<a href="#intro">简介</a>
+				<a href="#linux">Linux</a>
+				<a href="#editor">编辑器</a>
+				<!-- <a href="#sublime">Sublime</a> -->
+				<a href="#contact">联系</a>
+				<a href="#about">关于</a>
+			</nav>
+		</div>
+	</header>
+	<!-- 导航栏结束 -->
+	<!-- 正文部分开始 -->
+	<div class="list">
+		<section id="home" class="home">
+			<article class="container">
+				<a id="site-title" href="index.html">Shurrik`s Home</a>
+				<div class="point-group">
+					<span class="point"></span>
+					<span class="point"></span>
+					<span class="point"></span>
+				</div>
+				<p id="site-description">
+					<!-- <span>开源</span>
+					<span class="point"></span>
+					<span>自由</span>
+					<span class="point"></span>
+					<span>各种宅</span>
+					<span class="point"></span>
+					<span>喜搬砖</span> -->
+					<span>沉稳内敛,低调前行</span>
+					<span class="point"></span>
+					<span>这里是shurrik的堡垒</span>
+				</p>
+			</article>
+		</section>
+
+		<section id="intro" class="intro">
+			<article class="container">
+			 	<header class="intro">
+					<h2 class="title">简介</h2>
+					<div class="description">
+						<p>Code来源于我最喜欢的动漫Code Geass，Shurrik名字来源于WOW 60年代的盗贼皇帝，一个二流的通信工程师、业余的码农。</p>
+						<p>2013年毕业于电子科技大学(UESTC)通信学院(CCIE)，对通信、计算机、互联网、动漫、美剧等都有浓厚的兴趣。</p>
+						<hr />
+						<p>网站主要记录自己生活与之相关的一些心得体会，转载一些技术文章，然后若干年后自己回顾一下， 看看当时的自己是多么幼稚，仅此而已。</p>
+						<p>人的成长就是这样的一个过程，观点和思想都在不断地变化，今天的自己都有可能会否定昨天的自己。而否定的过程，就是成长的过程。</p>
+					</div>
+				</header>
+			</article>
+		</section>
+
+		<section id="linux" class="linux">
+			<article class="container">
+				<header class="header">
+					<h2 class="title">Linux</h2>
+					<div class="description">
+                            <p>Linux是自由和开放源代码的类UNIX操作系统</p>
+                            <p>该操作系统的内核由Linus · Torvalds在1991年10月5日首次发布。</p>
+                            <br>
+                            <p><img src="img/linux.png"></p>
+                    </div>
+				</header>
+				<div class="content" style="text-align: center;">
+	                <section class="ubuntu">
+	                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100" height="100">
+	                        <path fill="#ffffff" d="m 62.295912,28.701087 c 2.873376,1.659372 6.546563,0.675122 8.204788,-2.197388 1.659075,-2.873664 0.675688,-6.546562 -2.197975,-8.205644 -2.873087,-1.658504 -6.545987,-0.674543 -8.205062,2.199121 -1.6585,2.872509 -0.67455,6.545408 2.19825,8.203911 z M 50,67.549813 c -2.641888,0 -5.145512,-0.587374 -7.392837,-1.632816 l -4.174551,7.480879 C 41.919625,75.124499 45.845375,76.10009 50,76.10009 c 2.416175,0 4.7524,-0.334819 6.9726,-0.949614 0.392825,-2.413 1.825625,-4.636944 4.109888,-5.956013 2.280224,-1.316469 4.919225,-1.446933 7.203499,-0.583622 4.4424,-4.368222 7.333101,-10.311246 7.753925,-16.929679 l -8.5624,-0.124687 C 66.689537,60.521517 59.168538,67.549813 50,67.549813 z m 0,-35.099916 c 9.168538,0 16.689537,7.029739 17.477512,15.993631 l 8.5624,-0.124975 C 75.6185,41.700699 72.727812,35.757675 68.284837,31.389741 66.00085,32.252475 63.362137,32.121722 61.081625,30.804963 58.797637,29.486472 57.365137,27.262817 56.972312,24.849528 54.7524,24.235311 52.416175,23.900204 50,23.900204 c -4.154625,0 -8.080075,0.975302 -11.566813,2.702502 l 4.174263,7.480012 C 44.854487,33.037277 47.358112,32.449902 50,32.449902 z M 32.450338,49.999856 c 0,-5.93754 2.950725,-11.181774 7.4624,-14.357351 l -4.392175,-7.357919 c -5.257513,3.512993 -9.168825,8.882784 -10.793275,15.172749 1.897787,1.546802 3.11035,3.902363 3.11035,6.543097 0,2.640447 -1.21285,4.996008 -3.110638,6.542522 1.624163,6.290252 5.535475,11.660045 10.793275,15.173037 l 4.392463,-7.358207 c -4.511675,-3.175289 -7.4624,-8.419523 -7.4624,-14.357928 z m 29.84645,21.298479 c -2.873675,1.659081 -3.857625,5.331691 -2.198838,8.2042 1.659088,2.873663 5.331688,3.858202 8.20535,2.199121 2.8728,-1.658794 3.85705,-5.331691 2.197975,-8.205066 -1.658512,-2.872221 -5.3317,-3.85676 -8.204487,-2.198255 z M 19.400513,43.992755 c -3.31875,0 -6.007975,2.688936 -6.007975,6.007677 0,3.317876 2.689225,6.007102 6.007975,6.007102 3.317587,0 6.0071,-2.689226 6.0071,-6.007102 0,-3.318741 -2.689513,-6.007677 -6.0071,-6.007677" />
+	                    </svg>
+	                </section>
+	                <section class="debian">
+	                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100" height="100" >
+	                        <path fill="#ffffff" d="M81.762,38.962c0.09,2.416-0.705,3.59-1.424,5.666l-1.293,0.643c-1.057,2.054,0.105,1.304-0.652,2.937-1.652,1.467-5.006,4.589-6.08,4.875-0.785-0.017,0.531-0.926,0.703-1.281-2.209,1.516-1.773,2.276-5.152,3.199l-0.098-0.221c-8.33,3.92-19.902-3.847-19.75-14.443-0.088,0.672-0.253,0.504-0.437,0.774-0.43-5.451,2.518-10.926,7.49-13.165,4.863-2.406,10.564-1.42,14.045,1.829-1.912-2.506-5.721-5.163-10.232-4.917-4.421,0.072-8.558,2.881-9.938,5.932-2.264,1.425-2.528,5.496-3.514,6.242-1.329,9.76,2.497,13.975,8.97,18.936,1.016,0.686,0.286,0.791,0.422,1.313-2.15-1.006-4.118-2.526-5.738-4.387,0.86,1.257,1.787,2.479,2.986,3.439-2.029-0.685-4.738-4.913-5.527-5.085,3.495,6.258,14.178,10.975,19.775,8.634-2.59,0.096-5.879,0.053-8.787-1.022-1.225-0.629-2.884-1.93-2.587-2.173,7.636,2.851,15.522,2.158,22.128-3.137,1.682-1.31,3.518-3.537,4.049-3.567-0.799,1.202,0.137,0.578-0.477,1.639,1.672-2.701-0.729-1.1,1.73-4.664l0.908,1.25c-0.34-2.244,2.785-4.966,2.467-8.512,0.717-1.084,0.799,1.168,0.039,3.662,1.055-2.767,0.279-3.212,0.549-5.496,0.291,0.768,0.678,1.583,0.875,2.394-0.688-2.675,0.703-4.503,1.049-6.058-0.342-0.15-1.061,1.182-1.227-1.976,0.025-1.372,0.383-0.719,0.52-1.057-0.268-0.155-0.975-1.207-1.404-3.224,0.309-0.475,0.832,1.229,1.256,1.298-0.273-1.603-0.742-2.826-0.762-4.057-1.24-2.59-0.439,0.346-1.443-1.112-1.32-4.114,1.094-0.955,1.258-2.823,1.998,2.895,3.137,7.385,3.662,9.244-0.4-2.267-1.045-4.464-1.834-6.589,0.609,0.257-0.979-4.663,0.791-1.405-1.889-6.945-8.078-13.435-13.773-16.479,0.695,0.637,1.574,1.437,1.26,1.563-2.834-1.685-2.336-1.818-2.742-2.53-2.305-0.939-2.459,0.077-3.984,0.002-4.35-2.308-5.188-2.063-9.191-3.507l0.182,0.852c-2.881-0.96-3.357,0.362-6.47,0.002-0.189-0.147,0.998-0.536,1.976-0.677-2.786,0.368-2.656-0.55-5.382,0.101,0.671-0.471,1.383-0.784,2.099-1.184-2.271,0.138-5.424,1.322-4.451,0.244-3.705,1.654-10.286,3.975-13.979,7.438l-0.116-0.776c-1.692,2.031-7.379,6.066-7.832,8.699l-0.453,0.105c-0.879,1.491-1.45,3.18-2.148,4.713-1.151,1.963-1.688,0.756-1.524,1.064-2.265,4.592-3.392,8.45-4.363,11.616,0.692,1.035,0.017,6.232,0.278,10.391-1.136,20.544,14.418,40.489,31.42,45.093,2.492,0.893,6.197,0.861,9.349,0.949-3.718-1.064-4.198-0.563-7.822-1.826-2.613-1.232-3.185-2.637-5.037-4.244l0.733,1.295c-3.63-1.285-2.111-1.59-5.065-2.525l0.783-1.021c-1.177-0.09-3.117-1.982-3.647-3.033l-1.288,0.051c-1.546-1.906-2.371-3.283-2.31-4.35l-0.416,0.742c-0.471-0.809-5.691-7.158-2.983-5.68-0.503-0.458-1.172-0.747-1.897-2.066l0.551-0.629c-1.301-1.677-2.398-3.826-2.314-4.542,0.695,0.938,1.177,1.114,1.655,1.275-3.291-8.164-3.476-0.449-5.967-8.31l0.526-0.042c-0.403-0.611-0.65-1.27-0.974-1.919l0.23-2.285c-2.368-2.736-0.662-11.645-0.319-16.53,0.235-1.986,1.977-4.101,3.3-7.418l-0.806-0.138c1.542-2.688,8.802-10.799,12.166-10.383,1.629-2.046-0.324-0.008-0.643-0.522,3.579-3.703,4.704-2.616,7.119-3.283,2.603-1.545-2.235,0.604-1.001-0.589,4.503-1.149,3.19-2.614,9.063-3.197,0.62,0.352-1.437,0.544-1.953,1.001,3.75-1.836,11.869-1.417,17.145,1.018,6.117,2.861,12.994,11.314,13.266,19.267l0.309,0.083c-0.156,3.162,0.484,6.819-0.627,10.177l0.751-1.591"/>
+	                    </svg>
+	                </section>
+	                <section class="centos">
+	                	<img src="img/centos.jpg">
+	                </section>
+	            </div>
+			</article>
+		</section>
+
+		<section id="editor" class="editor">
+			<article class="container">
+				<header class="header">
+					<h2 class="title">编辑器</h2>
+				</header>
+				<div class="content">
+	                <section class="emacs">
+	                    <h3 class="title">神之编辑器 -- Emacs</h3>
+	                    <img src="img/emacs.png" alt="Emacs" />
+	                </section>
+	                <section class="vim">
+	                    <h3 class="title">编辑器之神  -- Vim</h3>
+	                    <img src="img/vim.png" alt="Vim" />
+	                </section>
+                </div>
+			</article>
+		</section>
+
+<!-- 		<section id="sublime" class="sublime">
+			<article class="container">
+				sublime
+			</article>
+		</section> -->
+
+		<section id="contact" class="contact">
+			<article class="container">
+				<header>
+					<h2 class="title">联系</h2>
+				</header>
+				<div class="contact-list">
+					<a class="zocial weibo" href="http://weibo.com/codeshurrik" target="_blank"></a>
+                    <a class="zocial github" href="https://github.com/ixjx" target="_blank"></a>
+                    <a class="zocial googleplus" href="https://plus.google.com/114837348919935573225/posts" target="_blank"></a>
+                    <a class="zocial youtube" href="http://www.douban.com/people/48370434/" target="_blank"></a>
+                    <a class="zocial gmail" href="mailto:shurrik.dly@gmail.com" target="_blank"></a>
+				</div>
+				<div class="blog">
+					<a href="http://ixjx.coding.me/blog" target="_blank">进入我的博客</a>
+				</div>
+			</article>
+		</section>
+
+		<section id="about" class="about">
+			<article class="container">
+				<header class="header">
+					<h2 class="title">关于</h2>
+				</header>
+				<div class="content">
+					<p>练手之作，花费4天，总共大概8个小时</p>
+					<p>这是我第一次如此认真的写一个页面</p>
+					<p>想法和配色参考于 <a href="http://rogerdudler.github.io/git-guide/index.zh.html" target="_blank">git - 简易指南</a></p>
+					<p>联系部分的图标采用修改过的 <a href="http://zocial.smcllns.com" target="_blank">Zocial</a></p>
+					<p class="dot">...</p>
+					<p>主页挂在 <a href="https://github.com/ixjx" target="_blank">github</a>上</p>
+					<p>开源是一种伟大的思想</p>
+					<p>因为人都是自私的</p>
+					<p>我也不例外</p>
+				</div>
+			</article>
+		</section>
 	</div>
-	<script src="/blog/js/totop.js"></script>
+	<!-- 正文部分结束 -->
+	<!-- 页面底部开始 -->
+	<footer>
+		 <p>&#169;&nbsp;2013 <a href="http://ixjx.coding.me" target="_blank">CodeShurrik</a></p>
+	</footer>
+	<!-- 页面底部结束 -->
 
-<!-- Totop End -->
+	<script type="text/javascript" src="js/jquery1.7.2.js"></script>
+	<script type="text/javascript" src="js/script.js"></script>
 
-<!-- MathJax Begin -->
-<!-- mathjax config similar to math.stackexchange -->
-
-
-<!-- MathJax End -->
-
-<!-- Tiny_search Begin -->
-
-<!-- Tiny_search End -->
-
-  </body>
- </html>
+</body>
+</html>
