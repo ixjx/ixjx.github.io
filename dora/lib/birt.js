@@ -30,7 +30,7 @@ function drawText(ctx, config) {
 	ctx.fillStyle = '#ffffff';
 	ctx.font = font;
 	ctx.textBaseline = "middle";
-	ctx.fillText(text, (canvas.width - size * textLen) / 20, (canvas.height / 2));
+	ctx.fillText(text, (canvas.width - size * textLen) / 2, (canvas.height / 2));
 	ctx.restore();
 
 	//根据字体像素，画球
@@ -114,9 +114,9 @@ function checkBound(ball, bounce) {
 	canvas.height = window.innerHeight;
 
 	canvas.style.display = 'block';
-
+	var te = '生日快乐'
 	var pos = drawText(ctx, {  
-		text: '生日快乐',  //参数
+		text: te,  //参数
 		font: '900 275px simsun',
 		gap: 10
 	});
