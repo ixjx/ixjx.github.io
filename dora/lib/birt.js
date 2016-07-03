@@ -116,7 +116,7 @@ function checkBound(ball, bounce) {
 	canvas.style.display = 'block';
 
 	var pos = drawText(ctx, {  
-		text: 'Dora生日快乐',  //参数
+		text: '生日快乐',  //参数
 		font: '900 275px simsun',
 		gap: 10
 	});
