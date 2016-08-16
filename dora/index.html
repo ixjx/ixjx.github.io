@@ -7,15 +7,30 @@
 		overflow: hidden;
 	}
 	#canvas {
-		background: url('http://shurriklab.qiniudn.com/psdora.png') repeat 0 0;
+		background: url('http://shurriklab.qiniudn.com/psdora.png') repeat;
 		border: none;
 		cursor: pointer;
 		display: none;
 	}
+	.sticker{
+		position: absolute;
+		left: 650px;
+		top:10px;
+		width: 180px;
+		height: 240px;
+	}
+	.sticker-img{
+		background-image: url(./dora.jpg);
+	}	
 </style>
+<div class="sticker"></div>
 <canvas id="canvas" width="1000" height="500">
 	using the fucking chrome!
 </canvas>
 <script src="lib/utils.js"></script>
 <script src="lib/ball.js"></script>
 <script src="lib/birt.js"></script>
+<script src="lib/sticker.min.js"></script>
+<script type="text/javascript">
+Sticker.init('.sticker');	
+</script>
