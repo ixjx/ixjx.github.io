@@ -1,60 +1,363 @@
-<!DOCTYPE html>
-<!--
- _____    _____       ___   _____        _   _   _____   _____    _____  
-|  _  \  | ____|     /   | |  _  \      | | | | | ____| |  _  \  | ____| 
-| |_| |  | |__      / /| | | | | |      | |_| | | |__   | |_| |  | |__   
-|  _  /  |  __|    / / | | | | | |      |  _  | |  __|  |  _  /  |  __|  
-| | \ \  | |___   / /  | | | |_| |      | | | | | |___  | | \ \  | |___  
-|_|  \_\ |_____| /_/   |_| |_____/      |_| |_| |_____| |_|  \_\ |_____| 
+<!DOCTYPE>
+<html class="iescrollbar">
+  <head>
+    <meta charset="utf-8" />    
+    <title>Dora&Shurrik</title>
+    
+	<link rel="stylesheet" type="text/css" href="css/lab.css">
+	<link rel="stylesheet" type="text/css" href="css/scrollbar.css">
 
-Dear Dora：
-Happy birthday first!
-页面简陋了点，但我还是花了不少心思，嘿嘿。
-虽然这是我第一次为你过生日，但希望以后每年都有我陪你过生日，好吗？
-如果要加上一个期限，我希望是一辈子。
-愿你在新的一年快快乐乐，考试也能有一个完美的结果~
-过去的这一年有你的陪伴我觉得很幸福，感谢有你，你也得感谢有我^_^
-最后，我告诉你一件事。我很想有一个自己的家，里面有一张很大的书桌，
-但是如果没有无所谓。我还想有一张很舒服的沙发，但是如果没有无所谓。
-如果在家里面，有两个天真活泼的小孩子跑来跑去，我会很开心，但是如果没有也无所谓。
-最重要的是这个家有你，虽然小，但是有你就很温馨，其他有没有无所谓......我要你知道，我心里是这么想的。
--->
-<meta charset="utf-8">
-<head>
-<style type="text/css">
-	html, body {
-		padding: 0;
-		margin: 0;
-		overflow: hidden;
-	}
-	#canvas {
-		background: url('http://shurriklab.qiniudn.com/psdora.png') repeat;
-		border: none;
-		cursor: pointer;
-		display: none;
-	}
-	.sticker{
-		position: absolute;
-		left: 650px;
-		top:10px;
-		width: 180px;
-		height: 240px;
-	}
-	.sticker-img{
-		background-image: url(./dora.jpg);
-	}	
-</style>
-</head>
-<body>
-	<!--<div class="sticker"></div> -->
-	<canvas id="canvas" width="1000" height="500">
-		using the fucking chrome!
-	</canvas>
-</body>
-<script src="lib/utils.js"></script>
-<script src="lib/ball.js"></script>
-<script src="lib/birt.js"></script>
-<script src="lib/sticker.min.js"></script>
-<script type="text/javascript">
-Sticker.init('.sticker');	
-</script>
+  </head>
+  
+  <body>
+    <div id="header">
+		<div id="header_content">
+			<h1>Dora&Shurrik`s Home</h1>
+		</div>
+	</div>
+	<div id="content">
+		<div class="component">
+			<ul class="align">
+				<!--Begin -->
+				<li>
+					<figure class='book'>
+					<!-- Front -->
+						<ul class='hardcover_front'>
+							<li>
+								<img src="img/1.jpg" alt="" width="100%" height="100%">
+							</li>
+							<li></li>
+						</ul>
+					<!-- Pages -->
+						<ul class='page'>
+							<li></li>
+							<li>
+								<a class="btn" href="img/1.jpg" target="_blank">查看</a>
+							</li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					<!-- Back -->
+						<ul class='hardcover_back'>
+							<li></li>
+							<li></li>
+						</ul>
+						<ul class='book_spine'>
+							<li></li>
+							<li></li>
+						</ul>
+						<figcaption>
+							<h1>幼儿园</h1>
+							<span>20年前</span>
+							<p>仔细看，那时候就有小酒窝了</p>
+							<p>喜欢你傻笑的样子</p>
+						</figcaption>
+					</figure>
+				</li>
+				<!--End -->
+				<li>
+					<figure class='book'>
+					<!-- Front -->
+						<ul class='hardcover_front'>
+							<li>
+								<img src="img/2.jpg" alt="" width="100%" height="100%">
+							</li>
+							<li></li>
+						</ul>
+					<!-- Pages -->
+						<ul class='page'>
+							<li></li>
+							<li>
+								<a class="btn" href="img/2.jpg" target="_blank">查看</a>
+							</li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					<!-- Back -->
+						<ul class='hardcover_back'>
+							<li></li>
+							<li></li>
+						</ul>
+						<ul class='book_spine'>
+							<li></li>
+							<li></li>
+						</ul>
+						<figcaption>
+							<h1>幼儿园</h1>
+							<span>20年前</span>
+							<p>一脸严肃的看那边</p>
+							<p>嘟嘴的样子也好可爱</p>
+						</figcaption>
+					</figure>
+				</li>
+				<li>
+					<figure class='book'>
+					<!-- Front -->
+						<ul class='hardcover_front'>
+							<li>
+								<img src="img/3.jpg" alt="" width="100%" height="100%">
+							</li>
+							<li></li>
+						</ul>
+					<!-- Pages -->
+						<ul class='page'>
+							<li></li>
+							<li>
+								<a class="btn" href="img/3.jpg" target="_blank">查看</a>
+							</li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					<!-- Back -->
+						<ul class='hardcover_back'>
+							<li></li>
+							<li></li>
+						</ul>
+						<ul class='book_spine'>
+							<li></li>
+							<li></li>
+						</ul>
+						<figcaption>
+							<h1>西安·华清池</h1>
+							<span>2016.7.14</span>
+							<p>笑不露齿VS笑得门牙都露出来</p>
+						</figcaption>
+					</figure>
+				</li>
+				<li>
+					<figure class='book'>
+					<!-- Front -->
+						<ul class='hardcover_front'>
+							<li>
+								<img src="img/4.jpg" alt="" width="100%" height="100%">
+							</li>
+							<li></li>
+						</ul>
+					<!-- Pages -->
+						<ul class='page'>
+							<li></li>
+							<li>
+								<a class="btn" href="img/4.jpg" target="_blank">查看</a>
+							</li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					<!-- Back -->
+						<ul class='hardcover_back'>
+							<li></li>
+							<li></li>
+						</ul>
+						<ul class='book_spine'>
+							<li></li>
+							<li></li>
+						</ul>
+						<figcaption>
+							<h1>西安·华山</h1>
+							<span>2016.7.15</span>
+							<p>西安这天是有多热？</p>
+						</figcaption>
+					</figure>
+				</li>
+				<li>
+					<figure class='book'>
+					<!-- Front -->
+						<ul class='hardcover_front'>
+							<li>
+								<img src="img/5.jpg" alt="" width="100%" height="100%">
+							</li>
+							<li></li>
+						</ul>
+					<!-- Pages -->
+						<ul class='page'>
+							<li></li>
+							<li>
+								<a class="btn" href="img/5.jpg" target="_blank">查看</a>
+							</li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					<!-- Back -->
+						<ul class='hardcover_back'>
+							<li></li>
+							<li></li>
+						</ul>
+						<ul class='book_spine'>
+							<li></li>
+							<li></li>
+						</ul>
+						<figcaption>
+							<h1>成都·五月天</h1>
+							<span>2016.9.10</span>
+							<p>第一次和喜欢的人一起听演唱会</p>
+						</figcaption>
+					</figure>
+				</li>
+				<!--Begin -->
+				<li>
+					<figure class='book'>
+					<!-- Front -->
+						<ul class='hardcover_front'>
+							<li>
+								<img src="img/6.jpg" alt="" width="100%" height="100%">
+							</li>
+							<li></li>
+						</ul>
+					<!-- Pages -->
+						<ul class='page'>
+							<li></li>
+							<li>
+								<a class="btn" href="img/6.jpg" target="_blank">查看</a>
+							</li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					<!-- Back -->
+						<ul class='hardcover_back'>
+							<li></li>
+							<li></li>
+						</ul>
+						<ul class='book_spine'>
+							<li></li>
+							<li></li>
+						</ul>
+						<figcaption>
+							<h1>写真照1</h1>
+							<span>2016.9.17</span>
+							<p>还是可爱风最适合你</p>
+						</figcaption>
+					</figure>
+				</li>
+				<!--End -->
+				<!--Begin -->
+				<li>
+					<figure class='book'>
+					<!-- Front -->
+						<ul class='hardcover_front'>
+							<li>
+								<img src="img/7.jpg" alt="" width="100%" height="100%">
+							</li>
+							<li></li>
+						</ul>
+					<!-- Pages -->
+						<ul class='page'>
+							<li></li>
+							<li>
+								<a class="btn" href="img/7.jpg" target="_blank">查看</a>
+							</li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					<!-- Back -->
+						<ul class='hardcover_back'>
+							<li></li>
+							<li></li>
+						</ul>
+						<ul class='book_spine'>
+							<li></li>
+							<li></li>
+						</ul>
+						<figcaption>
+							<h1>写真照2</h1>
+							<span>2016.9.17</span>
+							<p>这张也不错</p>
+						</figcaption>
+					</figure>
+				</li>
+				<!--End -->
+				<!--Begin -->
+				<li>
+					<figure class='book'>
+					<!-- Front -->
+						<ul class='hardcover_front'>
+							<li>
+								<img src="img/8.jpg" alt="" width="100%" height="100%">
+							</li>
+							<li></li>
+						</ul>
+					<!-- Pages -->
+						<ul class='page'>
+							<li></li>
+							<li>
+								<a class="btn" href="img/8.jpg" target="_blank">查看</a>
+							</li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					<!-- Back -->
+						<ul class='hardcover_back'>
+							<li></li>
+							<li></li>
+						</ul>
+						<ul class='book_spine'>
+							<li></li>
+							<li></li>
+						</ul>
+						<figcaption>
+							<h1>写真照3</h1>
+							<span>2016.9.17</span>
+							<p>百变风格~</p>
+						</figcaption>
+					</figure>
+				</li>
+				<!--End -->
+				<!--Begin -->
+				<li>
+					<figure class='book'>
+					<!-- Front -->
+						<ul class='hardcover_front'>
+							<li>
+								<img src="img/secret.jpg" alt="" width="100%" height="100%">
+							</li>
+							<li></li>
+						</ul>
+					<!-- Pages -->
+						<ul class='page'>
+							<li></li>
+							<li>
+								<a class="btn" href="birth.html">查看</a>
+							</li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
+					<!-- Back -->
+						<ul class='hardcover_back'>
+							<li></li>
+							<li></li>
+						</ul>
+						<ul class='book_spine'>
+							<li></li>
+							<li></li>
+						</ul>
+						<figcaption>
+							<h1>Secret</h1>
+							<span>2016.12.30</span>
+							<p>猜猜看?</p>
+						</figcaption>
+					</figure>
+				</li>
+				<!--End -->
+			</ul>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/jQuery.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		var sUserAgent = navigator.userAgent.toLowerCase();
+	    if(sUserAgent.match(/msie/i) == "msie"){
+	        alert("请使用Chrome 或 FF等webkit浏览器打开\n 你懂的~");
+	    }
+	});
+
+	</script>
+  </body>
+</html>
