@@ -1,0 +1,39 @@
+permalink: /:year-:month-:day/:title/
+
+highlighter: rouge
+markdown: kramdown
+kramdown:
+  input:  GFM
+  syntax_highlighter: rouge
+
+
+paginate: 10
+paginate_path: ":num"
+baseurl: ""
+
+
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+      styles : [highlight.css,post.css]
+      scripts : [post.js]
+
+
+
+title: "Shurrik"
+email: "vissky1@163.com"
+description: "shurrik`s blog"
+github_username:  "ixjx"
+swiftype_searchId: ""
+disqus_shortname: ""
+
+
+
+url: "http://127.0.0.1:4000"
+imgrepo: "http://127.0.0.1:4000/static/img"
+
