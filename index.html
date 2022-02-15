@@ -203,19 +203,27 @@ let renderedStr = "Someting went wrong :-(<br>";
 function postList() {
     renderedStr = 'Last 10 posts in my blog.<br>More in [CodeShurrik](<a target="_blank" rel="noopener" href="https://ixjx.github.io/blog">https://ixjx.github.io/blog</a>)<br>';
     $.ajax({
-        url: "/blog",
+        url: "/blog/feed.xml",
+        dataType: 'xml',
         timeout: 10000,
         success: function(data) {
-            for (let i in data) {
-                let postTitleInApi = data[i].title.rendered;
-                let postUrlInApi = data[i].link;
-                renderedStr = renderedStr + '<br>- [' + postTitleInApi + '](<a target="_blank" rel="noopener" href="' + postUrlInApi + '">' + postUrlInApi + '</a>)'
-            }
+            // for (let i in data) {
+            //     alert(i);
+            //     let postTitleInApi = data[i].title.rendered;
+            //     let postUrlInApi = data[i].link;
+            //     renderedStr = renderedStr + '<br>- [' + postTitleInApi + '](<a target="_blank" rel="noopener" href="' + postUrlInApi + '">' + postUrlInApi + '</a>)'
+            // }
+            var frag = $("<ul/>");
+            $(data).find("item").each(function(i){
+                var postTitle = $(this).children("title"), postTitle_value = postTitle.text();
+                var postUrl = $(this).children("link"), postUrl_value = postUrl.text();
+                renderedStr = renderedStr + '<br>- [' + postTitle_value + '](<a target="_blank" rel="noopener" href="' + postUrl_value + '">' + postUrl_value + '</a>)';
+            });
             renderedStr = renderedStr + "<br>"
         },
-        // error: function() {
-        //     renderedStr = 'Can not get posts from my blog. Connection failed.<br>'
-        // }
+        error: function() {
+            renderedStr = 'Can not get posts from my blog. Connection failed.<br>'
+        }
     })
 }
 postList();
