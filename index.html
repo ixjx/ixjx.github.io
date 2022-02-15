@@ -216,7 +216,7 @@ function postList() {
             var frag = $("<ul/>");
             $(data).find("item").each(function(i){
                 var postTitle = $(this).children("title"), postTitle_value = postTitle.text();
-                var postUrl = $(this).children("link"), postUrl_value = postUrl.text();
+                var postUrl = $(this).children("link"), postUrl_value = decodeURI(postUrl.text());
                 renderedStr = renderedStr + '<br>- [' + postTitle_value + '](<a target="_blank" rel="noopener" href="' + postUrl_value + '">' + postUrl_value + '</a>)';
             });
             renderedStr = renderedStr + "<br>"
