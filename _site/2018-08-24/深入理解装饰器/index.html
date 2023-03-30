@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>深入理解装饰器</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="深入理解装饰器, 随编, python, CodeShurrik" />
+    <meta name="description" content="深入理解装饰器, 随编, python, 　　等offer等得心慌，写写之前面试遇到的坑吧。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2018-08-24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%A3%85%E9%A5%B0%E5%99%A8/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>深入理解装饰器</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Aug 24, 2018
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#随编"><span class="octicon octicon-list-unordered"></span>&nbsp;随编</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#python"><span class="octicon octicon-tag"></span>&nbsp;python</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>　　等offer等得心慌，写写之前面试遇到的坑吧。</p>
+
+<p>　　面试官：看你简历写了熟悉python？</p>
+
+<p>　　我：…会一点,shell脚本写得比较多</p>
+
+<p>　　面试官：那你给我讲讲装饰器吧</p>
+
+<p>　　我：…呵呵</p>
+
+<p>　　之前只是了解python的函数式编程，大概知道装饰器(decorator)是在代码运行期间动态增加功能同时又不改变原有代码。</p>
+
+<blockquote>
+  <p>&lt; 函数+返回值高阶函数+实参高阶函数+嵌套函数+语法糖 = 装饰器 &gt;</p>
+</blockquote>
+
+<p>　　你能看懂吗？反正我是没看懂，所以一个一个的查了后才略有理解：装饰器本质上还是函数。</p>
+
+<h2 id="函数">函数</h2>
+
+<p>　　理解装饰器前，需要明白函数的工作原理，我们先从一个最简单函数定义开始：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<p>　　上面定义了一个函数，名字叫foo，也可以把 foo 可理解为变量名，该变量指向一个函数对象</p>
+
+<p><img src="http://shurriklab.qiniudn.com/18-8-24/81273610.jpg" alt="" /></p>
+
+<p>　　调用函数只需要给函数名加上括号并传递必要的参数（如果函数定义的时候有参数的话）</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">value</span> <span class="o">=</span> <span class="n">foo</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="c1"># 4
+</span></code></pre></div></div>
+
+<p>　　变量名 foo 现在指向 &lt;function foo at 0x1030060c8&gt; 函数对象，但它也可以指向另外一个函数</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">bar</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"bar"</span><span class="p">)</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="n">bar</span>
+<span class="n">foo</span><span class="p">()</span> <span class="c1"># bar()
+</span></code></pre></div></div>
+
+<p><img src="http://shurriklab.qiniudn.com/18-8-24/26546525.jpg" alt="" /></p>
+
+<h2 id="返回值高阶函数">返回值高阶函数</h2>
+
+<p>在Python中，一切皆为对象，函数也不例外，它可以像整数一样作为其它函数的返回值，例如：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="k">return</span> <span class="mi">1</span>
+ 
+<span class="k">def</span> <span class="nf">bar</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">foo</span>
+ 
+<span class="k">print</span><span class="p">(</span><span class="n">bar</span><span class="p">())</span> <span class="c1"># &lt;function foo at 0x10a2f4140&gt;
+</span> 
+<span class="k">print</span><span class="p">(</span><span class="n">bar</span><span class="p">()())</span> <span class="c1"># 1 
+# 等价于
+</span><span class="k">print</span><span class="p">(</span><span class="n">foo</span><span class="p">())</span> <span class="c1"># 1
+</span></code></pre></div></div>
+
+<p>　　调用函数 bar() 的返回值是一个函数对象 &lt;function foo at 0x10a2f4140&gt;，因为返回值是函数，所以我们可以继续对返回值进行调用（记住：调用函数就是在函数名后面加()）调用bar()()相当于调用 foo()，因为 变量 foo 指向的对象与 bar() 的返回值是同一个对象。</p>
+
+<h2 id="实参高阶函数">实参高阶函数</h2>
+
+<p>　　函数还可以像整数一样作为函数的参数，例如：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span>
+ 
+<span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="n">fun</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+ 
+<span class="n">value</span> <span class="o">=</span> <span class="n">bar</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># 4
+</span></code></pre></div></div>
+
+<p>　　函数 bar 接收一个参数，这个参数是一个可被调用的函数对象，把函数 foo 传递到 bar 中去时，foo 和 fun 两个变量名指向的都是同一个函数对象，所以调用 fun(3) 相当于调用 foo(3)。</p>
+
+<h2 id="嵌套函数">嵌套函数</h2>
+
+<p>　　函数不仅可以作为参数和返回值，函数还可以定义在另一个函数中，作为嵌套函数存在，例如：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">outer</span><span class="p">():</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">def</span> <span class="nf">inner</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">inner</span><span class="p">()</span>
+ 
+<span class="n">outer</span><span class="p">()</span> <span class="c1"># 1
+</span></code></pre></div></div>
+
+<p>　　inner做为嵌套函数，它可以访问外部函数的变量，调用 outer 函数时，发生了3件事：</p>
+
+<ol>
+  <li>给变量 x 赋值为1</li>
+  <li>定义嵌套函数 inner，此时并不会执行 inner 中的代码，因为该函数还没被调用，直到第3步</li>
+  <li>调用 inner 函数，执行 inner 中的代码逻辑。</li>
+</ol>
+
+<h2 id="闭包">闭包</h2>
+
+<p>　　再来看一个例子：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">outer</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">inner</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+ 
+    <span class="k">return</span> <span class="n">inner</span>
+<span class="n">closure</span> <span class="o">=</span> <span class="n">outer</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">closure</span><span class="p">()</span> <span class="c1"># 1
+</span></code></pre></div></div>
+<p>　　同样是嵌套函数，只是稍改动一下，把局部变量 x 作为参数了传递进来，嵌套函数不再直接在函数里被调用，而是作为返回值返回，这里的 closure就是一个闭包，本质上它还是函数，闭包是引用了自由变量(x)的函数(inner)。</p>
+
+<h2 id="装饰器">装饰器</h2>
+
+<p>　　终于到正题了：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>　　上面这个函数虽然没什么用，但是能说明问题就行。现在，有一个新的需求，需要在执行该函数时加上日志：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"记录日志开始"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"记录日志结束"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>　　功能实现，唯一的问题就是它需要侵入到原来的代码里面，把日志逻辑加上去，如果还有好几十个这样的函数要加日志，也必须这样做，显然，这样的代码一点都不Cooooooool。那么有没有可能在不修改业务代码的提前下，实现日志功能呢？答案就是装饰器。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">outer</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">inner</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"记录日志开始"</span><span class="p">)</span>
+        <span class="n">func</span><span class="p">()</span> <span class="c1"># 业务函数
+</span>        <span class="k">print</span><span class="p">(</span><span class="s">"记录日志结束"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inner</span>
+ 
+<span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span>
+ 
+<span class="n">foo</span> <span class="o">=</span> <span class="n">outer</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span> 
+<span class="n">foo</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>　　我没有修改 foo 函数里面的任何逻辑，只是给 foo 变量重新赋值了，指向了一个新的函数对象。最后调用 foo()，不仅能打印日志，业务逻辑也执行完了。现在来分析一下它的执行流程。</p>
+
+<p>　　这里的 outer 函数其实就是一个装饰器，装饰器是一个带有函数作为参数并返回一个新函数的闭包，本质上装饰器也是函数。outer 函数的返回值是 inner 函数，在 inner 函数中，除了执行日志操作，还有业务代码，该函数重新赋值给 foo 变量后，调用 foo() 就相当于调用 inner()</p>
+
+<p>　　另外，python为装饰器提供了语法糖@，它用在函数的定义处：这样就省去了手动给foo重新赋值的步骤。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">outer</span>
+<span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span>
+
+<span class="c1">#即 @outer 等价于 foo = outer(foo)
+</span>
+<span class="n">foo</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>　　当然，实际使用的装饰器更加复杂，比如可以接受参数的装饰器，基于类的装饰器等等，慢慢学吧</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#python"><span class="octicon octicon-tag"></span>&nbsp;python</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-06-10/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A5%E6%94%B6/">基于企业微信的消息接收</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-05-30/python%E7%BA%BF%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%B5%85%E6%9E%90/">python线程与线程池浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-04-22/PaddleOCR%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/">PaddleOCR文字识别API搭建</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/">基于企业微信API的消息推送</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-02-15/paramiko%E6%B5%85%E6%9E%90/">Paramiko浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-27/Nornir%E7%95%AA%E5%A4%96%E7%AF%87-3.5/">Nornir番外篇-3.5</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-08-27/%E7%BD%91%E7%BB%9C%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84python%E4%B9%8B%E8%B7%AF/">网络工程师的python之路</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/">基于Docker+Jenkins+Gitlab搭建持续集成测试环境</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-10-26/F2E_8%E4%BB%8E%E5%AE%9C%E5%AE%B6%E7%9A%84%E5%AE%B6%E5%85%B7%E8%AE%BE%E8%AE%A1%E5%88%B0%E6%A8%A1%E5%9D%97%E5%8C%96/">F2E_8从宜家的家具设计到模块化</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-08-11/F2E_7markdown%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-02/">F2E_7markdown编辑器的实现-02(文件操作)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-05-17/F2E_6markdown%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-01/">F2E_6markdown编辑器的实现-01</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-03-03/github%E7%9A%84%E6%B8%85%E7%82%B9%E5%AF%B9%E8%B1%A1%E7%AE%97%E6%B3%95/">git的清点对象算法</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-03-25/F2E_5sticker%E8%B4%B4%E7%BA%B8%E6%95%88%E6%9E%9C/">F2E_5sticker贴纸效果</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-03-23/F2E_4js%E8%BE%93%E5%87%BA%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">F2E_4js输出浏览器与操作系统</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-02-09/F2E_3JS%E5%8E%9F%E5%9E%8B%E4%B8%8E%E9%97%AD%E5%8C%85/">F2E_3JS原型与闭包</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

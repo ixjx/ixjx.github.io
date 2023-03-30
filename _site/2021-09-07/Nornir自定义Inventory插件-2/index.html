@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Nornir自定义Inventory插件-2</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Nornir自定义Inventory插件-2, 网络自动化, nornir, CodeShurrik" />
+    <meta name="description" content="Nornir自定义Inventory插件-2, 网络自动化, nornir, 之前学习了下Nornir这个NetDevops框架，实践中发现通过Nornir原生的yaml方式管理设备，实际工作量比较大，因为我们自身CMDB是做到Adminset里面的，通过数据库读写。一开始的思路是将设备信息从数据库读出来再写入yaml文件，然后Nornir再读取yaml文件，实际上这个需求就是自定义一个i..." />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2021-09-07/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Inventory%E6%8F%92%E4%BB%B6-2/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Nornir自定义Inventory插件-2</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Sep 7, 2021
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#网络自动化"><span class="octicon octicon-list-unordered"></span>&nbsp;网络自动化</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#nornir"><span class="octicon octicon-tag"></span>&nbsp;nornir</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>之前学习了下Nornir这个NetDevops框架，实践中发现通过Nornir原生的yaml方式管理设备，实际工作量比较大，因为我们自身CMDB是做到Adminset里面的，通过数据库读写。一开始的思路是将设备信息从数据库读出来再写入yaml文件，<del>然后Nornir再读取yaml文件</del>，实际上这个需求就是自定义一个inventory插件，能够按照自己的方式灵活加载网络设备。</p>
+
+<p>Nornir作为一款自比Flask的网络自动化框架，灵活性，本身就是其主打的feature之一，网上找了一个基于Nornir原生<code class="language-plaintext highlighter-rouge">SimpleInventory</code>自定义的<code class="language-plaintext highlighter-rouge">CMDBInventory</code>，核心就是yaml与字典的转换，构建Host列表，从而构建Inventory对象（defaults与group暂时用处不大，可以按需构建）PS：threaded这个runner插件也一样，大概看了一下源码是用的<code class="language-plaintext highlighter-rouge">concurrent.futures</code>的<code class="language-plaintext highlighter-rouge">ThreadPoolExecutor</code>，甚至可以照着重写一个Processed runner插件。回归inventory正题，通过这种自定义插件很直观的体现了Nornir的灵活性，代码如下：</p>
+
+<p><code class="language-plaintext highlighter-rouge">cmdb.py</code></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">from</span> <span class="nn">nornir.core.inventory</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Inventory</span><span class="p">,</span>
+    <span class="n">Group</span><span class="p">,</span>
+    <span class="n">Groups</span><span class="p">,</span>
+    <span class="n">Host</span><span class="p">,</span>
+    <span class="n">Hosts</span><span class="p">,</span>
+    <span class="n">Defaults</span><span class="p">,</span>
+    <span class="n">ConnectionOptions</span><span class="p">,</span>
+    <span class="n">HostOrGroup</span><span class="p">,</span>
+    <span class="n">ParentGroups</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_connection_options</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConnectionOptions</span><span class="p">]:</span>
+    <span class="n">cp</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">cn</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">cp</span><span class="p">[</span><span class="n">cn</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConnectionOptions</span><span class="p">(</span>
+            <span class="n">hostname</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"hostname"</span><span class="p">),</span>
+            <span class="n">port</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"port"</span><span class="p">),</span>
+            <span class="n">username</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"username"</span><span class="p">),</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"password"</span><span class="p">),</span>
+            <span class="n">platform</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"platform"</span><span class="p">),</span>
+            <span class="n">extras</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"extras"</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">cp</span>
+
+
+<span class="k">def</span> <span class="nf">_get_defaults</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Defaults</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Defaults</span><span class="p">(</span>
+        <span class="n">hostname</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"hostname"</span><span class="p">),</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"port"</span><span class="p">),</span>
+        <span class="n">username</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"username"</span><span class="p">),</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"password"</span><span class="p">),</span>
+        <span class="n">platform</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"platform"</span><span class="p">),</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"data"</span><span class="p">),</span>
+        <span class="n">connection_options</span><span class="o">=</span><span class="n">_get_connection_options</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"connection_options"</span><span class="p">,</span> <span class="p">{})),</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_inventory_element</span><span class="p">(</span>
+    <span class="n">typ</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">HostOrGroup</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">defaults</span><span class="p">:</span> <span class="n">Defaults</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HostOrGroup</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">typ</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">hostname</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"hostname"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"ip"</span><span class="p">),</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"port"</span><span class="p">),</span>
+        <span class="n">username</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"username"</span><span class="p">),</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"password"</span><span class="p">),</span>
+        <span class="n">platform</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"platform"</span><span class="p">),</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"data"</span><span class="p">),</span>
+        <span class="n">groups</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s">"groups"</span>
+        <span class="p">),</span>  <span class="c1"># this is a hack, we will convert it later to the correct type
+</span>        <span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span><span class="p">,</span>
+        <span class="n">connection_options</span><span class="o">=</span><span class="n">_get_connection_options</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"connection_options"</span><span class="p">,</span> <span class="p">{})),</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CMDBInventory</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">devices</span><span class="p">):</span>
+        <span class="s">"""
+        根据devices的字典列表加载所有网络主机
+        Args:
+          devices: 网络设备信息字典的列表，形如 [
+                    {'ip': '192.168.1.1',
+                    'username': 'admin',
+                    'password': '1!',
+                    'port': 8181,
+                    'platform': 'cisco_nxos',
+                    'vendor':'cisco',
+                    'region': 'XX园区'
+                    },
+            ]
+        """</span>
+        <span class="c1"># 将host_info中的字段的数据保留，其他的都放到序列化后的dict数据的data字段中去。
+</span>        <span class="n">host_info</span> <span class="o">=</span> <span class="p">[</span><span class="s">'hostname'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">,</span>
+                     <span class="s">'port'</span><span class="p">,</span> <span class="s">'platform'</span><span class="p">,</span> <span class="s">'ip'</span><span class="p">,</span> <span class="s">'secret'</span><span class="p">,</span> <span class="s">'device_type'</span><span class="p">]</span>
+        <span class="n">reshape_devices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+            <span class="c1"># 初始化一个序列化后的数据
+</span>            <span class="n">reshape_device</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">'data'</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">device</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># 数据在host_info中，则保留，对platform做一下处理，netmiko中是device_type，所以兼容了一下这个字段，将其转为platform
+</span>                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">host_info</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">'device_type'</span><span class="p">:</span>
+                        <span class="n">reshape_device</span><span class="p">[</span><span class="s">'platform'</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">reshape_device</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                <span class="c1"># 数据不在host_info中，则放到data中去
+</span>                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">reshape_device</span><span class="p">[</span><span class="s">'data'</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="n">reshape_devices</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">reshape_device</span><span class="p">)</span>
+        <span class="c1"># self.deivces后续构建inventory对象
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">deivces</span> <span class="o">=</span> <span class="n">reshape_devices</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 初始化三个对象，分别是Hosts、Groups和Defaults的实例
+</span>        <span class="n">hosts</span> <span class="o">=</span> <span class="n">Hosts</span><span class="p">()</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">Groups</span><span class="p">()</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="n">Defaults</span><span class="p">()</span>
+        <span class="c1"># 我们本例只使用了hosts，大家如果真有需要，按需去添加其他两个对象的属性
+</span>        <span class="c1"># 从原生的inventory我们实际能看出，inventory的hosts是一个类似dict的对象，所以我们通过dict的方式构建或添加设备。
+</span>        <span class="c1"># 所以我们将原有的列表进行了一层转化，用ip作为每个host的name，在这段就是用ip作为字典的key值，value是之前构建的字典
+</span>        <span class="n">hosts_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">[</span><span class="s">'ip'</span><span class="p">]:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">deivces</span><span class="p">}</span>
+        <span class="c1"># 以上这行代码等于以下三行代码
+</span>        <span class="c1"># hosts_dict = {}
+</span>        <span class="c1"># for i in self.deivces:
+</span>        <span class="c1">#     hosts_dict[i['ip']] = i
+</span>
+        <span class="c1"># 我们准备好了添加网络设备的字典，然后在hosts中添加每个
+</span>        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">host_dict</span> <span class="ow">in</span> <span class="n">hosts_dict</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">hosts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_inventory_element</span><span class="p">(</span>
+                <span class="n">Host</span><span class="p">,</span> <span class="n">host_dict</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Inventory</span><span class="p">(</span><span class="n">hosts</span><span class="o">=</span><span class="n">hosts</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">demo.py</code></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
+<span class="kn">from</span> <span class="nn">nornir.core.plugins.inventory</span> <span class="kn">import</span> <span class="n">InventoryPluginRegister</span>
+<span class="kn">from</span> <span class="nn">nornir_netmiko</span> <span class="kn">import</span> <span class="n">netmiko_send_command</span><span class="p">,</span> <span class="n">netmiko_send_config</span>
+<span class="kn">from</span> <span class="nn">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
+<span class="kn">from</span> <span class="nn">nornir.core.task</span> <span class="kn">import</span> <span class="n">Result</span>
+
+<span class="kn">from</span> <span class="nn">cmdb</span> <span class="kn">import</span> <span class="n">CMDBInventory</span>
+
+<span class="n">InventoryPluginRegister</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"CMDBInventory"</span><span class="p">,</span> <span class="n">CMDBInventory</span><span class="p">)</span>
+
+<span class="c1"># device_type改为platform也是兼容的
+</span><span class="n">devices</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.11'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'device_type'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span> <span class="p">{</span>
+        <span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.12'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'platform'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="n">nr</span> <span class="o">=</span> <span class="n">InitNornir</span><span class="p">(</span>
+    <span class="n">runner</span><span class="o">=</span><span class="p">{</span>
+        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"threaded"</span><span class="p">,</span>
+        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"num_workers"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="n">inventory</span><span class="o">=</span><span class="p">{</span>
+        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"CMDBInventory"</span><span class="p">,</span>
+        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"devices"</span><span class="p">:</span> <span class="n">devices</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">netmiko_send_command</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'dis users'</span><span class="p">,</span>
+                 <span class="n">command_string</span><span class="o">=</span><span class="s">'dis users'</span><span class="p">)</span>
+<span class="n">print_result</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#nornir"><span class="octicon octicon-tag"></span>&nbsp;nornir</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-02-15/paramiko%E6%B5%85%E6%9E%90/">Paramiko浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-10-08/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Processor-4/">Nornir自定义Processor-4</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-27/Nornir%E7%95%AA%E5%A4%96%E7%AF%87-3.5/">Nornir番外篇-3.5</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-15/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Task%E6%8F%92%E4%BB%B6-3/">Nornir自定义Task插件-3</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-01/Nornir%E5%88%9D%E8%AF%86-1/">Nornir初识-1</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-08-27/%E7%BD%91%E7%BB%9C%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84python%E4%B9%8B%E8%B7%AF/">网络工程师的python之路</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

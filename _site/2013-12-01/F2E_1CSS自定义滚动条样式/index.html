@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>F2E_1CSS自定义滚动条样式</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="F2E_1CSS自定义滚动条样式, 随编, 前端之路, CodeShurrik" />
+    <meta name="description" content="F2E_1CSS自定义滚动条样式, 随编, 前端之路, 突然很看不惯默认的滚动条，于是研究了一番改成了现在的样子，兼容IE和基于webkit的浏览器，正好来总结一下。  一、IE下的滚动条样式IE是最早提供滚动条的样式支持，嗯，好多年了，但是其它浏览器一直没有支持，IE独孤求败了。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2013-12-01/F2E_1CSS%E8%87%AA%E5%AE%9A%E4%B9%89%E6%BB%9A%E5%8A%A8%E6%9D%A1%E6%A0%B7%E5%BC%8F/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>F2E_1CSS自定义滚动条样式</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Dec 1, 2013
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#随编"><span class="octicon octicon-list-unordered"></span>&nbsp;随编</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#前端之路"><span class="octicon octicon-tag"></span>&nbsp;前端之路</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>突然很看不惯默认的滚动条，于是研究了一番改成了现在的样子，兼容IE和基于webkit的浏览器，正好来总结一下。</p>
+<blockquote>
+  <p>一、IE下的滚动条样式
+IE是最早提供滚动条的样式支持，嗯，好多年了，但是其它浏览器一直没有支持，IE独孤求败了。</p>
+</blockquote>
+
+<p>这些样式规则很简单：</p>
+<pre>/*for IE*/
+.test{
+    scrollbar-base-color:color; /*滚动条的基色*/
+    scrollbar-arrow-color: color; /*三角箭头的颜色*/
+    scrollbar-track-color: #292929; /*立体滚动条背景颜色*/
+    scrollbar-face-color: #4d4d4d;  /*立体滚动条的颜色（包括箭头部分的背景色）*/
+    scrollbar-3dlight-color: #4d4d4d; /*立体滚动条上下的颜色*/
+    scrollbar-highlight-color: #4d4d4d; /*滚动条的高亮颜色（左阴影）*/
+    scrollbar-shadow-color: #4d4d4d; /*立体滚动条阴影的颜色*/
+    scrollbar-darkshadow-color: #4d4d4d; /*立体滚动条外阴影的颜色*/
+}</pre>
+
+<!--more -->
+
+<p>大概就这些，也可以定义cursor来定义滚动条的鼠标手势。缺点很明显，只能修改color属性并且得应用在&lt;\ html class=”test” &gt;，
+效果用IE浏览器打开本页面即可看到。</p>
+<blockquote>
+  <p>二、webkit的自定义滚动条样式
+当然，这里才是今天的重点。webkit不再是用简单的几个CSS属性，而是一坨的CSS伪元素：</p>
+</blockquote>
+<pre>::-webkit-scrollbar {  /*1 滚动条整体部分*/
+    width: 10px;
+    background: #cacaca url("http://bcs.duapp.com/codeshurrik-123/mooning.jpg?sign=MBO:C7bc76a3d7869d24b1c5964a25ffb5bb:s3S%2FFtWxGP9hf6DeUloXiHK57kA%3D");
+    opacity: .8;	
+    -webkit-transition: .25s;
+}
+::-webkit-scrollbar-button {	 /*2 滚动条两端的按钮*/
+    width: 10px;
+    height: 5px;
+    -webkit-transition: .25s;
+}
+::-webkit-scrollbar-track {	 /*3 外层轨道（背景)*/
+    background: #cacaca url("http://bcs.duapp.com/codeshurrik-123/mooning.jpg?sign=MBO:C7bc76a3d7869d24b1c5964a25ffb5bb:s3S%2FFtWxGP9hf6DeUloXiHK57kA%3D");
+    /* border: thin solid lightgray; 
+    box-shadow: 0px 0px 3px #dfdfdf inset; */
+    border-radius: 10px;
+    -webkit-transition: .25s;
+}
+:-webkit-scrollbar-track-piece{} /*4 内层轨道，滚动条中间部分（除去）*/
+::-webkit-scrollbar-thumb {	 /*5 拖动条？滑块？滚动条里面可以拖动的那个，肿么翻译好呢？*/
+    background: #969696;
+    /* border: thin solid gray; */
+    border-radius: 10px;
+    -webkit-transition: .25s;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #7d7d7d;
+    -webkit-transition: .25s;
+}
+::-webkit-scrollbar-corner {} /*6 边角*/
+::-webkit-resizer {} /*7 定义右下角拖动块的样式*/
+</pre>
+
+<p><a href="http://bcs.duapp.com/codeshurrik-123/d8bea9ca0a46f21fbf8c08e7f6246b600d33aebb.png"><img src="http://bcs.duapp.com/codeshurrik-123/d8bea9ca0a46f21fbf8c08e7f6246b600d33aebb.png" alt="" title="1" /></a></p>
+
+<p>通过这些伪元素，可以完全的重写一个网站的滚动条样式。</p>
+
+<blockquote>
+  <p>三、当然webkit提供的不止这些，还有很多伪类，可以更丰富滚动条样式
+:horizontal – horizontal伪类应用于水平方向的滚动条。</p>
+</blockquote>
+
+<p>:vertical – vertical伪类应用于竖直方向的滚动条。</p>
+
+<p>:decrement – decrement伪类应用于按钮和内层轨道(track piece)。它用来指示按钮或者内层轨道是否会减小视窗的位置(比如，垂直滚动条的上面，水平滚动条的左边。)</p>
+
+<p>:increment – increment伪类和decrement类似，用来指示按钮或内层轨道是否会增大视窗的位置(比如，垂直滚动条的下面和水平滚动条的右边。)</p>
+
+<p>:start – start伪类也应用于按钮和滑块。它用来定义对象是否放到滑块的前面。</p>
+
+<p>:end – 类似于start伪类，标识对象是否放到滑块的后面。</p>
+
+<p>:double-button – 该伪类以用于按钮和内层轨道。用于判断一个按钮是不是放在滚动条同一端的一对按钮中的一个。对于内层轨道来说，它表示内层轨道是否紧靠一对按钮。</p>
+
+<p>:single-button – 类似于double-button伪类。对按钮来说，它用于判断一个按钮是否自己独立的在滚动条的一段。对内层轨道来说，它表示内层轨道是否紧靠一个single-button。</p>
+
+<p>:no-button – 用于内层轨道，表示内层轨道是否要滚动到滚动条的终端，比如，滚动条两端没有按钮的时候。</p>
+
+<p>:corner-present – 用于所有滚动条轨道，指示滚动条圆角是否显示。</p>
+
+<p>:window-inactive – 用于所有的滚动条轨道，指示应用滚动条的某个页面容器(元素)是否当前被激活。(在webkit最近的版本中，该伪类也可以用于::selection伪元素。webkit团队有计划扩展它并推动成为一个标准的伪类)</p>
+
+<p>另外，:enabled、:disabled、:hover 和 :active 等伪类同样可以用于滚动条中。</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#前端之路"><span class="octicon octicon-tag"></span>&nbsp;前端之路</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-06-10/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A5%E6%94%B6/">基于企业微信的消息接收</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-05-30/python%E7%BA%BF%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%B5%85%E6%9E%90/">python线程与线程池浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-04-22/PaddleOCR%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/">PaddleOCR文字识别API搭建</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/">基于企业微信API的消息推送</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-27/Nornir%E7%95%AA%E5%A4%96%E7%AF%87-3.5/">Nornir番外篇-3.5</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/">基于Docker+Jenkins+Gitlab搭建持续集成测试环境</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-08-24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%A3%85%E9%A5%B0%E5%99%A8/">深入理解装饰器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-10-26/F2E_8%E4%BB%8E%E5%AE%9C%E5%AE%B6%E7%9A%84%E5%AE%B6%E5%85%B7%E8%AE%BE%E8%AE%A1%E5%88%B0%E6%A8%A1%E5%9D%97%E5%8C%96/">F2E_8从宜家的家具设计到模块化</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-08-11/F2E_7markdown%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-02/">F2E_7markdown编辑器的实现-02(文件操作)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-05-17/F2E_6markdown%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-01/">F2E_6markdown编辑器的实现-01</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-03-03/github%E7%9A%84%E6%B8%85%E7%82%B9%E5%AF%B9%E8%B1%A1%E7%AE%97%E6%B3%95/">git的清点对象算法</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-03-25/F2E_5sticker%E8%B4%B4%E7%BA%B8%E6%95%88%E6%9E%9C/">F2E_5sticker贴纸效果</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-03-23/F2E_4js%E8%BE%93%E5%87%BA%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">F2E_4js输出浏览器与操作系统</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-02-09/F2E_3JS%E5%8E%9F%E5%9E%8B%E4%B8%8E%E9%97%AD%E5%8C%85/">F2E_3JS原型与闭包</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-01-11/F2E_2CSS%E4%B8%89%E8%A7%92%E5%BD%A2/">F2E_2CSS三角形</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

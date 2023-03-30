@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Linux namespace</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Linux namespace, Linux, 容器, CodeShurrik" />
+    <meta name="description" content="Linux namespace, Linux, 容器, 之前做过一段时间 docker 相关的工作，只能算熟悉相关命令，很多原理都似是而非。面试的时候被问过一个简单的问题：容器间资源的隔离是怎么实现的？当时只知道是靠 namespace ，但是具体实现不清楚。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2019-08-20/Linux-namespace/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Linux namespace</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Aug 20, 2019
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#Linux"><span class="octicon octicon-list-unordered"></span>&nbsp;Linux</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>之前做过一段时间 docker 相关的工作，只能算熟悉相关命令，很多原理都似是而非。面试的时候被问过一个简单的问题：容器间资源的隔离是怎么实现的？当时只知道是靠 namespace ，但是具体实现不清楚。</p>
+
+<p>最近深入看了下 Linux namespace ，通过 network namespace 实验了 docker 的 bridge 网络。</p>
+
+<p>在每个容器中，我们都可以看到文件系统，网卡等资源，这些资源看上去是容器自己的。拿网卡来说，每个容器都会认为自己有一块独立的网卡，即使 host 上只有一块物理网卡。</p>
+
+<p><strong>namespace 就是 Linux 内核用来隔离内核资源的方式。</strong>通过 namespace 可以让一些进程只能看到与自己相关的一部分资源，而另外一些进程也只能看到与它们自己相关的资源，这两拨进程根本就感觉不到对方的存在。具体的实现方式是把一个或多个进程的相关资源指定在同一个 namespace 中。</p>
+
+<p>Linux namespaces 是对全局系统资源的一种封装隔离，使得处于不同 namespace 的进程拥有独立的全局系统资源，改变一个 namespace 中的系统资源只会影响当前 namespace 里的进程，对其他 namespace 中的进程没有影响。</p>
+
+<p>我们可以从 docker 实现者的角度考虑该如何实现一个资源隔离的容器。比如是不是可以通过 chroot 命令切换根目录的挂载点，从而隔离文件系统。为了在分布式的环境下进行通信和定位，容器必须要有独立的 IP、端口和路由等，这就需要对网络进行隔离。同时容器还需要一个独立的主机名以便在网络中标识自己。接下来还需要进程间的通信、用户权限等的隔离。最后，运行在容器中的应用需要有进程号(PID)，自然也需要与宿主机中的 PID 进行隔离。也就是说这六种隔离能力是实现一个容器的基础，让我们看看 linux 内核的 namespace 特性为我们提供了什么样的隔离能力：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63321909-b0a84e00-c354-11e9-8179-ee7aca298e6e.png" alt="image" /></p>
+
+<p>这里我们就深入了解下network namespace：</p>
+
+<p><strong>Network namespace 在逻辑上是网络堆栈的一个副本，它有自己的路由、防火墙规则和网络设备。</strong> 默认情况下，子进程继承其父进程的 network namespace。也就是说，如果不显式创建新的 network namespace，所有进程都从 init 进程继承相同的默认 network namespace。</p>
+
+<p>每个新创建的 network namespace 默认有一个本地环回接口 lo，除此之外，所有的其他网络设备(物理/虚拟网络接口，网桥等)只能属于一个 network namespace。每个 socket 也只能属于一个 network namespace。</p>
+
+<h3 id="ip-netns-命令">ip netns 命令</h3>
+<p>ip netns 命令用来管理 network namespace。本文将使用 ip netns 命令来创建和操作 network namespace。(最近发现<code class="language-plaintext highlighter-rouge">ip</code>比<code class="language-plaintext highlighter-rouge">ifconfig</code>好用多了)</p>
+
+<h3 id="创建-network-namespace">创建 network namespace</h3>
+
+<p>先查看一下默认的 network namespace 的 ID：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63323053-683e5f80-c357-11e9-9f1d-d382e7f39ea7.png" alt="image" /></p>
+
+<p>然后通过 ip netns add 命令创建名为 mynet 的 network namespace：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63323179-ba7f8080-c357-11e9-8642-60d728246a39.png" alt="image" /></p>
+
+<p>从上图可以看出，在名为 mynet 的 network namespace 创建成功后，/var/run/netns 目录下多了一个名为 mynet 文件。ip netns exec 子命令可以在对应的 network namespace 中执行命令，下面我们就通过它在 mynet network namespace 中创建一个 bash 进程，并查看 network namespace 的 ID：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63324843-7f7f4c00-c35b-11e9-9e91-91fd2fa52841.png" alt="image" /></p>
+
+<p>这是一个完全不同的 network namespace ID，而且默认shell也变了，说明当前的 bash 进程运行在一个隔离的 network 环境中。接下来让我们看看新的 network namespace 中都有什么：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63324922-ac336380-c35b-11e9-9767-308b536ef4ec.png" alt="image" /></p>
+
+<p>每个新创建的 network namespace 默认有一个本地环回接口 lo，并且这个接口是处于关闭状态的。下面我们就启动这个接口：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63324996-d6852100-c35b-11e9-981f-d95726142cec.png" alt="image" /></p>
+
+<p>启动 lo 接口后我们可以看到其 IP 地址，并且能够 ping 通。</p>
+
+<h3 id="在两个-network-namespace-之间通信">在两个 network namespace 之间通信</h3>
+
+<p>network namespace 之间是相互隔离的，我们可以使用 veth 设备把两个 network namespace 连接起来进行通信。veth 设备是虚拟的以太网设备。它们可以充当 network namespace 之间的通道，也可以作为独立的网络设备使用。<strong>veth 设备总是被成对的创建，并且这一对设备总是连接在一起的，所以一般称之为 veth pair。</strong>需要注意的是，veth pair 无法单独存在，删除其中一个，另一个也会自动消失。接下来的示例我们就演示如何使用 veth pair 在两个 network namespace 直接通信。示例中我们使用 ip link 命令来创建和管理 veth pair。</p>
+
+<p><strong>第一步，先创建两个 network namespace net0 和 net1</strong></p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip netns add net0
+ip netns add net1
+</code></pre></div></div>
+
+<p><strong>第二步，创建一对命名的 veth 设备</strong></p>
+
+<p>默认情况下会自动为 veth pair 生成名称，这里为了易于辨识，我们在创建时指定 veth pair 的名称：</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip <span class="nb">link </span>add vethmother <span class="nb">type </span>veth peer name vethfather
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63325674-34fecf00-c35d-11e9-8a1e-09443031db75.png" alt="image" /></p>
+
+<p>如图所示，veth pair 在主机上表现为两个网卡。</p>
+
+<p><strong>第三步，把这一对 veth pair 分别放到 network namespace net0 和 net1中</strong></p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip <span class="nb">link set </span>vethmother netns net0
+ip <span class="nb">link set </span>vethfather netns net1
+ip netns <span class="nb">exec </span>net0 ip addr
+ip netns <span class="nb">exec </span>net1 ip addr
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63325799-71322f80-c35d-11e9-9403-4b6ab5d95c77.png" alt="image" /></p>
+
+<p>查看 net0 和 net1 中的网络资源，发现各自多了一个网卡，也就是 veth 设备的两个端点。注意，当我们把 veth pair 分配到 network namespace 中后，在主机上就看不到它们了。</p>
+
+<p><strong>第四步，给这些 veth pair 分配 IP 并启用它们</strong></p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip netns <span class="nb">exec </span>net0 ip <span class="nb">link set </span>vethmother up
+ip netns <span class="nb">exec </span>net0 ip addr add 10.0.1.1/24 dev vethmother
+ip netns <span class="nb">exec </span>net0 ip route
+ip netns <span class="nb">exec </span>net1 ip <span class="nb">link set </span>vethfather up
+ip netns <span class="nb">exec </span>net1 ip addr add 10.0.1.2/24 dev vethfather
+ip netns <span class="nb">exec </span>net1 ip route
+</code></pre></div></div>
+<p>下面通过 ping 命令来验证两个 network namespace 是否可以通信：</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip netns <span class="nb">exec </span>net0 ping <span class="nt">-c</span> 3 10.0.1.2
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63326000-e998f080-c35d-11e9-816b-03b39bff47b2.png" alt="image" /></p>
+
+<p>至此，我们构建了一个如下结构的虚拟网络：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63326036-f9b0d000-c35d-11e9-9b76-2670ab5c18f2.png" alt="image" /></p>
+
+<h3 id="通过-bridge-连接-network-namespace">通过 bridge 连接 network namespace</h3>
+
+<p>虽然 veth pair 可以实现两个 network namespace 之间的通信，但是当需要在多个 network namespace 之间通信的时候，光靠 veth pair 就不行了。我们可以使用 Linux 提供的虚拟交换机，来完成这样的功能。下面的示例演示如何通过虚拟交换机(这里就是一个虚拟网桥)连接多个 network namespace。</p>
+
+<p><strong>第一步，先添加一个叫 mybridge0 的网桥</strong></p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip <span class="nb">link </span>add mybridge0 <span class="nb">type </span>bridge
+ip <span class="nb">link set </span>dev mybridge0 up
+ip addr
+</code></pre></div></div>
+
+<p>对主机来说其实就是新添加了一个网络接口。</p>
+
+<p><strong>第二步，创建 network namespace 和 veth 设备</strong></p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip netns add net0
+ip <span class="nb">link </span>add veth0 <span class="nb">type </span>veth peer name veth0p 
+
+ip <span class="nb">link set </span>dev veth0p netns net0
+ip netns <span class="nb">exec </span>net0 ip <span class="nb">link set </span>dev veth0p name eth0
+ip netns <span class="nb">exec </span>net0 ip addr add 10.0.1.1/24 dev eth0
+ip netns <span class="nb">exec </span>net0 ip <span class="nb">link set </span>dev eth0 up
+ip netns <span class="nb">exec </span>net0 ip addr
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63326429-cfabdd80-c35e-11e9-90a8-a41327b7c57a.png" alt="image" /></p>
+
+<p>上图显示 network namespace net0 中的 eth0 网卡已经启动了。下面把 veth 设备的另一端连接到网桥 mybridge0 上：</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip <span class="nb">link set </span>dev veth0 master mybridge0
+ip <span class="nb">link set </span>dev veth0 up
+</code></pre></div></div>
+
+<p><strong>第三步，重复第二步创建 net1 和 net2，并连接到网桥</strong></p>
+
+<p>给 mybridge0 设置 IP：</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip <span class="nb">link set </span>dev mybridge0 down
+ip addr add 10.0.1.254/24 dev mybridge0
+ip <span class="nb">link set </span>dev mybridge0 up
+ip addr
+</code></pre></div></div>
+
+<p>通过 bridge link 命令查看网桥的信息如下：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63326917-c8390400-c35f-11e9-8b5c-3700bab628b5.png" alt="image" /></p>
+
+<p>这时就可以在不同的 network namespace 之间通信了：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63329053-d38e2e80-c363-11e9-9ef5-02199d26cd5a.png" alt="image" /></p>
+
+<p>我们创建的网络拓扑结构如下所示：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/63327204-57461c00-c360-11e9-8340-7d948ff3d0d8.png" alt="image" /></p>
+
+<h3 id="总结">总结</h3>
+
+<p>通过 network namespace 可以创建相互独立的网络栈，从而实现网络的隔离。其中 network namespace 之间通过 bridge 通信的方式已经与 docker 网络的 bridge 模式非常类似了，剩下的不过就是开启ip.forward，添加NAT规则等等。</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-04-14/tmux-+-oh-my-tmux%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8C%97/">tmux + oh-my-tmux使用指北</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-07-17/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3UDP/">深入理解UDP</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-06-06/Docker%E9%83%A8%E7%BD%B2Calico%E7%BD%91%E7%BB%9C/">Docker部署Calico网络</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-03-05/%E4%BD%BF%E7%94%A8-prometheus-%E5%92%8C-grafana-%E7%9B%91%E6%8E%A7-linux-%E6%9C%BA%E5%99%A8/">使用 prometheus 和 grafana 监控 linux 机器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/">基于Docker+Jenkins+Gitlab搭建持续集成测试环境</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-07-10/ELK-Docker-image%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3/">ELK Docker image中文文档</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-26/%E5%B9%B2%E6%8E%89Linux-Firefox%E7%9A%84Title-bar/">干掉Linux Firefox的Title bar</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-01/%E5%88%B6%E4%BD%9C%E7%BD%91%E7%AB%99docker%E9%95%9C%E5%83%8F/">制作网站docker镜像</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5Linux-VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(13)/">动手实践Linux VLAN-每天5分钟的OpenStack(13)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/Linux%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(12)/">Linux如何实现VLAN-每天5分钟的OpenStack(12)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-06/%E7%90%86%E8%A7%A3virbr0-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(11)/">理解virbr0-每天5分钟的OpenStack(11)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-06/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(10)/">动手实践虚拟网络-每天5分钟的OpenStack(10)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-05/KVM%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96%E5%9F%BA%E7%A1%80-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(9)/">KVM网络虚拟化基础-每天5分钟的OpenStack(9)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/LVM%E7%B1%BB%E5%9E%8B%E7%9A%84Storage-Pool-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(8)/">LVM类型的Storage Pool-每天5分钟的OpenStack(8)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/KVM%E5%AD%98%E5%82%A8%E8%99%9A%E6%8B%9F%E5%8C%96-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(7)/">KVM存储虚拟化-每天5分钟的OpenStack(7)</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>pytorch学习8-加载数据集</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="pytorch学习8-加载数据集, pytorch, AI, CodeShurrik" />
+    <meta name="description" content="pytorch学习8-加载数据集, pytorch, AI, 加载数据集" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2022-09-27/pytorch%E5%AD%A6%E4%B9%A08-%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE%E9%9B%86/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>pytorch学习8-加载数据集</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Sep 27, 2022
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#pytorch"><span class="octicon octicon-list-unordered"></span>&nbsp;pytorch</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <h2 id="加载数据集"><strong>加载数据集</strong></h2>
+
+<h3 id="数据集"><strong>数据集</strong></h3>
+
+<p>包括<code class="language-plaintext highlighter-rouge">DataSet</code>以及<code class="language-plaintext highlighter-rouge">DataLoader</code>两部分，用于加载的数据集包括数据和索引两部分，而DataLoader是用于引入数据集的Mini-Batch</p>
+
+<h3 id="mini-batch"><strong>Mini-Batch</strong></h3>
+
+<p>均衡于算法的时间复杂度（加载全部数据训练更快）以及算法的准确度（加载单个数据训练更准）</p>
+
+<p>在外层循环中，每一层是一个epoch（训练周期），在内层循环中，每一次是一个Mini-Batch（Batch的迭代）</p>
+
+<h3 id="常用术语"><strong>常用术语</strong></h3>
+
+<p>Epoch：所有的样本都进行了一次前馈计算和反向传播即为一次epoch</p>
+
+<p>Batch-Size：每次训练的时候所使用的样本数量</p>
+
+<p>Iterations：batch分的次数</p>
+
+<h3 id="dataloader"><strong>DataLoader</strong></h3>
+
+<p>batch_size，shuffle(洗牌，用于打乱顺序)</p>
+
+<p>通过获得DataSet的索引以及数据集大小，来自动得生成小批量训练集</p>
+
+<p>DataLoader先对数据集进行洗牌，再将数据集按照Batch_Size的长度划分为小的Batch，并按照Iterations进行加载，以方便通过循环对每个Batch进行操作。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/192412093-9cfa4479-58e7-4e06-b738-5542d5f1ea4e.png" alt="image-20210302214313822" /></p>
+
+<p>在构造数据集时，两种对数据加载到内存中的处理方式如下：</p>
+
+<ol>
+  <li>加载所有数据到dataset，每次使用时读索引，适用于数据量小的情况</li>
+  <li>只对dataset进行初始化，仅存文件名到列表，每次使用时再通过索引到内存中去读取</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="k">class</span> <span class="nc">DiabetesDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">','</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="c1">#获得数据集长度
+</span>        <span class="bp">self</span><span class="p">.</span><span class="nb">len</span><span class="o">=</span><span class="n">xy</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">t_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">xy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">t_data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">y_data</span> <span class="o">=</span> <span class="n">t_data</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="c1">#获得索引方法
+</span>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">x_data</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">y_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="c1">#获得数据集长度
+</span>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="nb">len</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">DiabetesDataset</span><span class="p">(</span><span class="s">'diabetes.csv'</span><span class="p">)</span>
+<span class="c1">#num_workers表示多线程的读取
+</span><span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span><span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">linear1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">linear2</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">linear3</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">sigmoid</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Sigmoid</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">linear1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">linear2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">linear3</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">BCELoss</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="s">'mean'</span><span class="p">)</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span><span class="s">'__main__'</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="c1">#enumerate:可获得当前迭代的次数
+</span>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
+            <span class="c1">#准备数据dataloader会将按batch_size返回的数据整合成矩阵加载
+</span>            <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="c1">#前馈
+</span>            <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">loss</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+            <span class="c1">#反向传播
+</span>            <span class="n">optimizer</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="c1">#更新
+</span>            <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+    <span class="c1"># 保存模型参数
+</span>    <span class="n">torch</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">state_dict</span><span class="p">(),</span><span class="s">'model_param.pkl'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'保存完毕'</span><span class="p">)</span>
+    
+    <span class="c1">#预测
+</span>    <span class="n">model</span><span class="p">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="s">'model_param.pkl'</span><span class="p">))</span>
+    <span class="n">model</span><span class="p">.</span><span class="nb">eval</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"预测 = "</span><span class="p">,</span> <span class="n">model</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]).</span><span class="n">item</span><span class="p">())</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"实际 = "</span><span class="p">,</span> <span class="n">dataset</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">].</span><span class="n">item</span><span class="p">())</span>
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/192412553-290c6d11-d79c-4962-9a02-b43ceb065ff0.png" alt="微信截图_20220927095044" /></p>
+
+<p>本文参考自<a href="https://www.bilibili.com/video/BV1Y7411d7Ys?p=8">B站《PyTorch深度学习实践》P8</a></p>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2023-01-03/pytorch%E5%AD%A6%E4%B9%A016-transformer%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习16-transformer流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-12-03/pytorch%E5%AD%A6%E4%B9%A015-%E5%8A%A0%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E7%9A%84seq2seq%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习15-加入注意力机制的seq2seq优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-11-09/pytorch%E5%AD%A6%E4%B9%A014-%E4%BD%BF%E7%94%A8GPU%E8%AE%AD%E7%BB%83/">pytorch学习14-使用GPU训练</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-16/pytorch%E5%AD%A6%E4%B9%A013-%E4%BD%BF%E7%94%A8RNN%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习13-使用RNN优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-14/pytorch%E5%AD%A6%E4%B9%A012-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">pytorch学习12-循环神经网络基础</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-09/pytorch%E5%AD%A6%E4%B9%A011-%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">pytorch学习11-卷积神经网络基础</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-30/pytorch%E5%AD%A6%E4%B9%A010-%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B%E5%AE%9E%E6%88%98/">pytorch学习10-流量预测实战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-29/pytorch%E5%AD%A6%E4%B9%A09-%E5%A4%9A%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/">pytorch学习9-多分类问题</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-26/pytorch%E5%AD%A6%E4%B9%A07-%E5%A4%84%E7%90%86%E5%A4%9A%E7%BB%B4%E7%89%B9%E5%BE%81%E7%9A%84%E8%BE%93%E5%85%A5/">pytorch学习7-处理多维特征的输入</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-23/pytorch%E5%AD%A6%E4%B9%A06-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98Logistic%E5%9B%9E%E5%BD%92/">pytorch学习6-分类问题Logistic回归</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-22/pytorch%E5%AD%A6%E4%B9%A05-pytorch%E5%AE%9E%E7%8E%B0%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">pytorch学习5-pytorch实现线性回归</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-21/pytorch%E5%AD%A6%E4%B9%A04-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">pytorch学习4-反向传播</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-20/pytorch%E5%AD%A6%E4%B9%A03-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95/">pytorch学习3-梯度下降算法</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-15/pytorch%E5%AD%A6%E4%B9%A02-%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B/">pytorch学习2-线性模型</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-13/pytorch%E5%AD%A6%E4%B9%A01-%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/">pytorch学习1-人工智能基础</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

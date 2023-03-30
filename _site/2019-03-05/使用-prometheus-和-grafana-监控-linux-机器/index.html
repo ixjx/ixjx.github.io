@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>使用 prometheus 和 grafana 监控 linux 机器</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="使用 prometheus 和 grafana 监控 linux 机器, Linux, 容器, CodeShurrik" />
+    <meta name="description" content="使用 prometheus 和 grafana 监控 linux 机器, Linux, 容器, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2019-03-05/%E4%BD%BF%E7%94%A8-prometheus-%E5%92%8C-grafana-%E7%9B%91%E6%8E%A7-linux-%E6%9C%BA%E5%99%A8/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>使用 prometheus 和 grafana 监控 linux 机器</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Mar 5, 2019
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#Linux"><span class="octicon octicon-list-unordered"></span>&nbsp;Linux</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <ul id="markdown-toc">
+  <li><a href="#运行prometheus" id="markdown-toc-运行prometheus">运行prometheus</a></li>
+  <li><a href="#使用-node-exporter-收集监控数据" id="markdown-toc-使用-node-exporter-收集监控数据">使用 node exporter 收集监控数据</a></li>
+  <li><a href="#安装配置-grafana" id="markdown-toc-安装配置-grafana">安装配置 grafana</a></li>
+  <li><a href="#配置告警" id="markdown-toc-配置告警">配置告警</a></li>
+  <li><a href="#总结" id="markdown-toc-总结">总结</a></li>
+</ul>
+
+<p>　　Prometheus 是一个非常优秀的监控工具。准确的说，应该是监控方案。Prometheus 提供了监控数据搜集、存储、处理、可视化和告警一套完整的解决方案。让我们先来看看 Prometheus 的架构。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/56795946-2a677980-6844-11e9-9cfd-5bc9be82b2e0.jpg" alt="prometheus1" /></p>
+
+<ul>
+  <li>
+    <p>prometheus server 位于中心，负责时序数据的收集、存储和查询</p>
+  </li>
+  <li>
+    <p>左边是数据来源，prometheus 统一采用拉取的模式（pull mode）从兼容的 HTTP 接口处获取数据，数据源可以分为三种</p>
+  </li>
+</ul>
+
+<p>　　1. 本身就暴露 prometheus 可读取 metrics 数据的或者专门为某个组件编写的 exporter，称为 Jobs 或者 Exporters，比如 node exporter</p>
+
+<p>　　2. 通过 push gateway 可以把原来 push 类型的数据转换成 pull 类型</p>
+
+<p>　　3. 其他 prometheus server</p>
+
+<ul>
+  <li>
+    <p>上面是目标自动发现机制。对于生产的很多情况，手动配置所有的 metrics 来源可能会非常繁琐，所以 prometheus 支持 DNS、k8s、Consul 等服务发现机制来动态地获取目标源进行数据抓取</p>
+  </li>
+  <li>
+    <p>右下方是数据输出，一般是用来进行 UI 展示，可以使用 grafana 等开源方案，也可以直接读取 prometheus 的接口进行自主开发</p>
+  </li>
+  <li>
+    <p>右上方是告警部分，用户需要配置告警规则，一旦 alertManager 发现监控数据匹配告警规则，就把告警信息通过邮件、社交账号发送出去</p>
+  </li>
+</ul>
+
+<hr />
+
+<p>　　整个系统使用了三个组件：</p>
+
+<ul>
+  <li>
+    <p>node-exporter：运行在主机上收集操作系统上各种数据的 agent，prometheus 中称为 exporter</p>
+  </li>
+  <li>
+    <p>prometheus server：开源的时序数据库，作为数据存储和分析的中心</p>
+  </li>
+  <li>
+    <p>grafana：数据展示分析界面，提供各种强大的 dashboard，可以从多个数据源读取数据，其中就包括 prometheus</p>
+  </li>
+</ul>
+
+<blockquote>
+  <p>NOTE：所有的服务都是通过 docker 启动，需要安装 docker 和 docker-compose</p>
+</blockquote>
+
+<h2 id="运行prometheus">运行prometheus</h2>
+
+<p>首先，我们创建一个<code class="language-plaintext highlighter-rouge">docker-compose.yml</code>文件，里面只包含 prometheus 一个服务：</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">2'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">prometheus</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/prometheus:v2.0.0</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./prometheus.yml:/etc/prometheus/prometheus.yml</span>
+    <span class="na">command</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">--config.file=/etc/prometheus/prometheus.yml'</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">9090:9090'</span>
+</code></pre></div></div>
+
+<p>其中比较重要的是<code class="language-plaintext highlighter-rouge">prometheus.yml</code>文件，它是 Prometheus Server 的配置文件：</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">global</span><span class="pi">:</span>
+    <span class="na">scrape_interval</span><span class="pi">:</span> <span class="s">5s</span>
+    <span class="na">external_labels</span><span class="pi">:</span>
+        <span class="na">monitor</span><span class="pi">:</span> <span class="s1">'</span><span class="s">my-monitor'</span>
+<span class="na">scrape_configs</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">prometheus'</span>
+      <span class="na">static_configs</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">localhost:9090'</span><span class="pi">]</span>
+</code></pre></div></div>
+
+<p>　　这个配置文件一共分为两个部分：<code class="language-plaintext highlighter-rouge">global</code>和<code class="language-plaintext highlighter-rouge">scrape_configs</code>，前者是全局的配置，如果后面的任务没有对特定配置项进行覆盖，这里的选项会生效。这里有两个配置项，<code class="language-plaintext highlighter-rouge">scrape_interval</code>表示 prometheus server 抓取的周期，如果太频繁会导致 prometheus 压力比较大，如果太久，可能会导致某些关键数据漏掉，推荐根据每个任务的重要性和集群规模分别进行配置。</p>
+
+<p>　　<code class="language-plaintext highlighter-rouge">scrape_configs</code>配置了每个抓取任务，因此是一个列表，这里我们只有一个任务，那就是抓取 prometheus 本身的 metrics 。配置里面最重要的是<code class="language-plaintext highlighter-rouge">static_configs.targets</code>，表示要抓取任务的 HTTP 地址，默认会在<code class="language-plaintext highlighter-rouge">/metrics</code> url 处进行抓取，比如这里就是 http://localhost:9090/metrics。 这是 prometheus 本身提供的监控数据，可以在浏览器中直接查看。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/56795973-38b59580-6844-11e9-8a1a-809a313c4bab.png" alt="prometheus2" /></p>
+
+<p>　　每个数据都是有一个名字和一系列称为 label 的键值对组成的，prometheus 在抓取数据的时候还会自动添加上<code class="language-plaintext highlighter-rouge">instance</code>（节点的 host:port 标识）和<code class="language-plaintext highlighter-rouge">job</code>（任务名称）两个 label 作为任务之间的区分。</p>
+
+<p>　　这些数据本身没有时间信息，当 prometheus 抓取的时候会自动添加上当时的时间戳。此外这些数据在客户端会分成四种不同的类型：counter、gauge、histogram 和 summary。更多关于 prometheus metrics 数据类型的说明请查阅官方文档。</p>
+
+<p>　　运行<code class="language-plaintext highlighter-rouge">docker-compose up -d</code>启动服务，然后在浏览器中打开 http://server-ip:9090/status 查看 prometheus 运行的状态信息</p>
+
+<h2 id="使用-node-exporter-收集监控数据">使用 node exporter 收集监控数据</h2>
+
+<p>　　虽然监控 prometheus 服务自身是件有趣而且有用的事情，但是我们的目标是监控 linux 主机。因为 prometheus 只能从 HTTP 接口的某个地址来拉取监控数据，因此需要一个工具把 linux 提供的系统数据以 HTTP 服务的形式暴露出来。庆幸的是，prometheus 官方社区有很多 exporter，它们负责把某个组件或者系统的监控数据以 prometheus 能理解的方式暴露出来，其中 node exporter 就是导出 unix/linux 系统监控数据的工具。</p>
+
+<p>　　node exporter 主要是从<code class="language-plaintext highlighter-rouge">/proc</code>中读取 linux 的各种数据，修改 docker-compose.yml 文件，添加上 node-exporter 相关的内容，node-exporter 默认会监听在 9100 端口：</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">2'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">prometheus</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/prometheus:v2.0.0</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./prometheus.yml:/etc/prometheus/prometheus.yml</span>
+    <span class="na">command</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">--config.file=/etc/prometheus/prometheus.yml'</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">9090:9090'</span>
+  <span class="na">node-exporter</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/node-exporter:v0.15.2</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">9100:9100'</span>
+</code></pre></div></div>
+
+<p>　　为了让 prometheus 收集 node-exporter 的内容，我们需要在配置文件中加上一个单独的任务：</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">global</span><span class="pi">:</span>
+    <span class="na">scrape_interval</span><span class="pi">:</span> <span class="s">5s</span>
+    <span class="na">external_labels</span><span class="pi">:</span>
+        <span class="na">monitor</span><span class="pi">:</span> <span class="s1">'</span><span class="s">my-monitor'</span>
+<span class="na">scrape_configs</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">prometheus'</span>
+      <span class="na">static_configs</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">localhost:9090'</span><span class="pi">]</span>
+    <span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">node</span><span class="nv"> </span><span class="s">resources'</span>
+      <span class="na">scrape_interval</span><span class="pi">:</span> <span class="s">10s</span>
+      <span class="na">static_configs</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="s1">'</span><span class="s">node-exporter:9100'</span>
+</code></pre></div></div>
+
+<p>　　因为 docker-compose 会自动做服务到 IP 地址的解析，因此这里可以直接使用 node-exporter:9100 作为地址。</p>
+
+<p>　　再次运行，确认 prometheus 中 targets 列表中有 node-exporter。</p>
+
+<h2 id="安装配置-grafana">安装配置 grafana</h2>
+
+<p>　　grafana 是一款强大的 dashboard 工具，界面设计很好看，功能强大，可配置性非常灵活。</p>
+
+<p>　　同样，在 docker-compose.yml 文件中加入 grafana 服务：</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">2'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">prometheus</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/prometheus:v2.11.0</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./prometheus.yml:/etc/prometheus/prometheus.yml</span>
+      <span class="pi">-</span> <span class="s">prometheus_data:/prometheus</span>
+    <span class="na">command</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">--config.file=/etc/prometheus/prometheus.yml'</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">9090:9090'</span>
+  <span class="na">node-exporter</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/node-exporter:v0.16.0</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">9100:9100'</span>
+  <span class="na">grafana</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">grafana/grafana:6.2.5</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">grafana_data:/var/lib/grafana</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">GF_SECURITY_ADMIN_PASSWORD=pass</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">prometheus</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">3000:3000'</span>
+<span class="na">volumes</span><span class="pi">:</span>
+  <span class="na">grafana_data</span><span class="pi">:</span> <span class="pi">{}</span>
+  <span class="na">prometheus_data</span><span class="pi">:</span> <span class="pi">{}</span>
+</code></pre></div></div>
+
+<p>　　这里使用 docker 的 volumes 来保存 grafana 和 prometheus 运行过程中产生的数据来保证持久化，而且使用<code class="language-plaintext highlighter-rouge">GF_SECURITY_ADMIN_PASSWORD=pass</code>环境变量设置 admin 的密码。</p>
+
+<p>　　grafana 本身只是一个 dashboard，它可以从多个数据源中获取数据进行展示，比如我们这里使用的 prometheus。所以在正式配置界面之前，需要先添加数据源，点击 grafana 左上角按钮找到 Data Sources ，进入对应页面。按照下面的内容进行填写，主要是 Type 要选择 prometheus，URL 添加 grafana 服务能访问的 prometheus 地址；Name 字段随便填写一个用来标记来源的名字即可。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/56796031-5256dd00-6844-11e9-8097-633f55fd1c24.png" alt="prometheus3" /></p>
+
+<p>　　然后创建一个 dashboard，并里面添加 graph，在 graph 中添加一个 panel，我们用这个 panel 展示系统的 load 数据。编辑 panel 数据，选择 data source 为之前添加的 prometheus，然后填写 query，系统 node 比较简单，一共是<code class="language-plaintext highlighter-rouge">node_load1</code>、<code class="language-plaintext highlighter-rouge">node_load5</code>和 <code class="language-plaintext highlighter-rouge">node_load15</code>，分别是系统最近一分钟、五分钟和十五分钟的 load 数值。输入完成后点击输入框之外，grafana 会自动更新上面的图表：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/56796069-61d62600-6844-11e9-9562-067c6a075ea7.png" alt="prometheus4" /></p>
+
+<p>　　类似的，可以添加其他的 panel，展示系统方方面的监控数据，比如 CPU、memory、IO、网络等。手动通过界面对 grafana 可以很灵活地创建出很强大的图表，但是这无疑会耗费很多时间，而且 node exporter 这种监控数据是通用的，如果所有人都手动创建一遍无疑是很多重复工作。为此，grafana 支持导入和导出配置，并且提供 <a href="https://grafana.com/dashboards">官方社区</a> 供大家分享 dashboard 配置。</p>
+
+<p>　　每个 dashboard 都有一个编号，比如 <a href="https://grafana.com/dashboards/22">编号 22 的 dashboard </a> 就是专门为 node-exporter 设计的展示图表。在 grafana 中点击导入 dashboard，添加编号选择数据源，就能得到已经配置完整的图表：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/56796100-6e5a7e80-6844-11e9-9a75-32b6b44fd2b0.png" alt="prometheus5" /></p>
+
+<p>　　如果对 dashboard 有什么不满，可以直接在页面进行添加和编辑，然后可以导出 json 文件，以便重复使用。</p>
+
+<h2 id="配置告警">配置告警</h2>
+
+<p>　　通过 grafana 图表我们可以知道系统各种指标随着时间的变化，方便轻松判断系统某个资源是否异常。但是我们不能一直盯着 dashboard，还需要系统发生异常的时候能立即通过邮件或者其他方式通知我们，这就是告警的功能。</p>
+
+<p>　　prometheus 提供用户可以自己配置的告警规则，在处理 metrics 数据的时候，如果发现某个规则被触发，就执行对应的告警动作，通过发邮件或者其他方式通知用户。</p>
+
+<p>　　对于我们的单节点主机来说，可以定义两个简单的告警规则：当主机 download 掉，或者 CPU load 持续过高一段时间就发送告警。对此，需要新建一个<code class="language-plaintext highlighter-rouge">alert.rules</code>文件，用来保存告警规则，按照需求对应的内容如下：</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">➜  monitor git:(master) ✗ cat alert.rules</span>
+<span class="na">groups</span><span class="pi">:</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">node-alert</span>
+  <span class="na">rules</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">alert</span><span class="pi">:</span> <span class="s">service_down</span>
+    <span class="na">expr</span><span class="pi">:</span> <span class="s">up == </span><span class="m">0</span>
+    <span class="na">for</span><span class="pi">:</span> <span class="s">2m</span>
+  <span class="pi">-</span> <span class="na">alert</span><span class="pi">:</span> <span class="s">high_load</span>
+    <span class="na">expr</span><span class="pi">:</span> <span class="s">node_load1 &gt; </span><span class="m">0.5</span>
+    <span class="na">for</span><span class="pi">:</span> <span class="s">5m</span>
+</code></pre></div></div>
+
+<p>　　在启动 prometheus 服务的时候把告警规则文件 mount 到 service 中，如下添加一个 volume：</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">➜  monitor git:(master) ✗ cat docker-compose.yml</span>
+<span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">2'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">prometheus</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/prometheus:v2.0.0</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./prometheus.yml:/etc/prometheus/prometheus.yml</span>
+      <span class="pi">-</span> <span class="s">./alert.rules:/etc/prometheus/alert.rules</span>
+ <span class="s">......</span>
+</code></pre></div></div>
+
+<p>　　然后，告知 prometheus 加载这些规则：</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">➜  monitor git:(master) ✗ cat prometheus.yml</span>
+<span class="s">......</span>
+<span class="na">rule_files</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s1">'</span><span class="s">alert.rules'</span>
+</code></pre></div></div>
+
+<p>　　prometheus 还提供了 alertmanager 可以自动化根据告警规则触发对应的动作，一般是各种方式通知用户和管理员，这里就不再介绍了。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>　　需要注意的是，这只是一个本地的 demo 环境，不能直接在生产上使用。首先我们没有配置安全访问，所有的服务都是 HTTP；其次 docker-compose 运行的话，所有的服务都是在同一台机器上，无法做到分布式监控和高可用。</p>
+
+<p>　　如果想在生产中使用 prometheus 和 grafana，请参考 <a href="https://prometheus.io/docs/introduction/overview/">官方文档</a> 。</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-04-14/tmux-+-oh-my-tmux%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8C%97/">tmux + oh-my-tmux使用指北</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-08-20/Linux-namespace/">Linux namespace</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-07-17/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3UDP/">深入理解UDP</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-06-06/Docker%E9%83%A8%E7%BD%B2Calico%E7%BD%91%E7%BB%9C/">Docker部署Calico网络</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/">基于Docker+Jenkins+Gitlab搭建持续集成测试环境</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-07-10/ELK-Docker-image%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3/">ELK Docker image中文文档</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-26/%E5%B9%B2%E6%8E%89Linux-Firefox%E7%9A%84Title-bar/">干掉Linux Firefox的Title bar</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-01/%E5%88%B6%E4%BD%9C%E7%BD%91%E7%AB%99docker%E9%95%9C%E5%83%8F/">制作网站docker镜像</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5Linux-VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(13)/">动手实践Linux VLAN-每天5分钟的OpenStack(13)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/Linux%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(12)/">Linux如何实现VLAN-每天5分钟的OpenStack(12)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-06/%E7%90%86%E8%A7%A3virbr0-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(11)/">理解virbr0-每天5分钟的OpenStack(11)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-06/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(10)/">动手实践虚拟网络-每天5分钟的OpenStack(10)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-05/KVM%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96%E5%9F%BA%E7%A1%80-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(9)/">KVM网络虚拟化基础-每天5分钟的OpenStack(9)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/LVM%E7%B1%BB%E5%9E%8B%E7%9A%84Storage-Pool-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(8)/">LVM类型的Storage Pool-每天5分钟的OpenStack(8)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/KVM%E5%AD%98%E5%82%A8%E8%99%9A%E6%8B%9F%E5%8C%96-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(7)/">KVM存储虚拟化-每天5分钟的OpenStack(7)</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

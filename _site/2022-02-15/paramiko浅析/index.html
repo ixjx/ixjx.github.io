@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Paramiko浅析</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Paramiko浅析, 网络自动化, python, CodeShurrik" />
+    <meta name="description" content="Paramiko浅析, 网络自动化, python, 回想起上次写blog，还是在上次，不禁令人感慨。目前所谓的网络运维自动化，绝大部分都是通过ssh实现的，使用ssh做网络自动化的本质，是对人类行为的模拟，说白了，你是在写代码模拟你日常的cli操作（这点肯定是不如api操作的）。而python实现ssh的模块Paramiko，也几乎是你首选的ssh轮子。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2022-02-15/paramiko%E6%B5%85%E6%9E%90/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Paramiko浅析</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Feb 15, 2022
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#网络自动化"><span class="octicon octicon-list-unordered"></span>&nbsp;网络自动化</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#python"><span class="octicon octicon-tag"></span>&nbsp;python</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>回想起上次写blog，还是在上次，不禁令人感慨。目前所谓的网络运维自动化，绝大部分都是通过ssh实现的，使用ssh做网络自动化的本质，是对人类行为的模拟，说白了，你是在写代码模拟你日常的cli操作（这点肯定是不如api操作的）。而python实现ssh的模块Paramiko，也几乎是你首选的ssh轮子。</p>
+
+<p>作为python最成功的一个sshv2开源项目，Paramiko在netdevops业界的地位毋庸置疑。计算机网络从业者都知道Netdevops给整个网络业界带来的改变是颠覆性的，很多开源项目在默默支撑着当代社会的运转，而Paramiko几乎是网络工程师（包括我）进入python和netdevops世界的领路人。</p>
+
+<p><strong>解释下Paramiko的几个核心部分的东西</strong></p>
+
+<blockquote>
+  <p>SSHClient</p>
+</blockquote>
+
+<p>SSHClient是Paramiko最高层的抽象，大部分时候，我们直接通过实例化一个SSHClient来访问所有的函数/方法。</p>
+
+<blockquote>
+  <p>Transport</p>
+</blockquote>
+
+<p>在你实例化SSHClient的时候，Transport对象就已经创建过了，如无特殊需求，一般不需要单独使用。Transport包含的是SSH建立通道所需要的参数，如密钥交互算法。</p>
+
+<blockquote>
+  <p>Channel</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">A secure tunnel across an SSHTransport. A Channel is meant to behave like a socket</code></p>
+
+<p>顾名思义，Channel就是那条真正在工作的SSH通道。Paramiko实际上可以创建两条不同的通道，一条是建立SSH连接后就一定会存在的通道，另一条是你调用exec_command方法的时候，它会创建另一条通道出来。但是，并非所有的SSH服务端都支持，按官方的说法就是，基于标准的OpenSSH实现都是可以的……不过嘛，大厂的网络设备，总会有非标的情况。</p>
+
+<blockquote>
+  <p>invoke_shell</p>
+</blockquote>
+
+<p>Paramiko提供了一个invoke_shell()的方法，让你直接调用SSH建立通道时默认存在的那条Channel，不过通过这条Channel返回的数据是字节流，但它仍然是一个”Channel”对象，这意味着你可以通过调用所有Channel支持的方法来达到和exec_command同样的效果。</p>
+
+<p><strong>使用Paramiko操作设备</strong></p>
+
+<p>无论如何，你总要实例化一个SSHClient的，所以</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">paramiko</span>
+
+<span class="n">hostname</span> <span class="o">=</span> <span class="s">"YOUR DEVICE HOSTNAME"</span>
+<span class="n">username</span> <span class="o">=</span> <span class="s">"YOUR ACCOUNT USERNAME"</span>
+<span class="n">password</span> <span class="o">=</span> <span class="s">"YOUR PASSWORD"</span>
+
+<span class="n">ssh_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="p">.</span><span class="n">SSHClient</span><span class="p">()</span>
+<span class="n">ssh_client</span><span class="p">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+<span class="n">ssh_client</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>通过exec_command发送单条命令</p>
+</blockquote>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="p">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s">"dis version</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>    <span class="o">//</span><span class="n">在读stdout之前中断一下</span><span class="err">，</span><span class="n">让回显完全写入</span>
+<span class="n">stdout</span><span class="p">.</span><span class="n">channel</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">stdout</span><span class="p">.</span><span class="n">readlines</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>\n其实就是在模拟敲回车。命令执行完之后需要关闭Channle，否则你会发现你根本不能读取到stdout中的数据。stdout实际上是在调用exec_command方法时自动调用了makefile()，返回了一个类文件的对象，你可以直接使用Python的file()函数和方法，比如readlines，逐行读取后返回一个列表。</p>
+
+<blockquote>
+  <p>invoke_shell多条命令</p>
+</blockquote>
+
+<p>不再使用exec_command，实例化SSHClient的代码不变，然后</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">channel</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="p">.</span><span class="n">invoke_shell</span><span class="p">()</span>
+<span class="n">channel</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s">"sys</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="n">channel</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s">"dis version</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="n">channel</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s">"dis vlan</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># RETURN A BYTES OBJECT THAT DECODED BY THE UNICODE
+</span><span class="k">print</span><span class="p">(</span><span class="n">channel</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">65535</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="s">"utf-8"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>请注意，这里返回输出的，不再是可以调用file()方法的对象了，而是一个Bytes对象，顾名思义，是字节流 ，通过utf-8解码可以得到和CLI一样的回显。</p>
+
+<p>不过，字节流不好处理，数据提取会比较痛苦，所幸invoke_shell仍然是一个Channel，所以可以调用makefile()方法来达到和使用exec_command一样的效果。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stdout</span> <span class="o">=</span> <span class="n">channel</span><span class="p">.</span><span class="n">makefile</span><span class="p">()</span>
+<span class="n">channel</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">stdout</span><span class="p">.</span><span class="n">readlines</span><span class="p">())</span>
+</code></pre></div></div>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#python"><span class="octicon octicon-tag"></span>&nbsp;python</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-06-10/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A5%E6%94%B6/">基于企业微信的消息接收</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-05-30/python%E7%BA%BF%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%B5%85%E6%9E%90/">python线程与线程池浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/">基于企业微信API的消息推送</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-10-08/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Processor-4/">Nornir自定义Processor-4</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-15/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Task%E6%8F%92%E4%BB%B6-3/">Nornir自定义Task插件-3</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-07/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Inventory%E6%8F%92%E4%BB%B6-2/">Nornir自定义Inventory插件-2</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-01/Nornir%E5%88%9D%E8%AF%86-1/">Nornir初识-1</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-08-27/%E7%BD%91%E7%BB%9C%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84python%E4%B9%8B%E8%B7%AF/">网络工程师的python之路</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-08-24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%A3%85%E9%A5%B0%E5%99%A8/">深入理解装饰器</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

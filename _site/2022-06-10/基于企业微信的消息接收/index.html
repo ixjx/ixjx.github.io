@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>基于企业微信的消息接收</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="基于企业微信的消息接收, 随编, python, CodeShurrik" />
+    <meta name="description" content="基于企业微信的消息接收, 随编, python, 本篇是基于企业微信API的消息推送的下集，之前也提到过，接收信息比推送稍微复杂一丢丢，需要实现一个回调服务。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2022-06-10/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A5%E6%94%B6/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>基于企业微信的消息接收</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Jun 10, 2022
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#随编"><span class="octicon octicon-list-unordered"></span>&nbsp;随编</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#python"><span class="octicon octicon-tag"></span>&nbsp;python</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>本篇是<a href="https://ixjx.github.io/blog/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/">基于企业微信API的消息推送</a>的下集，之前也提到过，接收信息比推送稍微复杂一丢丢，需要实现一个回调服务。</p>
+
+<p>根据<a href="https://developer.work.weixin.qq.com/document/path/90238">官方文档</a>，配置回调服务时，<strong>需要能同时支持HttpGet以及HttpPost两种能力</strong>。</p>
+
+<ul>
+  <li>
+    <p>企业微信会先判断URL服务是否具备解析企业微信推送消息的能力。
+具体方式是，企业微信往URL服务上发一条Get请求带签名及密文参数到URL服务上，如果URL服务检查签名通过，并能正确返回密文参数对应的明文字符串，则验证通过。此时在企业微信的配置就开始生效。</p>
+  </li>
+  <li>
+    <p>后续的业务请求（比如应用菜单的点击事件，用户消息等），都会类似的方式（签名+密文）向服务URL推送消息。URL服务验证签名通过后，需要将POST数据解密，就可以得到对应的业务消息明文。</p>
+  </li>
+</ul>
+
+<h2 id="1-首先设置接收消息的参数">1. 首先设置接收消息的参数</h2>
+
+<p>在企业的管理端后台，进入需要设置接收消息的目标应用，点击“接收消息”的“设置API接收”按钮，进入配置页面。</p>
+
+<p><img src="https://wework.qpic.cn/wwpic/811920_5NH6quLcQXyXXjT_1578920675/0" alt="" /></p>
+
+<p>用的<code class="language-plaintext highlighter-rouge">URL、Token、EncodingAESKey</code>三个参数</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">URL</code>是企业后台接收企业微信推送请求的访问协议和地址，支持http或https协议（为了提高安全性，建议使用https）。</li>
+  <li><code class="language-plaintext highlighter-rouge">Token</code>可由企业任意填写，用于生成签名。</li>
+  <li><code class="language-plaintext highlighter-rouge">EncodingAESKey</code>用于消息体的加密。</li>
+</ul>
+
+<h2 id="2-回调服务">2. 回调服务</h2>
+
+<p>回调服务用什么实现都可以，我这里django比较熟就使用django了。</p>
+
+<p>主要在于消息的加解密，鉴于加解密算法相对复杂，企业微信提供了算法库。目前已有c++/python/php/java/golang/c#等语言版本，均提供了解密、加密、验证URL三个接口，自己去官方文档下就是了。</p>
+
+<p>views.py :</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">django.views</span> <span class="kn">import</span> <span class="n">View</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
+<span class="kn">from</span> <span class="nn">django.utils.decorators</span> <span class="kn">import</span> <span class="n">method_decorator</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>
+
+<span class="kn">from</span> <span class="nn">.WXBizMsgCrypt3</span> <span class="kn">import</span> <span class="n">WXBizMsgCrypt</span>
+<span class="kn">import</span> <span class="nn">xml.etree.cElementTree</span> <span class="k">as</span> <span class="n">ET</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c1"># Create your views here.
+</span><span class="o">@</span><span class="n">method_decorator</span><span class="p">(</span><span class="n">csrf_exempt</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'dispatch'</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Receive</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">wxcpt</span> <span class="o">=</span> <span class="n">WXBizMsgCrypt</span><span class="p">(</span>
+            <span class="n">sToken</span><span class="o">=</span><span class="s">'你的Token'</span><span class="p">,</span> <span class="n">sEncodingAESKey</span><span class="o">=</span><span class="s">'你的EncodingAESKey'</span><span class="p">,</span> <span class="n">sReceiveId</span><span class="o">=</span><span class="s">'你的corp_id'</span><span class="p">)</span>  <span class="c1"># corp_id
+</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">msg_signature</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'msg_signature'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 加密签名
+</span>        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'timestamp'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 时间戳
+</span>        <span class="n">nonce</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'nonce'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 随机数
+</span>        <span class="n">echostr</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'echostr'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 加密的字符串
+</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">sEchoStr</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">wxcpt</span><span class="p">.</span><span class="n">VerifyURL</span><span class="p">(</span>
+            <span class="n">msg_signature</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span> <span class="n">echostr</span><span class="p">)</span>
+        <span class="c1"># print(sEchoStr)
+</span>        <span class="k">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"ERR: VerifyURL ret: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
+            <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># 验证URL成功，将sEchoStr返回给企业号
+</span>        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">sEchoStr</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">msg_signature</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'msg_signature'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 加密签名
+</span>        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'timestamp'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 时间戳
+</span>        <span class="n">nonce</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'nonce'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 随机数
+</span>        <span class="n">sReqData</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">body</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>  <span class="c1"># 加密的消息
+</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">sMsg</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">wxcpt</span><span class="p">.</span><span class="n">DecryptMsg</span><span class="p">(</span>
+            <span class="n">sReqData</span><span class="p">,</span> <span class="n">msg_signature</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
+        <span class="c1">#print(ret, sMsg)
+</span>        <span class="k">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"ERR: DecryptMsg ret: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
+            <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># 解密成功，sMsg即为xml格式的明文
+</span>        <span class="c1"># TODO: 对明文的处理
+</span>        <span class="n">xml_tree</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">sMsg</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"Content"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">ToUserName</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"ToUserName"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">FromUserName</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"FromUserName"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">CreateTime</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"CreateTime"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">MsgId</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"MsgId"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">AgentID</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"AgentID"</span><span class="p">).</span><span class="n">text</span>
+        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'content:</span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s">'</span><span class="p">,</span> <span class="sa">f</span><span class="s">'ToUserName:</span><span class="si">{</span><span class="n">ToUserName</span><span class="si">}</span><span class="s">'</span><span class="p">,</span>
+              <span class="sa">f</span><span class="s">'FromUserName:</span><span class="si">{</span><span class="n">FromUserName</span><span class="si">}</span><span class="s">'</span><span class="p">,)</span>
+
+        <span class="c1"># 构造回复消息结构体
+</span>        <span class="n">sRespData</span> <span class="o">=</span> <span class="sa">f</span><span class="s">'''
+        &lt;xml&gt;
+        &lt;ToUserName&gt;</span><span class="si">{</span><span class="n">ToUserName</span><span class="si">}</span><span class="s">&lt;/ToUserName&gt;
+        &lt;FromUserName&gt;</span><span class="si">{</span><span class="n">FromUserName</span><span class="si">}</span><span class="s">&lt;/FromUserName&gt;
+        &lt;CreateTime&gt;</span><span class="si">{</span><span class="n">CreateTime</span><span class="si">}</span><span class="s">&lt;/CreateTime&gt;
+        &lt;MsgType&gt;text&lt;/MsgType&gt;
+        &lt;Content&gt;我也</span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s">!&lt;/Content&gt;
+        &lt;MsgId&gt;</span><span class="si">{</span><span class="n">MsgId</span><span class="si">}</span><span class="s">&lt;/MsgId&gt;
+        &lt;AgentID&gt;</span><span class="si">{</span><span class="n">AgentID</span><span class="si">}</span><span class="s">&lt;/AgentID&gt;
+        &lt;/xml&gt;
+        '''</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">sEncryptMsg</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">wxcpt</span><span class="p">.</span><span class="n">EncryptMsg</span><span class="p">(</span><span class="n">sRespData</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"ERR: EncryptMsg ret: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
+            <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># ret == 0 加密成功，企业需要将sEncryptMsg返回给企业号
+</span>        <span class="c1"># 假如企业无法保证在五秒内处理并回复，或者不想回复任何内容，可以直接返回200（即以空串为返回包）。
+</span>        <span class="c1"># 企业后续可以使用主动发消息接口进行异步回复。
+</span>        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">sEncryptMsg</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p>python版本有个坑的地方在于使用了<code class="language-plaintext highlighter-rouge">pycrypto</code>第三方库</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
+
+关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案
+
+请到官方网站 https://www.dlitz.net/software/pycrypto/ 下载pycrypto。
+
+下载后，按照README中的“Installation”小节的提示进行pycrypto安装。
+
+pip install pycryptodome
+"""</span>
+</code></pre></div></div>
+
+<h2 id="3-效果">3. 效果</h2>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/173006198-6d91a6ba-1d31-44d9-afab-852374a5ea10.jpg" alt="微信图片_20220610144038" /></p>
+
+<p><del>不小心暴露了价值百万的人工智能IP</del>，可以看到emoji也能显示，消息类型支持：文本、图片、语音、视频、位置以及链接信息，具体可以参考官方文档。</p>
+
+<p>后台接收到信息后就可以自己去实现相应的业务逻辑，比如用户向应用发消息，识别消息关键词，回复不同的消息内容；用户点击应用菜单时，转化为指令，执行自动化任务等等等。</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#python"><span class="octicon octicon-tag"></span>&nbsp;python</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-05-30/python%E7%BA%BF%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%B5%85%E6%9E%90/">python线程与线程池浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-04-22/PaddleOCR%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/">PaddleOCR文字识别API搭建</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/">基于企业微信API的消息推送</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-02-15/paramiko%E6%B5%85%E6%9E%90/">Paramiko浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-27/Nornir%E7%95%AA%E5%A4%96%E7%AF%87-3.5/">Nornir番外篇-3.5</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-08-27/%E7%BD%91%E7%BB%9C%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84python%E4%B9%8B%E8%B7%AF/">网络工程师的python之路</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/">基于Docker+Jenkins+Gitlab搭建持续集成测试环境</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-08-24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%A3%85%E9%A5%B0%E5%99%A8/">深入理解装饰器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-10-26/F2E_8%E4%BB%8E%E5%AE%9C%E5%AE%B6%E7%9A%84%E5%AE%B6%E5%85%B7%E8%AE%BE%E8%AE%A1%E5%88%B0%E6%A8%A1%E5%9D%97%E5%8C%96/">F2E_8从宜家的家具设计到模块化</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-08-11/F2E_7markdown%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-02/">F2E_7markdown编辑器的实现-02(文件操作)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-05-17/F2E_6markdown%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-01/">F2E_6markdown编辑器的实现-01</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-03-03/github%E7%9A%84%E6%B8%85%E7%82%B9%E5%AF%B9%E8%B1%A1%E7%AE%97%E6%B3%95/">git的清点对象算法</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-03-25/F2E_5sticker%E8%B4%B4%E7%BA%B8%E6%95%88%E6%9E%9C/">F2E_5sticker贴纸效果</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-03-23/F2E_4js%E8%BE%93%E5%87%BA%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">F2E_4js输出浏览器与操作系统</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-02-09/F2E_3JS%E5%8E%9F%E5%9E%8B%E4%B8%8E%E9%97%AD%E5%8C%85/">F2E_3JS原型与闭包</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

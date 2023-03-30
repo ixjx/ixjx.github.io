@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>RSA算法原理（二）</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="RSA算法原理（二）, 转载, RSA, CodeShurrik" />
+    <meta name="description" content="RSA算法原理（二）, 转载, RSA, 上一次，我介绍了一些数论知识。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2013-07-12/RSA%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86-%E4%BA%8C/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>RSA算法原理（二）</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Jul 12, 2013
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#转载"><span class="octicon octicon-list-unordered"></span>&nbsp;转载</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#RSA"><span class="octicon octicon-tag"></span>&nbsp;RSA</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>上一次，我介绍了一些<a href="http://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html">数论知识</a>。</p>
+
+<p>有了这些知识，我们就可以看懂<a href="http://zh.wikipedia.org/wiki/RSA%E7%AE%97%E6%B3%95">RSA算法</a>。这是目前地球上最重要的加密算法。</p>
+
+<p><img src="http://image.beekka.com/blog/201307/bg2013070301.png" alt="" /></p>
+
+<p>六、密钥生成的步骤</p>
+
+<p>我们通过一个例子，来理解RSA算法。假设<a href="http://zh.wikipedia.org/wiki/%E7%88%B1%E4%B8%BD%E4%B8%9D%E4%B8%8E%E9%B2%8D%E4%BC%AF">爱丽丝</a>要与鲍勃进行加密通信，她该怎么生成公钥和私钥呢？</p>
+
+<!--more-->
+
+<p><img src="http://image.beekka.com/blog/201307/bg2013070302.png" alt="" /></p>
+
+<p>第一步，随机选择两个不相等的质数p和q。</p>
+
+<p>爱丽丝选择了61和53。（实际应用中，这两个质数越大，就越难破解。）</p>
+
+<p>第二步，计算p和q的乘积n。</p>
+
+<p>爱丽丝就把61和53相乘。</p>
+<blockquote>
+  <p>n = 61×53 = 3233
+n的长度就是密钥长度。3233写成二进制是110010100001，一共有12位，所以这个密钥就是12位。实际应用中，RSA密钥一般是1024位，重要场合则为2048位。</p>
+</blockquote>
+
+<p>第三步，计算n的欧拉函数φ(n)。</p>
+
+<p>根据公式：</p>
+<blockquote>
+  <p>φ(n) = (p-1)(q-1)
+爱丽丝算出φ(3233)等于60×52，即3120。</p>
+</blockquote>
+
+<p>第四步，随机选择一个整数e，条件是1&lt; e &lt; φ(n)，且e与φ(n) 互质。</p>
+
+<p>爱丽丝就在1到3120之间，随机选择了17。（实际应用中，常常选择65537。）</p>
+
+<p>第五步，计算e对于φ(n)的模反元素d。</p>
+
+<p>所谓<a href="http://zh.wikipedia.org/wiki/%E6%A8%A1%E5%8F%8D%E5%85%83%E7%B4%A0">“模反元素”</a>就是指有一个整数d，可以使得ed被φ(n)除的余数为1。</p>
+<blockquote>
+  <p>ed ≡ 1 (mod φ(n))
+这个式子等价于
+ed - 1 = kφ(n)
+于是，找到模反元素d，实质上就是对下面这个二元一次方程求解。
+ex + φ(n)y = 1
+已知 e=17, φ(n)=3120，
+17x + 3120y = 1
+这个方程可以用<a href="http://zh.wikipedia.org/wiki/%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95">“扩展欧几里得算法”</a>求解，此处省略具体过程。总之，爱丽丝算出一组整数解为 (x,y)=(2753,-15)，即 d=2753。</p>
+</blockquote>
+
+<p>至此所有计算完成。</p>
+
+<p>第六步，将n和e封装成公钥，n和d封装成私钥。</p>
+
+<p>在爱丽丝的例子中，n=3233，e=17，d=2753，所以公钥就是 (3233,17)，私钥就是（3233, 2753）。</p>
+
+<p>实际应用中，公钥和私钥的数据都采用<a href="http://zh.wikipedia.org/zh-cn/ASN.1">ASN.1</a>格式表达（<a href="http://hi.baidu.com/mathack/item/d0ad4cc1514a3663f7c95da2">实例</a>）。</p>
+
+<p>七、RSA算法的可靠性</p>
+
+<p>回顾上面的密钥生成步骤，一共出现六个数字：</p>
+<blockquote>
+  <p>p</p>
+
+  <p>q</p>
+
+  <p>n</p>
+
+  <p>φ(n)</p>
+
+  <p>e</p>
+
+  <p>d
+这六个数字之中，公钥用到了两个（n和e），其余四个数字都是不公开的。其中最关键的是d，因为n和d组成了私钥，一旦d泄漏，就等于私钥泄漏。</p>
+</blockquote>
+
+<p>那么，有无可能在已知n和e的情况下，推导出d？</p>
+<blockquote>
+  <p>（1）ed≡1 (mod φ(n))。只有知道e和φ(n)，才能算出d。</p>
+
+  <p>（2）φ(n)=(p-1)(q-1)。只有知道p和q，才能算出φ(n)。</p>
+
+  <p>（3）n=pq。只有将n因数分解，才能算出p和q。
+结论：如果n可以被因数分解，d就可以算出，也就意味着私钥被破解。</p>
+</blockquote>
+
+<p>可是，大整数的因数分解，是一件非常困难的事情。目前，除了暴力破解，还没有发现别的有效方法。维基百科这样写道：</p>
+<blockquote>
+  <p>“对极大整数做因数分解的难度决定了RSA算法的可靠性。换言之，对一极大整数做因数分解愈困难，RSA算法愈可靠。</p>
+
+  <p>假如有人找到一种快速因数分解的算法，那么RSA的可靠性就会极度下降。但找到这样的算法的可能性是非常小的。今天只有短的RSA密钥才可能被暴力破解。到2008年为止，世界上还没有任何可靠的攻击RSA算法的方式。</p>
+
+  <p>只要密钥长度足够长，用RSA加密的信息实际上是不能被解破的。”
+举例来说，你可以对3233进行因数分解（61×53），但是你没法对下面这个整数进行因数分解。
+12301866845301177551304949</p>
+
+  <p>58384962720772853569595334</p>
+
+  <p>79219732245215172640050726</p>
+
+  <p>36575187452021997864693899</p>
+
+  <p>56474942774063845925192557</p>
+
+  <p>32630345373154826850791702</p>
+
+  <p>61221429134616704292143116</p>
+
+  <p>02221240479274737794080665</p>
+
+  <p>351419597459856902143413
+它等于这样两个质数的乘积：
+33478071698956898786044169</p>
+
+  <p>84821269081770479498371376</p>
+
+  <p>85689124313889828837938780</p>
+
+  <p>02287614711652531743087737</p>
+
+  <p>814467999489</p>
+
+  <p>×</p>
+
+  <p>36746043666799590428244633</p>
+
+  <p>79962795263227915816434308</p>
+
+  <p>76426760322838157396665112</p>
+
+  <p>79233373417143396810270092</p>
+
+  <p>798736308917
+事实上，这大概是人类已经分解的最大整数（232个十进制位，768个二进制位）。比它更大的因数分解，还没有被报道过，因此目前被破解的最长RSA密钥就是768位。</p>
+</blockquote>
+
+<p>八、加密和解密</p>
+
+<p>有了公钥和密钥，就能进行加密和解密了。</p>
+
+<p>（1）加密要用公钥 (n,e)</p>
+
+<p>假设鲍勃要向爱丽丝发送加密信息m，他就要用爱丽丝的公钥 (n,e) 对m进行加密。这里需要注意，m必须是整数（字符串可以取ascii值或unicode值），且m必须小于n。</p>
+
+<p>所谓”加密”，就是算出下式的c：</p>
+<blockquote>
+  <p>m<sup>e</sup> ≡ c (mod n)
+爱丽丝的公钥是 (3233, 17)，鲍勃的m假设是65，那么可以算出下面的等式：
+65<sup>17</sup> ≡ 2790 (mod 3233)
+于是，c等于2790，鲍勃就把2790发给了爱丽丝。</p>
+</blockquote>
+
+<p>（2）解密要用私钥(n,d)</p>
+
+<p>爱丽丝拿到鲍勃发来的2790以后，就用自己的私钥(3233, 2753) 进行解密。可以证明，下面的等式一定成立：</p>
+<blockquote>
+  <p>c<sup>d</sup> ≡ m (mod n)
+也就是说，c的d次方除以n的余数为m。现在，c等于2790，私钥是(3233, 2753)，那么，爱丽丝算出
+2790<sup>2753</sup> ≡ 65 (mod 3233)
+因此，爱丽丝知道了鲍勃加密前的原文就是65。</p>
+</blockquote>
+
+<p>至此，”加密–解密”的整个过程全部完成。</p>
+
+<p>我们可以看到，如果不知道d，就没有办法从c求出m。而前面已经说过，要知道d就必须分解n，这是极难做到的，所以RSA算法保证了通信安全。</p>
+
+<p>你可能会问，公钥(n,e) 只能加密小于n的整数m，那么如果要加密大于n的整数，该怎么办？有两种解决方法：一种是把长信息分割成若干段短消息，每段分别加密；另一种是先选择一种”对称性加密算法”（比如<a href="https://zh.wikipedia.org/wiki/%E8%B5%84%E6%96%99%E5%8A%A0%E5%AF%86%E6%A0%87%E5%87%86">DES</a>），用这种算法的密钥加密信息，再用RSA公钥加密DES密钥。</p>
+
+<p>九、私钥解密的证明</p>
+
+<p>最后，我们来证明，为什么用私钥解密，一定可以正确地得到m。也就是证明下面这个式子：</p>
+<blockquote>
+  <p>c<sup>d</sup> ≡ m (mod n)
+因为，根据加密规则
+ｍ<sup>e</sup> ≡ c (mod n)
+于是，c可以写成下面的形式：
+c = m<sup>e</sup> - kn
+将c代入要我们要证明的那个解密规则：
+(m<sup>e</sup> - kn)<sup>d</sup> ≡ m (mod n)
+它等同于求证
+m<sup>ed</sup> ≡ m (mod n)
+由于
+ed ≡ 1 (mod φ(n))
+所以
+ed = hφ(n)+1
+将ed代入：
+m<sup>hφ(n)+1</sup> ≡ m (mod n)
+接下来，分成两种情况证明上面这个式子。</p>
+</blockquote>
+
+<p>（1）m与n互质。</p>
+
+<p>根据欧拉定理，此时</p>
+<blockquote>
+  <p>m<sup>φ(n)</sup> ≡ 1 (mod n)
+得到
+(m<sup>φ(n)</sup>)<sup>h</sup> × m ≡ m (mod n)
+原式得到证明。</p>
+</blockquote>
+
+<p>（2）m与n不是互质关系。</p>
+
+<p>此时，由于n等于质数p和q的乘积，所以m必然等于kp或kq。</p>
+
+<p>以 m = kp为例，考虑到这时k与q必然互质，则根据欧拉定理，下面的式子成立：</p>
+<blockquote>
+  <p>(kp)<sup>q-1</sup> ≡ 1 (mod q)
+进一步得到
+[(kp)<sup>q-1</sup>]<sup>h(p-1)</sup> × kp ≡ kp (mod q)
+即
+(kp)<sup>ed</sup> ≡ kp (mod q)
+将它改写成下面的等式
+(kp)<sup>ed</sup> = tq + kp
+这时t必然能被p整除，即 t=t’p
+(kp)<sup>ed</sup> = t’pq + kp
+因为 m=kp，n=pq，所以
+m<sup>ed</sup> ≡ m (mod n)
+原式得到证明。</p>
+</blockquote>
+
+<p>（完）</p>
+<div>
+
+### 文档信息
+
+*   版权声明：自由转载-非商用-非衍生-保持署名 | [Creative Commons BY-NC-ND 3.0](http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh)
+*   原文网址：[http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html](http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html)
+*   最后修改时间：2013年7月 9日 00:06
+*   付费支持：[![人民币 - 支付宝](http://www.ruanyifeng.com/blog/images/rmb_32.png "人民币")](https://me.alipay.com/ruanyf) | [![美元 - paypal](http://www.ruanyifeng.com/blog/images/dollar_32.png "美元")](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=yifeng.ruan@gmail.com&amp;currency_code=USD&amp;amount=0.99&amp;return=http://www.ruanyifeng.com/thank.html&amp;item_name=Ruan%20YiFeng)
+</div>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#RSA"><span class="octicon octicon-tag"></span>&nbsp;RSA</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-04-22/%E6%B8%A3%E6%8A%80%E6%9C%AF%E8%80%83%E6%8D%AE-HMS-Glowworm%E7%BB%9D%E5%A2%83%E4%B8%8B%E7%9A%84%E5%A5%8B%E6%88%98/">渣技术考据——HMS Glowworm绝境下的奋战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-09-22/%E8%B4%9F%E8%83%BD%E9%87%8F%E6%89%8D%E6%98%AF%E7%A4%BE%E4%BC%9A%E7%9A%84%E7%9C%9F%E7%90%86/">负能量才是社会的真理</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-01-05/%E9%BB%91%E7%A7%91%E6%8A%80%E4%B9%8BAndriod-LAMP%E7%BD%91%E7%AB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/">黑科技之Andriod LAMP网站服务器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-12-30/%E5%8F%91%E5%B8%83%E9%82%AE%E4%BB%B6%E5%9C%B0%E5%9D%80%E6%97%B6%E7%94%A8-at-%E7%AD%89%E6%9B%BF%E4%BB%A3-@-%E5%AF%B9%E4%BA%8E%E9%98%B2%E5%9E%83%E5%9C%BE%E9%82%AE%E4%BB%B6%E7%9C%9F%E7%9A%84%E6%9C%89%E4%BD%9C%E7%94%A8%E5%90%97/">发布邮件地址时用「#」「at」等替代「@」对于防垃圾邮件真的有作用吗？</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-11-06/event-loop/">Event Loop（事件轮询）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-09-07/JavaScript%E4%B8%8E%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA/">JavaScript与有限状态机</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-08-18/Linux-%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">Linux 的启动流程</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-30/%E5%86%8D%E8%AE%BAIP-QAM%E6%8A%80%E6%9C%AF/">再论IP QAM技术</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-10/RSA%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86-%E4%B8%80/">RSA算法原理（一）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%98%AF%E5%A6%82%E4%BD%95%E5%90%AF%E5%8A%A8%E7%9A%84/">计算机是如何启动的？</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

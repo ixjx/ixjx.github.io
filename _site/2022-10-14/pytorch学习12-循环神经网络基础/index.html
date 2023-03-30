@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>pytorch学习12-循环神经网络基础</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="pytorch学习12-循环神经网络基础, pytorch, AI, CodeShurrik" />
+    <meta name="description" content="pytorch学习12-循环神经网络基础, pytorch, AI, 循环神经网络 RNN" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2022-10-14/pytorch%E5%AD%A6%E4%B9%A012-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>pytorch学习12-循环神经网络基础</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Oct 14, 2022
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#pytorch"><span class="octicon octicon-list-unordered"></span>&nbsp;pytorch</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <h2 id="循环神经网络-rnn"><strong>循环神经网络 RNN</strong></h2>
+
+<h3 id="问题引入"><strong>问题引入</strong></h3>
+
+<p>在前篇中所提到的线性网络，大致上都是稠密网络（DNN）这种网络的输入大多是样本的多维度的<strong>特征</strong>，以此来得到一个想要的输出。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/195747388-4a2f3e42-4d32-44d4-b455-4337fa41abf4.png" alt="image" /></p>
+
+<p>显然，面对<strong>序列问题</strong>，即处理视频流、预测天气、自然语言等等问题时，此时输入的x1…xn实际上是一组有序列性即存在前后关系的样本。每个xi为一个样本的所包含的特征元组。</p>
+
+<p>针对这样的问题，我们也会想到利用线性的全连接网络来进行处理，但事实上，全连接网络所需要计算的权重太多，并不能够解决问题。</p>
+
+<h4 id="关于权重"><strong>关于权重</strong></h4>
+
+<p>对于一张128通道的图片，若想要利用5 * 5的卷积核将它转换成一张64通道的图片，则需要计算的权重有大约20W个</p>
+
+\[128 \times 5^2 \times 64 = 204800\]
+
+<p>即卷积层的权重数目只与通道数以及卷积核大小有关，但全连接层的权重数与转成一维向量以后的整个数据量有关</p>
+
+<p>若转为一维向量以后，输入为4096个元素，输出为1024个元素，则需要计算的权重大约有400W个</p>
+
+\[4096 \times 1024 = 4194304\]
+
+<p>显然，全连接层所需要计算的权重远多于卷积层。</p>
+
+<p>卷积神经网络采用<strong>权重共享</strong>机制，实际上是计划通过将输入图片的一个局部特征映射成输出图片的一个像素点而发挥作用的，也就是通过卷积核，使得输出层的每一个像素只与输入层一个局部的方块相连接，这就避免了在全连接情形下的，输出层的每个像素都在或多或少的被输入层的任意一个像素影响这一复杂的情况。</p>
+
+<p>另外，图像信息的特征：<strong>图片底层特征与特征在图片中的位置无关</strong>，也是权重共享的一个依据。例如对于图像的边缘特征，无论边缘处在图像的什么位置，都是以同样的方法定义，作为同样的特征进行区别的。</p>
+
+<p>因此，为了能够较好地解决序列问题，也要利用到权重共享的思路方法，来减少在计算过程中所需要的权重。因此产生了RNN。</p>
+
+<h3 id="rnn-cell"><strong>RNN CELL</strong></h3>
+
+<h4 id="rnn原理"><strong>RNN原理</strong></h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>模块名称</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>xt</td>
+      <td>表时刻t时的输入数据</td>
+    </tr>
+    <tr>
+      <td>RNN Cell</td>
+      <td>本质上是一个线性层</td>
+    </tr>
+    <tr>
+      <td>ht</td>
+      <td>表时刻t时得到的输出（隐含层）</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/195748181-e933181a-7898-4567-a66f-2e005a19b503.png" alt="image" /></p>
+
+<p>本质上，RNN Cell为一个线性层Linear，在t时刻下的N维<strong>向量</strong>，经过Cell后即可变为一个M维的<strong>向量</strong>ht，而与其他线性层不同，RNN Cell为一个共享的线性层。即重复利用，权重共享。将上图展开来看如下。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/195748335-75637783-4583-4ea0-9641-5999ae47eee5.png" alt="image" /></p>
+
+<p>由于x1⋯xn，为一组序列信息，每一个xi都至少应包含xi−1的信息。也就是说，针对x2的操作所得到的h2中，应当包含x1的信息，因此在设计中，把x1处理后得到的h1一并向下传递。</p>
+
+<p>上图中的h0是一种前置信息。例如若实现图像到文本的转换，可以利用CNN+FC对图像进行操作，再将输出的向量作为h0参与到RNN的运算中。</p>
+
+<p>若没有可获知的前置信息，可将h0设置为与xi同维度的零向量。</p>
+
+<p>图中的RNN Cell为同一个Linear，即让设计好的Linear反复参与运算，实现权重共享。</p>
+
+<h3 id="代码实现"><strong>代码实现</strong></h3>
+
+<p>代码实现有两种模式，一是实现自己的RNN Cell，再自己重写循环调用等逻辑。二是直接调用RNN的网络。</p>
+
+<p><strong>重点在于控制其输入输出的维度。</strong></p>
+
+<p>这里只写直接调用RNN，实际中使用LSTM/GRU</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#说明input维度，hidden维度，以及RNN层数
+#RNN计算耗时大，不建议层数过深
+</span><span class="n">rnn</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">RNN</span><span class="p">(</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span><span class="p">)</span>
+
+<span class="c1">#inputs指的是X1……Xn的整个输入序列
+#hidden指的是前置条件H0
+#out指的是每一次迭代的H1……Hn隐藏层序列
+#hidden_out指的是最后一次迭代得到输出Hn
+</span><span class="n">out</span><span class="p">,</span> <span class="n">hidden_out</span> <span class="o">=</span> <span class="n">rnn</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+<span class="c1">#其他参数
+#batch_first=True inputs维度从(SeqLen*Batch*input_size)变为（Batch*SeqLen*input_size）
+</span></code></pre></div></div>
+
+<h4 id="维度说明"><strong>维度说明</strong></h4>
+
+<p>为说明输入输出维度大小，假定当前有如下配置的数据</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>参数</th>
+      <th>值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BatchSize</td>
+      <td>1</td>
+      <td>批量大小</td>
+    </tr>
+    <tr>
+      <td>SeqLen</td>
+      <td>5</td>
+      <td>样本数目x1…x5</td>
+    </tr>
+    <tr>
+      <td>InputSize</td>
+      <td>4</td>
+      <td>输入维度</td>
+    </tr>
+    <tr>
+      <td>HiddenSize</td>
+      <td>2</td>
+      <td>隐藏层（输出）维度</td>
+    </tr>
+    <tr>
+      <td>numLayers</td>
+      <td>3</td>
+      <td>RNN层数</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>对于RNN而言，在<code class="language-plaintext highlighter-rouge">out, hidden_out = rnn(inputs, hidden)</code></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>参数</th>
+      <th>值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>input</td>
+      <td>([5, 1, 4])</td>
+      <td>input.shape=(seqLen, batch_size, input_size)</td>
+    </tr>
+    <tr>
+      <td>hidden</td>
+      <td>([3, 1, 2])</td>
+      <td>hidden.shape=(numLayers, batch_size, hidden_size)</td>
+    </tr>
+    <tr>
+      <td>out</td>
+      <td>([5, 1, 2])</td>
+      <td>out.shape=(seqLen, batch_size, hidden_size)</td>
+    </tr>
+    <tr>
+      <td>hidden_out</td>
+      <td>([3, 1, 2])</td>
+      <td>hidden_out.shape=(numLayers, batch_size, hidden_size)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/195848621-e69f7ee1-d6b3-4a36-9c9f-c459ccdac8fa.png" alt="image" /></p>
+
+<p>其中，左侧及下侧为输入部分，右侧及上侧为输出部分。</p>
+
+<p>左侧是每一层RNN的前置条件，下侧为输入序列。右侧为每一层的隐藏层最终输出，上侧为隐藏层输出序列，此时hn=hn3。</p>
+
+<h3 id="对seq_len的理解"><strong>对seq_len的理解</strong></h3>
+
+<p>RNN的seq_len是个比较绕的地方，假如我们有id = 1,2,3,4,5,6,7,8,9,10一共10个样本。每个样本有feature_dims的特征。</p>
+
+<p>假设我们设定seq_len是3。</p>
+
+<p>那现在数据的形式应该为1-2-3，2-3-4，3-4-5，4-5-6，5-6-7，6-7-8，7-8-9，8-9-10，9-10-0，10-0-0（最后两个数据不完整，进行补零）的10个数据。这是我们真正有了seq_len这个参数，带有“循环”这个概念，要放进RNN等序列模型中进行处理的数据。</p>
+
+<p>假设我们设定batch_size为2，<code class="language-plaintext highlighter-rouge">batch_first=True</code>的情况下：</p>
+
+<p>那我们取出第一个batch为1-2-3，2-3-4。这个batch的size就是(2，3，feature_dims)了。我们把这个玩意儿喂进模型。</p>
+
+<p>接下来第二个batch为3-4-5，4-5-6。</p>
+
+<p>第三个batch为5-6-7，6-7-8。</p>
+
+<p>第四个batch为7-8-9，8-9-10。</p>
+
+<p>第五个batch为9-10-0，10-0-0。</p>
+
+<p>我们的数据一共生成了5个batch。</p>
+
+<p>可以看到，num_batch = num_samples / batch_size（这里没有进行向上或向下取整是因为在某些地方可以设置是否需要那些不完整的被进行补零的batch），seq_len仍然不会影响最后生成的batch的数量，只有batch_size和num_samples会对batch的数量进行影响。</p>
+
+<p>本文参考自<a href="https://www.bilibili.com/video/BV1Y7411d7Ys?p=12">B站《PyTorch深度学习实践》P12</a></p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2023-01-03/pytorch%E5%AD%A6%E4%B9%A016-transformer%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习16-transformer流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-12-03/pytorch%E5%AD%A6%E4%B9%A015-%E5%8A%A0%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E7%9A%84seq2seq%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习15-加入注意力机制的seq2seq优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-11-09/pytorch%E5%AD%A6%E4%B9%A014-%E4%BD%BF%E7%94%A8GPU%E8%AE%AD%E7%BB%83/">pytorch学习14-使用GPU训练</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-16/pytorch%E5%AD%A6%E4%B9%A013-%E4%BD%BF%E7%94%A8RNN%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习13-使用RNN优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-09/pytorch%E5%AD%A6%E4%B9%A011-%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">pytorch学习11-卷积神经网络基础</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-30/pytorch%E5%AD%A6%E4%B9%A010-%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B%E5%AE%9E%E6%88%98/">pytorch学习10-流量预测实战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-29/pytorch%E5%AD%A6%E4%B9%A09-%E5%A4%9A%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/">pytorch学习9-多分类问题</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-27/pytorch%E5%AD%A6%E4%B9%A08-%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE%E9%9B%86/">pytorch学习8-加载数据集</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-26/pytorch%E5%AD%A6%E4%B9%A07-%E5%A4%84%E7%90%86%E5%A4%9A%E7%BB%B4%E7%89%B9%E5%BE%81%E7%9A%84%E8%BE%93%E5%85%A5/">pytorch学习7-处理多维特征的输入</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-23/pytorch%E5%AD%A6%E4%B9%A06-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98Logistic%E5%9B%9E%E5%BD%92/">pytorch学习6-分类问题Logistic回归</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-22/pytorch%E5%AD%A6%E4%B9%A05-pytorch%E5%AE%9E%E7%8E%B0%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">pytorch学习5-pytorch实现线性回归</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-21/pytorch%E5%AD%A6%E4%B9%A04-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">pytorch学习4-反向传播</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-20/pytorch%E5%AD%A6%E4%B9%A03-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95/">pytorch学习3-梯度下降算法</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-15/pytorch%E5%AD%A6%E4%B9%A02-%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B/">pytorch学习2-线性模型</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-13/pytorch%E5%AD%A6%E4%B9%A01-%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/">pytorch学习1-人工智能基础</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

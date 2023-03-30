@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>炉石卡组原理解析</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="炉石卡组原理解析, 游戏, 炉石传说, CodeShurrik" />
+    <meta name="description" content="炉石卡组原理解析, 游戏, 炉石传说, 最近看Base64的时候看到了知乎上一个关于炉石卡组代码的帖子，它本质上就是用一个Base64编码的字符串来存储卡组信息。你有时会见到以=或者==结尾的卡组代码，这正是Base64编码的典型特征。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2020-05-21/%E7%82%89%E7%9F%B3%E5%8D%A1%E7%BB%84%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>炉石卡组原理解析</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> May 21, 2020
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#游戏"><span class="octicon octicon-list-unordered"></span>&nbsp;游戏</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#炉石传说"><span class="octicon octicon-tag"></span>&nbsp;炉石传说</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>最近看Base64的时候看到了知乎上一个关于炉石卡组代码的帖子，它本质上就是用一个Base64编码的字符串来存储卡组信息。你有时会见到以=或者==结尾的卡组代码，这正是Base64编码的典型特征。</p>
+
+<h3 id="dbf-id">DBF ID</h3>
+
+<p>为了了解编码的机制，我们需要先介绍DBF ID。这是每张炉石卡牌（包括可收集卡牌、衍生卡牌、冒险模式专属卡牌、英雄皮肤等）的唯一标识符。而炉石卡组代码正是使用DBF ID来表示每张卡牌。这也是能够卡出下图这种 BUG 的原因,皮肤被标记为了一张紫卡。
+<img src="https://user-images.githubusercontent.com/4729226/82526473-b262a480-9b66-11ea-9781-a4a23750a614.png" alt="hsdeck1" /></p>
+
+<p>DBF ID可在游戏文件中找到。更加方便的方法是通过 <a href="https://hearthstonejson.com">HearthstoneJSON</a> ，这上面提供了相关API。也可以在这个网站上直接下载最新的<code class="language-plaintext highlighter-rouge">cards.collectible.json</code>，这里面包含了所有可收集卡牌的信息，例如各种语言的卡牌名称、描述等。</p>
+
+<h3 id="格式">格式</h3>
+
+<p>如前所述，卡组代码是 Base64 编码的字符串。我们先来解码它，许多编程语言都可以做到这一点，以js 为例：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">parse_deckstring</span><span class="p">(</span><span class="nx">deckstring</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">binary</span> <span class="o">=</span> <span class="nx">Buffer</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="nx">deckstring</span><span class="p">,</span> <span class="dl">"</span><span class="s2">base64</span><span class="dl">"</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">hex</span> <span class="o">=</span> <span class="nx">binary</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="dl">"</span><span class="s2">hex</span><span class="dl">"</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">arr</span> <span class="o">=</span> <span class="nx">hex</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/.</span><span class="se">{1,2}</span><span class="sr">/g</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="o">=&gt;</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="mi">16</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这个函数会先将Base64字符串解码成2进制，然后转换成16进制，再按每两个元素切割，最后从16进制字符串转化为整型并返回。也就是说，它们可以是 0x00-0xff，即 0-255。</p>
+
+<p>现在我们得到的是一个由整数组成的数组。更具体的来说，就是 varint。还需要进一步的解码，才能读取出有用的信息：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">shift</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">c</span><span class="p">;</span>
+    <span class="k">do</span> <span class="p">{</span>
+        <span class="nx">c</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+        <span class="nx">result</span> <span class="o">|=</span> <span class="p">(</span><span class="nx">c</span> <span class="o">&amp;</span> <span class="mh">0x7f</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="nx">shift</span><span class="p">;</span>
+        <span class="nx">shift</span> <span class="o">+=</span> <span class="mi">7</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">c</span> <span class="o">&amp;</span> <span class="mh">0x80</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这里的<code class="language-plaintext highlighter-rouge">data.shift()</code>会将数组的第一个元素移出数组，并返回它的值。<code class="language-plaintext highlighter-rouge">read_varint()</code>函数完成了解码过程，不断地执行<code class="language-plaintext highlighter-rouge">read_varint()</code>，直到取完arr中的元素，就能把内容全部解码出来。</p>
+
+<p>根据作用，可以把解码后的卡组代码分为两个部分：元数据块和卡牌块。</p>
+
+<h3 id="元数据块">元数据块</h3>
+
+<p>在arr数组中，前五个元素分别为：</p>
+
+<ul>
+  <li>保留字节 0x00</li>
+  <li>版本号（固定为 1）</li>
+  <li>模式（1 为狂野，2 为标准）</li>
+  <li>使用英雄卡牌的数量（固定为 1）</li>
+  <li>使用的英雄卡牌的类型（长度不确定，一般是 1-3 位）</li>
+</ul>
+
+<p>可见卡组代码以字节 0x00 开头。然后是编码版本号，目前始终为 1。虽然这五个元素并没有官方名称，不过从作用上可以看作元数据。</p>
+
+<h3 id="卡牌块">卡牌块</h3>
+
+<p>在元数据块之后，继续读取arr的元素，那么接下来就轮到卡牌块了。它按以下顺序分为三对长度 + 数组的组合：</p>
+
+<ul>
+  <li>卡组中存在一张的卡</li>
+  <li>卡组中存在两张的卡</li>
+  <li>卡组中存在 n 张的卡</li>
+</ul>
+
+<p>每张卡都用 varint 型的 DBF ID 表示。</p>
+
+<p>所谓「卡组中存在 n 张的卡」，指的是卡组中的所有其他卡牌。此数组是一个 varint 对组成的列表，每一对的第一个元素表示 DBF ID，第二个元素是该卡牌在卡组中出现的次数。它应该只包含在牌组中至少出现三次的牌，因而意味着它（在这种情况下）对于构筑卡组应当是空的（毕竟一张卡最多只能带两张）。</p>
+
+<p>尽管最终排序无关紧要，但卡牌仍会在各自所在的数组中，按 DBF ID 的升序进行排序，以便始终为相同的卡组生成相同的卡组代码。我们称所有按照这种方式排列卡牌列表（包括英雄）的卡组代码为规范的卡组代码。下面的参考实现应该已经可以生成规范的卡组代码：</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">parse_deck</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">reserve</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">reserve</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="dl">"</span><span class="s2">Invalid deckstring</span><span class="dl">"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">version</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">version</span> <span class="o">!==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="dl">"</span><span class="s2">Unsupported deckstring version </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">version</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">format</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">heroes</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="kd">let</span> <span class="nx">num_heroes</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_heroes</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">heroes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">cards</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="kd">let</span> <span class="nx">num_cards_x1</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_cards_x1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">card_id</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">cards</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">card_id</span><span class="p">,</span> <span class="mi">1</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">num_cards_x2</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_cards_x2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">card_id</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">cards</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">card_id</span><span class="p">,</span> <span class="mi">2</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="kd">let</span> <span class="nx">num_cards_xn</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_cards_xn</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">card_id</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">cards</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">card_id</span><span class="p">,</span> <span class="nx">count</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">cards</span><span class="p">,</span>
+        <span class="nx">heroes</span><span class="p">,</span>
+        <span class="nx">format</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这时，再通过建立 DBF ID与卡牌对应关系的数据库，就能够实现在游戏外导入、导出和编辑卡组的功能了。不论是官方的卡牌工具，还是第三方平台（如旅法师营地、盒子）的套牌编辑功能，原理都是相似的。</p>
+
+<p><a href="https://ixjx.herokuapp.com">搭在heroku上的API</a></p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#炉石传说"><span class="octicon octicon-tag"></span>&nbsp;炉石传说</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-19/%E4%BB%8E%E8%BF%90%E7%BB%B4%E8%A7%92%E5%BA%A6%E8%B0%88%E8%B0%88%E7%82%89%E7%9F%B3%E8%BF%99%E6%AC%A1%E4%BA%8B%E6%95%85/">从运维角度谈谈炉石这次事故</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-06-12/%E5%8D%A1%E5%8D%A1%E9%82%A3%E4%B8%AA%E8%A5%BF-%E9%82%A3%E4%B8%AADK-%E5%BF%AB%E5%88%87%E4%B8%AA%E5%9D%A6/">卡卡那个西，那个DK，快切个坦</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-03-30/%E8%BE%90%E5%B0%844-%E6%88%91%E9%81%87%E5%88%B0%E7%9A%84%E4%BA%BA%E8%B6%8A%E5%A4%9A-%E6%88%91%E5%B0%B1%E8%B6%8A%E5%96%9C%E6%AC%A2%E7%8B%97/">辐射4——我遇到的人越多，我就越喜欢狗</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-03-29/%E5%BA%86%E7%A5%9D%E6%9C%88%E6%9C%AB%E6%B8%A1%E5%8A%AB%E6%88%90%E5%8A%9F/">庆祝月末渡劫成功</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-08-20/%E4%BB%8E-%E7%82%89%E7%9F%B3%E4%BC%A0%E8%AF%B4-%E5%AD%A6%E5%88%B0%E7%9A%84/">从《炉石传说》学到的</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-06-01/%E5%BD%93DNF%E9%81%87%E4%B8%8AWOW/">当DNF遇上WOW</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

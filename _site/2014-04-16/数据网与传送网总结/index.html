@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>数据网与传送网总结</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="数据网与传送网总结, 网络, 三层交换机, CodeShurrik" />
+    <meta name="description" content="数据网与传送网总结, 网络, 三层交换机, 一、IP城域网" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2014-04-16/%E6%95%B0%E6%8D%AE%E7%BD%91%E4%B8%8E%E4%BC%A0%E9%80%81%E7%BD%91%E6%80%BB%E7%BB%93/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>数据网与传送网总结</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Apr 16, 2014
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#网络"><span class="octicon octicon-list-unordered"></span>&nbsp;网络</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#三层交换机"><span class="octicon octicon-tag"></span>&nbsp;三层交换机</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p><strong>一、IP城域网</strong></p>
+
+<p>主城区IP城域网以彩电中心7609-X和广电大厦7609-Y为核心，6个B级7609分别通过两条10G光纤上联到两台核心路由器。IP城域网主要承载VOD、宽带数据业务、大客户MPLS VPN专线业务以及各分公司局域网办公。
+<a href="http://ixjx.sinaapp.com/%e6%95%b0%e6%8d%ae%e7%bd%91%e4%b8%8e%e4%bc%a0%e9%80%81%e7%bd%91%e6%80%bb%e7%bb%93/ip%e5%9f%8e%e5%9f%9f%e7%bd%91/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/IP城域网.jpg" alt="" title="IP城域网" /></a></p>
+
+<!--more-->
+
+<p>CM和CMTS：
+1. CM扫描并与下行同步；
+2. CMTS获得上行参数；
+3. CMTS Ranging、自动调节物理参数与CM适配；
+4. 建立IP连接；
+5. 建立ToD(time of day)；
+6. 向CM传输操作参数；
+7. 注册；
+8. BPI(Baseline Privacy initialization：可选。</p>
+
+<p>init（r1）:CM初步发出请求，进行下行同步搜索；
+init（r2）:CM进行测距，确定 延长时间与频率调整；
+init（rc）:CM测距完成，如果进行到此步骤，表示物理连接没有问题；
+Init（io ）:CM没有找到DHCP Server
+init（d ）:DHCP接到CM发送的数据包；
+init（i ）:CM收到DHCP的反馈消息，给CM分配一个 动态IP，但CM尚未回答与DHCP的通信，CM没有发送数据包和 特定IP，如果CM一直处于该处，则收到DHCP的失败响应
+init（O ）:CM开始下载选项文件（DOCSIS配置文件），TFTP，在指定的DHCP回应，如果CM一直停留在此处，则表示CM的下载失败
+init（r1）:CM登记并上线，但已到CMTS下行端口通道（DLL）的改变或上行端口通道（UCC）的请求消息从DCTS发来的请求,CM开始寻找新的通道与CMTS收到CM的同步不等；
+注：此步CM被认为离线状态，因为 它未通过交通的新通道；
+init（r2）:此步；表明完成了初步搜索，并在搜索连续不等的新通道，在MAC层被认为离线状态（此步表示正在进行测试）
+init（rc）:CM测距完成，如果进行到此步骤，表示物理连接没有问题；
+online: CM注册成功，可以在网上传输数据
+online（d）: CM已注册，但被CP用</p>
+
+<p><strong>二、区县主要业务</strong>
+1.数字电视直播业务：通过DVB承载网连接到区县核心路由器NE40，通过IPQAM推流接入HFC网络传输到千家万户。
+2.VOD业务：由用户端通过双向改造后的接入网，由CMTS或EPON-EOC网络到区县核心交换机，再通过DWDM网络到市核心路由器，接入互动电视平台。
+3．集团客户专线业务：用户端通过光纤收发器、协转等设备接入大客户交换机、MSTP等区县汇聚传输设备，接入DVB承载网、DWDM网络实现，实现网络通信。</p>
+
+<p>DVB承载网的市干10G SDH传送网。区县直播数字电视占用24<em>VC4、SDH电路专线业务8</em>VC4
+<a href="http://ixjx.sinaapp.com/%e6%95%b0%e6%8d%ae%e7%bd%91%e4%b8%8e%e4%bc%a0%e9%80%81%e7%bd%91%e6%80%bb%e7%bb%93/sdh%e4%bc%a0%e9%80%81%e7%bd%91/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/SDH传送网.jpg" alt="" title="SDH传送网" /></a></p>
+
+<p>DVB承载网的路由设备
+<a href="http://ixjx.sinaapp.com/%e6%95%b0%e6%8d%ae%e7%bd%91%e4%b8%8e%e4%bc%a0%e9%80%81%e7%bd%91%e6%80%bb%e7%bb%93/dvb%e6%89%bf%e8%bd%bd%e7%bd%91/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/DVB承载网.jpg" alt="" title="DVB承载网" /></a></p>
+
+<p>市干波分DWDM传送网
+<a href="http://ixjx.sinaapp.com/%e6%95%b0%e6%8d%ae%e7%bd%91%e4%b8%8e%e4%bc%a0%e9%80%81%e7%bd%91%e6%80%bb%e7%bb%93/dwdm%e6%b3%a2%e5%88%86/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/DWDM波分.jpg" alt="" title="DWDM波分" /></a></p>
+
+<p>市干波分传输网主要为各区县提供大带宽传输通道。采用华为OSN8800/6800设备进行组网。承载的主要业务：区县VOD、互联网、数据专网、局域网等业务网，以及与周边省市广电（如四川、贵州、陕西、湖南、湖北）互联互通业务。</p>
+
+<p><strong>三、专线业务</strong>
+1.CM VPN：基于CMTS在IP城域网上的虚拟专用网络。
+药房、渝城一卡通、平安重庆、交通银行 、公运集团等专线用户属于三层VPN，三层VPN的网关地址、IP地址、掩码等需要我方跟用户协商配置和分配。
+二层VPN的IP地址是由用户自行分配。我们只负责为用户建立二层隧道。</p>
+
+<p>2.IP光纤数据专线：承载于IP网络之上，主要是从CISCO3750等三层交换机接出,再通过光缆、光纤收发器到用户网络。
+该专线使用的是静态IP公网地址，由数通维护科分配，需要用户自己设置。现有的大客户IP专线为：沙区组织部、运管、医保、中百山城超市等。</p>
+
+<p>3.以太网光纤数据专线：二层专线，把客户总部和各个分支机构连接起来。不接入互联网，是客户内部网络互联。承载于大客户交换机，是从CISCO2960、2400、2918等二层设备接出。
+该专线业务接入方式在我公司最多。主要客户有消防、运管、城投金卡、交运集团、医保、监测台等，在配置上主要是用不同的VLAN来区分不同的用户。
+<a href="http://ixjx.sinaapp.com/%e6%95%b0%e6%8d%ae%e7%bd%91%e4%b8%8e%e4%bc%a0%e9%80%81%e7%bd%91%e6%80%bb%e7%bb%93/%e4%bb%a5%e5%a4%aa%e7%bd%91%e4%b8%93%e7%ba%bf/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/以太网专线.jpg" alt="" title="以太网专线" /></a></p>
+
+<p>4.SDH/MSTP光纤专线：直接通过传输网络SDH为大客户提供E1、N×E1的传输电路。
+承载于SDH网络，从华为OSN3500/7500设备（TP设备）或者Raisecom3500设备（MSAP设备）接出，再通过光缆、光纤收发器（光端机）到用户网络。
+主要客户有：人武部、区县直播下传、BOSS系统接各大银行，中石化公司、气象局等。
+<a href="http://ixjx.sinaapp.com/%e6%95%b0%e6%8d%ae%e7%bd%91%e4%b8%8e%e4%bc%a0%e9%80%81%e7%bd%91%e6%80%bb%e7%bb%93/sdh/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/SDH.jpg" alt="" title="SDH" /></a>
+<a href="http://ixjx.sinaapp.com/%e6%95%b0%e6%8d%ae%e7%bd%91%e4%b8%8e%e4%bc%a0%e9%80%81%e7%bd%91%e6%80%bb%e7%bb%93/mstp/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/MSTP.jpg" alt="" title="MSTP" /></a></p>
+
+<p>总结了下现网，有点乱，记下来以后方便查。</p>
+
+<p>2014.6.3加PTU-4GE单板接口分布图，备查。
+<a href="http://ixjx.sinaapp.com/%e6%95%b0%e6%8d%ae%e7%bd%91%e4%b8%8e%e4%bc%a0%e9%80%81%e7%bd%91%e6%80%bb%e7%bb%93/ptu-4ge%e5%8d%95%e6%9d%bf%e6%8e%a5%e5%8f%a3%e5%88%86%e5%b8%83/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/PTU-4GE单板接口分布.jpg" alt="" title="PTU-4GE单板接口分布" /></a></p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#三层交换机"><span class="octicon octicon-tag"></span>&nbsp;三层交换机</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-12-22/NAT%E8%AE%BF%E9%97%AE%E5%9B%9E%E6%B5%81%E9%97%AE%E9%A2%98/">NAT访问回流问题</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-09-10/AnyCast%E5%AE%9E%E7%8E%B0DNS%E9%AB%98%E5%8F%AF%E7%94%A8/">Anycast实现DNS高可用</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-07-17/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3UDP/">深入理解UDP</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-06-06/Docker%E9%83%A8%E7%BD%B2Calico%E7%BD%91%E7%BB%9C/">Docker部署Calico网络</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-01/%E5%88%B6%E4%BD%9C%E7%BD%91%E7%AB%99docker%E9%95%9C%E5%83%8F/">制作网站docker镜像</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-01-16/%E4%BD%BF%E7%94%A8docker%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/">使用docker科学上网</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-08-16/%E5%85%B3%E4%BA%8Ecacti/">关于cacti</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-06-05/%E7%A7%91%E5%AD%A6%E5%A7%BF%E5%8A%BF%E4%B8%8Agoogle%E6%8C%87%E5%8C%97/">科学姿势上google指北</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-10-09/%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97RAID/">磁盘阵列RAID</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-09-13/SDN%E7%BD%91%E7%BB%9C%E4%B9%8BMininet/">SDN网络之Mininet</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-09-25/%E5%96%9C%E5%9F%B9%E8%AE%AD/">喜培训</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Event Loop（事件轮询）</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Event Loop（事件轮询）, 转载, JavaScript,异步模式, CodeShurrik" />
+    <meta name="description" content="Event Loop（事件轮询）, 转载, JavaScript,异步模式, 作者： 阮一峰" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2013-11-06/event-loop/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Event Loop（事件轮询）</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Nov 6, 2013
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#转载"><span class="octicon octicon-list-unordered"></span>&nbsp;转载</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#JavaScript"><span class="octicon octicon-tag"></span>&nbsp;JavaScript</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#异步模式"><span class="octicon octicon-tag"></span>&nbsp;异步模式</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>作者： <a href="http://www.ruanyifeng.com/">阮一峰</a></p>
+
+<p>日期： <a href="http://www.ruanyifeng.com/blog/2013/10/">2013年10月21日</a></p>
+<div id="main-content">
+
+Event Loop 是一个很重要的概念，指的是计算机系统的一种运行机制。
+
+JavaScript语言就采用这种机制，来解决单线程运行带来的一些问题。
+
+![Event Loop](http://image.beekka.com/blog/201310/2013102001.png)
+
+本文参考C. Aaron Cois的[《Understanding The Node.js Event Loop》](https://www.udemy.com/lectures/understanding-the-nodejs-event-loop-91298)，解释什么是Event Loop，以及它与JavaScript语言的单线程模型有何关系。
+
+<!--more -->
+
+想要理解Event Loop，就要从程序的运行模式讲起。运行以后的程序叫做["进程"](http://zh.wikipedia.org/wiki/%E8%BF%9B%E7%A8%8B)（process），一般情况下，一个进程一次只能执行一个任务。
+
+如果有很多任务需要执行，不外乎三种解决方法。
+&gt; （1）排队。因为一个进程一次只能执行一个任务，只好等前面的任务执行完了，再执行后面的任务。
+&gt; 
+&gt; 
+&gt; （2）新建进程。使用fork命令，为每个任务新建一个进程。
+&gt; 
+&gt; 
+&gt; （3）新建线程。因为进程太耗费资源，所以如今的程序往往允许一个进程包含多个线程，由线程去完成任务。（进程和线程的详细解释，请看[这里](http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html)。）
+以JavaScript语言为例，它是一种单线程语言，所有任务都在一个线程上完成，即采用上面的第一种方法。一旦遇到大量任务或者遇到一个耗时的任务，网页就会出现"假死"，因为JavaScript停不下来，也就无法响应用户的行为。
+
+你也许会问，JavaScript为什么是单线程，难道不能实现为多线程吗？
+
+这跟历史有关系。JavaScript从诞生起就是单线程。原因大概是不想让浏览器变得太复杂，因为多线程需要共享资源、且有可能修改彼此的运行结果，对于一种网页脚本语言来说，这就太复杂了。后来就约定俗成，JavaScript为一种单线程语言。（Worker API可以实现多线程，但是JavaScript本身始终是单线程的。）
+
+如果某个任务很耗时，比如涉及很多I/O（输入/输出）操作，那么线程的运行大概是下面的样子。
+
+![synchronous mode](http://image.beekka.com/blog/201310/2013102002.png)
+
+上图的绿色部分是程序的运行时间，红色部分是等待时间。可以看到，由于I/O操作很慢，所以这个线程的大部分运行时间都在空等I/O操作的返回结果。这种运行方式称为"同步模式"（synchronous I/O）或"堵塞模式"（blocking I/O）。
+
+如果采用多线程，同时运行多个任务，那很可能就是下面这样。
+
+![synchronous mode](http://image.beekka.com/blog/201310/2013102003.png)
+
+上图表明，多线程不仅占用多倍的系统资源，也闲置多倍的资源，这显然不合理。
+
+Event Loop就是为了解决这个问题而提出的。[Wikipedia](http://en.wikipedia.org/wiki/Event_loop)这样定义：
+&gt; "Event Loop是一个程序结构，用于等待和发送消息和事件。（a programming construct that waits for and dispatches events or messages in a program.）"
+简单说，就是在程序中设置两个线程：一个负责程序本身的运行，称为"主线程"；另一个负责主线程与其他进程（主要是各种I/O操作）的通信，被称为"Event Loop线程"（可以译为"消息线程"）。
+
+![asynchronous mode](http://image.beekka.com/blog/201310/2013102004.png)
+
+上图主线程的绿色部分，还是表示运行时间，而橙色部分表示空闲时间。每当遇到I/O的时候，主线程就让Event Loop线程去通知相应的I/O程序，然后接着往后运行，所以不存在红色的等待时间。等到I/O程序完成操作，Event Loop线程再把结果返回主线程。主线程就调用事先设定的回调函数，完成整个任务。
+
+可以看到，由于多出了橙色的空闲时间，所以主线程得以运行更多的任务，这就提高了效率。这种运行方式称为"[异步模式](http://en.wikipedia.org/wiki/Asynchronous_I/O)"（asynchronous I/O）或"非堵塞模式"（non-blocking mode）。
+
+这正是JavaScript语言的运行方式。单线程模型虽然对JavaScript构成了很大的限制，但也因此使它具备了其他语言不具备的优势。如果部署得好，JavaScript程序是不会出现堵塞的，这就是为什么node.js平台可以用很少的资源，应付大流量访问的原因。
+
+（完）
+
+</div>
+<div>
+
+### 文档信息
+
+*   版权声明：自由转载-非商用-非衍生-保持署名 | [Creative Commons BY-NC-ND 3.0](http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh)
+*   原文网址：[http://www.ruanyifeng.com/blog/2013/10/event_loop.html](http://www.ruanyifeng.com/blog/2013/10/event_loop.html)
+*   最后修改时间：2013年11月 5日 20:45
+*   付费支持：[![人民币 - 支付宝](http://www.ruanyifeng.com/blog/images/rmb_32.png "人民币")](https://me.alipay.com/ruanyf) | [![美元 - paypal](http://www.ruanyifeng.com/blog/images/dollar_32.png "美元")](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=yifeng.ruan@gmail.com&amp;currency_code=USD&amp;amount=0.99&amp;return=http://www.ruanyifeng.com/thank.html&amp;item_name=Ruan%20YiFeng)
+</div>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#JavaScript"><span class="octicon octicon-tag"></span>&nbsp;JavaScript</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#异步模式"><span class="octicon octicon-tag"></span>&nbsp;异步模式</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-04-22/%E6%B8%A3%E6%8A%80%E6%9C%AF%E8%80%83%E6%8D%AE-HMS-Glowworm%E7%BB%9D%E5%A2%83%E4%B8%8B%E7%9A%84%E5%A5%8B%E6%88%98/">渣技术考据——HMS Glowworm绝境下的奋战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-09-22/%E8%B4%9F%E8%83%BD%E9%87%8F%E6%89%8D%E6%98%AF%E7%A4%BE%E4%BC%9A%E7%9A%84%E7%9C%9F%E7%90%86/">负能量才是社会的真理</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-01-05/%E9%BB%91%E7%A7%91%E6%8A%80%E4%B9%8BAndriod-LAMP%E7%BD%91%E7%AB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/">黑科技之Andriod LAMP网站服务器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-12-30/%E5%8F%91%E5%B8%83%E9%82%AE%E4%BB%B6%E5%9C%B0%E5%9D%80%E6%97%B6%E7%94%A8-at-%E7%AD%89%E6%9B%BF%E4%BB%A3-@-%E5%AF%B9%E4%BA%8E%E9%98%B2%E5%9E%83%E5%9C%BE%E9%82%AE%E4%BB%B6%E7%9C%9F%E7%9A%84%E6%9C%89%E4%BD%9C%E7%94%A8%E5%90%97/">发布邮件地址时用「#」「at」等替代「@」对于防垃圾邮件真的有作用吗？</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-09-07/JavaScript%E4%B8%8E%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA/">JavaScript与有限状态机</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-08-18/Linux-%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">Linux 的启动流程</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-30/%E5%86%8D%E8%AE%BAIP-QAM%E6%8A%80%E6%9C%AF/">再论IP QAM技术</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-12/RSA%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86-%E4%BA%8C/">RSA算法原理（二）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-10/RSA%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86-%E4%B8%80/">RSA算法原理（一）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%98%AF%E5%A6%82%E4%BD%95%E5%90%AF%E5%8A%A8%E7%9A%84/">计算机是如何启动的？</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

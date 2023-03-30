@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>tmux + oh-my-tmux使用指北</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="tmux + oh-my-tmux使用指北, Linux, tmux, CodeShurrik" />
+    <meta name="description" content="tmux + oh-my-tmux使用指北, Linux, tmux, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2020-04-14/tmux-+-oh-my-tmux%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8C%97/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>tmux + oh-my-tmux使用指北</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Apr 14, 2020
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#Linux"><span class="octicon octicon-list-unordered"></span>&nbsp;Linux</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#tmux"><span class="octicon octicon-tag"></span>&nbsp;tmux</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <ul id="markdown-toc">
+  <li><a href="#tmux是什么" id="markdown-toc-tmux是什么">tmux是什么</a></li>
+  <li><a href="#tmux的session" id="markdown-toc-tmux的session">tmux的session</a></li>
+  <li><a href="#tmux的window" id="markdown-toc-tmux的window">tmux的window</a></li>
+  <li><a href="#tmux的pane" id="markdown-toc-tmux的pane">tmux的pane</a></li>
+  <li><a href="#tmux-window中的历史输出查看" id="markdown-toc-tmux-window中的历史输出查看">tmux window中的历史输出查看</a></li>
+</ul>
+
+<blockquote>
+  <h3 id="tmux是什么">tmux是什么</h3>
+</blockquote>
+
+<p>　　我们在linux服务器上的工作一般都是通过一个终端连接软件连接到远端系统进行操作，例如使用xshell或者SecureCRT工具通过ssh进行远程连接。</p>
+
+<p>　　在使用过程中，如果要做比较耗时的操作，例如有时候进行编译，或者下载大文件需要比较长的时间，一般情况下是下班之后直接运行希望第二天早上过来运行完成，这样就不用耽误工作时间。但是网络有时候不稳定，或者timeout，可能在半夜会出现连接断掉的情况，一旦连接断掉，所执行的程序也就中断，当然可以写一个脚本后台运行，但是总不能每次都写脚本吧。</p>
+
+<p>　　那么有没有一种工具可以解决这样的问题呢，当然是有的了，比如这里提到的tmux。其实类似tmux的工具还有很多。例如gnu screen等。</p>
+
+<p>　　tmux使用更简单，功能也更强大，当在tmux中工作的时候，即使关掉CRT的连接窗口，再次连接，进入tmux的会话之前的工作仍然在继续。</p>
+
+<p>　　tmux是一个linux下面的工具，在使用之前需要安装，配置使用<a href="https://github.com/gpakosz/.tmux">oh-my-tmux</a>（取名类似oh-my-zsh）。</p>
+
+<p>　　tmux中有3种概念，会话(session)，窗口(window)，窗格(pane)。会话有点像是tmux的服务，在后端运行，可以通过tmux命令创建这种服务，并且可以通过tmux命令查看。一个session可以包含多个window，一个window可以被分割成多个pane。首先来看一下tmux的会话。</p>
+
+<blockquote>
+  <h3 id="tmux的session">tmux的session</h3>
+</blockquote>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tmux new -s mysession1</code> 新建名为mysession1的会话<br />
+<img src="https://user-images.githubusercontent.com/4729226/79189057-57e17480-7e53-11ea-911a-126c3fefd1a8.png" alt="1" />
+可以看到进入session之后的显示，在下面有一条状态栏。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ctrl+b d</code> 退出会话，回到shell的终端环境<br />
+当前在tmux的会话环境中，使用一个快捷键<code class="language-plaintext highlighter-rouge">ctrl+b d</code>。<br />
+这里提一下，tmux 窗口有大量的快捷键。所有快捷键都要通过前缀键唤起。默认的前缀键是<code class="language-plaintext highlighter-rouge">Ctrl+b</code>，oh-my-tmux新增了<code class="language-plaintext highlighter-rouge">Ctrl+a</code>。举例来说，帮助命令的快捷键是<code class="language-plaintext highlighter-rouge">Ctrl+b ?</code>。在后面的描述中，我们说的终端环境是指使用SecureCRT进入远程linux之后但是没有进入tmux的会话环境的状态。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tmux ls</code> 终端环境查看会话列表<br />
+在终端环境中执行<code class="language-plaintext highlighter-rouge">tmux ls</code><br />
+可以看到在列出的列表中，只有1行，说明只有一个session。 
+<img src="https://user-images.githubusercontent.com/4729226/79189704-0803ad00-7e55-11ea-9b5d-bf6ca1c5a138.png" alt="2" /></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ctrl+b s</code> 会话环境查看会话列表</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tmux a -t mysession1</code> 终端环境进入会话</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tmux kill-session -t mysession1</code>终端环境销毁会话</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tmux rename -t old_session_name  new_session_name</code> 终端环境重命名会话 
+<code class="language-plaintext highlighter-rouge">ctrl + b $</code>会话环境重命名会话</p>
+  </li>
+</ol>
+
+<blockquote>
+  <h3 id="tmux的window">tmux的window</h3>
+</blockquote>
+
+<p>　　一个tmux的会话(session)中可以有多个窗口(window)，每个窗口又可以分割成多个pane(窗格)。工作的最小单位其实是窗格。默认情况下在一个window中，只有一个大窗格，占满整个窗口区域。</p>
+
+<p>　　参考之前新创建的会话中会默认创建一个窗口，名字是zsh，可以通过<code class="language-plaintext highlighter-rouge">crtl+b ,</code> (前缀键之后按一个逗号)来修改当前窗口的名字。</p>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ctrl+b c</code> 创建window</p>
+  </li>
+  <li>
+    <p>切换window<br />
+<code class="language-plaintext highlighter-rouge">ctrl+b 1</code> 切换到1号window，依次类推<br />
+<code class="language-plaintext highlighter-rouge">ctrl+b w</code> (windows的首字母) 列出当前session所有window，通过上、下键切换窗口</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ctrl+b &amp; </code> 关闭window 或者直接exit</p>
+  </li>
+</ol>
+
+<blockquote>
+  <h3 id="tmux的pane">tmux的pane</h3>
+</blockquote>
+
+<p>　　这个是最好玩的了，tmux的一个window可以被分成多个pane(窗格)，可以做出分屏的效果。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/79191375-fe7c4400-7e58-11ea-8d45-81c4cb98ff68.png" alt="3" /></p>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ctrl+b %</code> 垂直分屏<br />
+<code class="language-plaintext highlighter-rouge">ctrl+b "</code> 水平分屏</p>
+  </li>
+  <li>
+    <p>切换pane<br />
+<code class="language-plaintext highlighter-rouge">ctrl+b o </code> 依次切换当前窗口下的各个pane<br />
+<code class="language-plaintext highlighter-rouge">ctrl+b 上下左右</code> 根据按箭方向选择切换到某个pane<br />
+<code class="language-plaintext highlighter-rouge">ctrl+b Space(空格键)</code> 对当前窗口下的所有pane重新排列布局，每按一次，换一种样式<br />
+<code class="language-plaintext highlighter-rouge">ctrl+b z</code> 最大化当前pane，再按一次后恢复</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ctrl+b x</code> 关闭pane  或者直接exit</p>
+  </li>
+</ol>
+
+<blockquote>
+  <h3 id="tmux-window中的历史输出查看">tmux window中的历史输出查看</h3>
+</blockquote>
+
+<p>　　在tmux里面，因为每个窗口的历史内容已经被tmux接管了。</p>
+
+<p>　　当我们在每 个tmux的window之间进行来回切换，来回操作，没有办法看到一个window里面屏幕上的历史输出，没办法使用鼠标滚动(例如在CRT中)查看之前的内容。</p>
+
+<p>　　如果要看当前窗口的历史内容，通过在当前的tmux window 按 <code class="language-plaintext highlighter-rouge">ctrl-b</code>，然后就可以用PgUp/PgDn来浏览历史输出了，按q退出。</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#tmux"><span class="octicon octicon-tag"></span>&nbsp;tmux</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-08-20/Linux-namespace/">Linux namespace</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-03-05/%E4%BD%BF%E7%94%A8-prometheus-%E5%92%8C-grafana-%E7%9B%91%E6%8E%A7-linux-%E6%9C%BA%E5%99%A8/">使用 prometheus 和 grafana 监控 linux 机器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-26/%E5%B9%B2%E6%8E%89Linux-Firefox%E7%9A%84Title-bar/">干掉Linux Firefox的Title bar</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5Linux-VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(13)/">动手实践Linux VLAN-每天5分钟的OpenStack(13)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/Linux%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(12)/">Linux如何实现VLAN-每天5分钟的OpenStack(12)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-06/%E7%90%86%E8%A7%A3virbr0-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(11)/">理解virbr0-每天5分钟的OpenStack(11)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-06/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(10)/">动手实践虚拟网络-每天5分钟的OpenStack(10)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-05/KVM%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96%E5%9F%BA%E7%A1%80-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(9)/">KVM网络虚拟化基础-每天5分钟的OpenStack(9)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/LVM%E7%B1%BB%E5%9E%8B%E7%9A%84Storage-Pool-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(8)/">LVM类型的Storage Pool-每天5分钟的OpenStack(8)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/KVM%E5%AD%98%E5%82%A8%E8%99%9A%E6%8B%9F%E5%8C%96-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(7)/">KVM存储虚拟化-每天5分钟的OpenStack(7)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/CPU%E5%92%8C%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96%E5%8E%9F%E7%90%86-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(6)/">CPU和内存虚拟化原理-每天5分钟的OpenStack(6)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-02/%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86KVM%E8%99%9A%E6%9C%BA-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(5)/">远程管理KVM虚机-每天5分钟的OpenStack(5)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-02/%E8%99%9A%E6%8B%9F%E5%8C%96-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(2)/">虚拟化-每天5分钟的OpenStack(2)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-02/%E5%90%AF%E5%8A%A8%E7%AC%AC%E4%B8%80%E4%B8%AAKVM%E8%99%9A%E6%9C%BA-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(4)/">启动第一个KVM虚机-每天5分钟的OpenStack(4)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-02/%E5%87%86%E5%A4%87KVM%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(3)/">准备KVM实验环境-每天5分钟的OpenStack(3)</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

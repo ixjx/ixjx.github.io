@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>理解virbr0-每天5分钟的OpenStack(11)</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="理解virbr0-每天5分钟的OpenStack(11), Linux, 虚拟化, CodeShurrik" />
+    <meta name="description" content="理解virbr0-每天5分钟的OpenStack(11), Linux, 虚拟化, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2017-11-06/%E7%90%86%E8%A7%A3virbr0-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(11)/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>理解virbr0-每天5分钟的OpenStack(11)</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Nov 6, 2017
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#Linux"><span class="octicon octicon-list-unordered"></span>&nbsp;Linux</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#虚拟化"><span class="octicon octicon-tag"></span>&nbsp;虚拟化</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            
+<p><img src="http://shurriklab.qiniudn.com/mirmi0r2wdu6jfu7pwhohydz8s.png" alt="" /></p>
+
+<p>virbr0 是 KVM 默认创建的一个 Bridge，其作用是为连接其上的虚机网卡提供 NAT 访问外网的功能。</p>
+
+<p>virbr0 默认分配了一个IP 192.168.122.1，并为连接其上的其他虚拟网卡提供 DHCP 服务。</p>
+
+<p>下面我们演示如何使用 virbr0。</p>
+
+<p>在 virt-manager 打开 VM1 的配置界面，网卡 Source device 选择 “default”，将 VM1 的网卡挂在 virbr0 上。</p>
+
+<p><img src="http://shurriklab.qiniudn.com/v67cryj4viy664kcdp02t63vrt.png" alt="" /></p>
+
+<p>启动 VM1，brctl show 可以查看到 vnet0 已经挂在了 virbr0 上。</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># brctl show
+bridge name     bridge id               STP enabled     interfaces
+br0             8000.000c298decbe       no                    eth0
+virbr0          8000.fe540075dd1a       yes                   vnet0
+</code></pre></div></div>
+
+<p>virbr0 使用 dnsmasq 提供 DHCP 服务，可以在宿主机中查看该进程信息</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ps -elf|grep dnsmasq
+5 S libvirt+  2422     1  0  80   0 -  7054 poll_s 11:26 ?        00:00:00 /usr/sbin/dnsmasq --conf-file=/var/lib/libvirt/dnsmasq/default.conf
+</code></pre></div></div>
+<p>在 /var/lib/libvirt/dnsmasq/ 目录下有一个 default.leases 文件，当 VM1 成功获得 DHCP 的 IP 后，可以在该文件中查看到相应的信息</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cat /var/lib/libvirt/dnsmasq/default.leases
+1441525677 52:54:00:75:dd:1a 192.168.122.6 ubuntu *
+</code></pre></div></div>
+
+<p>上面显示 192.168.122.6 已经分配给 MAC 地址为 52:54:00:75:dd:1a 的网卡，这正是 vnet0 的 MAC。之后就可以使用该 IP 访问 VM1 了。</p>
+
+<p>需要说明的是，使用 NAT 的虚机 VM1 可以访问外网，但外网无法直接访问 VM1。</p>
+
+<p>因为 VM1 发出的网络包源地址并不是 192.168.122.6，而是被 NAT 替换为宿主机的 IP 地址了。</p>
+
+<p>这个与使用 br0 不一样，在 br0 的情况下，VM1 通过自己的 IP 直接与外网通信，不会经过 NAT 地址转换。</p>
+
+<p>下节我们讨论 vlan 在 linux bridge 中的实现</p>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#虚拟化"><span class="octicon octicon-tag"></span>&nbsp;虚拟化</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-04-14/tmux-+-oh-my-tmux%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8C%97/">tmux + oh-my-tmux使用指北</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-08-20/Linux-namespace/">Linux namespace</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-03-05/%E4%BD%BF%E7%94%A8-prometheus-%E5%92%8C-grafana-%E7%9B%91%E6%8E%A7-linux-%E6%9C%BA%E5%99%A8/">使用 prometheus 和 grafana 监控 linux 机器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-26/%E5%B9%B2%E6%8E%89Linux-Firefox%E7%9A%84Title-bar/">干掉Linux Firefox的Title bar</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5Linux-VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(13)/">动手实践Linux VLAN-每天5分钟的OpenStack(13)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/Linux%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(12)/">Linux如何实现VLAN-每天5分钟的OpenStack(12)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-06/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(10)/">动手实践虚拟网络-每天5分钟的OpenStack(10)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-05/KVM%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96%E5%9F%BA%E7%A1%80-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(9)/">KVM网络虚拟化基础-每天5分钟的OpenStack(9)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/LVM%E7%B1%BB%E5%9E%8B%E7%9A%84Storage-Pool-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(8)/">LVM类型的Storage Pool-每天5分钟的OpenStack(8)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/KVM%E5%AD%98%E5%82%A8%E8%99%9A%E6%8B%9F%E5%8C%96-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(7)/">KVM存储虚拟化-每天5分钟的OpenStack(7)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/CPU%E5%92%8C%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96%E5%8E%9F%E7%90%86-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(6)/">CPU和内存虚拟化原理-每天5分钟的OpenStack(6)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-02/%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86KVM%E8%99%9A%E6%9C%BA-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(5)/">远程管理KVM虚机-每天5分钟的OpenStack(5)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-02/%E8%99%9A%E6%8B%9F%E5%8C%96-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(2)/">虚拟化-每天5分钟的OpenStack(2)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-02/%E5%90%AF%E5%8A%A8%E7%AC%AC%E4%B8%80%E4%B8%AAKVM%E8%99%9A%E6%9C%BA-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(4)/">启动第一个KVM虚机-每天5分钟的OpenStack(4)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-02/%E5%87%86%E5%A4%87KVM%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(3)/">准备KVM实验环境-每天5分钟的OpenStack(3)</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

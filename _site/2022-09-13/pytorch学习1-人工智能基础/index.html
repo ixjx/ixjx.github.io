@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>pytorch学习1-人工智能基础</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="pytorch学习1-人工智能基础, pytorch, AI, CodeShurrik" />
+    <meta name="description" content="pytorch学习1-人工智能基础, pytorch, AI, 前置条件" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2022-09-13/pytorch%E5%AD%A6%E4%B9%A01-%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>pytorch学习1-人工智能基础</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Sep 13, 2022
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#pytorch"><span class="octicon octicon-list-unordered"></span>&nbsp;pytorch</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <h2 id="前置条件"><strong>前置条件</strong></h2>
+
+<ol>
+  <li>线性代数 + 概率论</li>
+  <li>python基础</li>
+</ol>
+
+<h2 id="人工智能基础"><strong>人工智能基础</strong></h2>
+
+<p>所要实现的智能具体上可分为<strong>推理</strong>与<strong>预测</strong>两大部分，总的来说即是利用计算机来代替人脑进行此类工作。</p>
+
+<h3 id="推理类"><strong>推理类</strong></h3>
+
+<p>根据<strong>已经有的信息</strong>来进行<strong>推理</strong>并作出<strong>决策</strong>的过程。</p>
+
+<p>比如通过外界信息的情况（食堂做得菜，自己剩的钱…）来判断自己能够吃什么。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/189840952-31d81d62-adea-4628-89ca-35e3fe872f65.jpg" alt="机器学习-中午吃什么" /></p>
+
+<h3 id="预测类"><strong>预测类</strong></h3>
+
+<p>根据<strong>具体</strong>的实体将其与<strong>抽象</strong>概念结合起来。</p>
+
+<p>比如通过认识到猫这一动物实体，来与汉字“猫”建立联系，本质上是一个预测过程，赋予真实存在的事物一个并不真实存在的符号。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/189840976-e7c2d4ba-5fec-4eec-91a9-aba78f6c932c.jpg" alt="机器学习-识别猫" /></p>
+
+<h3 id="深度学习"><strong>深度学习</strong></h3>
+
+<h4 id="人工智能"><strong>人工智能</strong></h4>
+
+<p>使用模拟、延伸和扩展人的智能的理论、方法、技术和应用的技术科学。</p>
+
+<h4 id="机器学习"><strong>机器学习</strong></h4>
+
+<p>机器学习是专门研究计算机怎样模拟或实现人类的学习行为，以获取新的知识或技能，重新组织已有的知识结构，使之不断改善自身的性能。</p>
+
+<h4 id="深度学习-1"><strong>深度学习</strong></h4>
+
+<p>是机器学习的一种，模型假设、评价函数和优化算法与机器学习一致，其根本差别在于假设的复杂度，其核心算法为<strong>神经网络</strong>。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/189842281-980a5a95-34c9-49ef-b67e-cfdae1fe6482.png" alt="深度学习1" /></p>
+
+<h3 id="神经网络基础"><strong>神经网络基础</strong></h3>
+
+<h3 id="基本原理"><strong>基本原理</strong></h3>
+
+<p>模仿神经元细胞来进行的设计，在整体结构上，模仿神经进行分层设计，属于仿生学的算法。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/189842898-032f9b0a-04e0-4d1c-8cf3-4287efc19b7e.png" alt="神经网络" /></p>
+
+<ul>
+  <li><strong>神经元</strong>： 神经网络中每个节点称为神经元，由两部分组成：
+    <ul>
+      <li>
+        <p>加权和：将所有输入加权求和。</p>
+      </li>
+      <li>
+        <p>非线性变换（激活函数）：加权和的结果经过一个非线性函数变换，让神经元计算具备非线性的能力。</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>多层连接</strong>： 大量这样的节点按照不同的层次排布，形成多层的结构连接起来，即称为神经网络。</p>
+  </li>
+  <li><strong>计算图</strong>： 以图形化的方式展现神经网络的计算逻辑又称为计算图。我们也可以将神经网络的计算图以公式的方式表达，如下：Y=f3(f2(f1(w1⋅x1+w2⋅x2+w3⋅x3+b)+…)…)…)</li>
+</ul>
+
+<h3 id="正向传播与反向传播"><strong>正向传播与反向传播</strong></h3>
+
+<p>正向传播本质上是按照输入层到输出层的顺序，求解并保存网络中的中间变量本身。</p>
+
+<p>反向传播本质上是按照输出层到输入层的顺序，求解并保存网络中的中间变量以及其他参数的导数（梯度）。</p>
+
+<p>两者核心都是计算图。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/189844154-f9d46119-a2b7-458d-a551-5b306f93db76.png" alt="正向传播" /></p>
+
+<h4 id="正向传播"><strong>正向传播</strong></h4>
+
+<p>上图中的实际计算过程为：</p>
+
+\[e=(a+b)*(b+1)\]
+
+<p>每一步都只能进行原子计算，每个原子计算构成一个圈，继而形成整个计算图。</p>
+
+<p>在计算图中，先进行正向计算c=a+b, d=b+1,再进行e=c∗d，求解得到e的值以后即完成了正向计算的过程。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/189844172-903cc371-4582-4913-8503-f853fef451af.png" alt="反向传播" /></p>
+
+<h4 id="反向传播"><strong>反向传播</strong></h4>
+
+<p>在<strong>前馈计算过程</strong>中，就可以求解得</p>
+
+\[\frac{\partial c}{\partial a}    \frac{\partial c}{\partial b}
+\frac{\partial d}{\partial b}    \frac{\partial d}{\partial 1}\]
+
+<p>等一系列梯度，这其中所有的梯度信息在正向计算过程中进行保存，并在之后依照<strong>计算图中的链接</strong>，根据<strong>链式法则</strong>反方向求导计算∂e/∂a以及∂e/∂b。</p>
+
+<p>本文参考自<a href="https://www.bilibili.com/video/BV1Y7411d7Ys?p=1">B站《PyTorch深度学习实践》P1</a></p>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2023-01-03/pytorch%E5%AD%A6%E4%B9%A016-transformer%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习16-transformer流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-12-03/pytorch%E5%AD%A6%E4%B9%A015-%E5%8A%A0%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E7%9A%84seq2seq%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习15-加入注意力机制的seq2seq优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-11-09/pytorch%E5%AD%A6%E4%B9%A014-%E4%BD%BF%E7%94%A8GPU%E8%AE%AD%E7%BB%83/">pytorch学习14-使用GPU训练</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-16/pytorch%E5%AD%A6%E4%B9%A013-%E4%BD%BF%E7%94%A8RNN%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习13-使用RNN优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-14/pytorch%E5%AD%A6%E4%B9%A012-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">pytorch学习12-循环神经网络基础</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-09/pytorch%E5%AD%A6%E4%B9%A011-%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">pytorch学习11-卷积神经网络基础</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-30/pytorch%E5%AD%A6%E4%B9%A010-%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B%E5%AE%9E%E6%88%98/">pytorch学习10-流量预测实战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-29/pytorch%E5%AD%A6%E4%B9%A09-%E5%A4%9A%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/">pytorch学习9-多分类问题</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-27/pytorch%E5%AD%A6%E4%B9%A08-%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE%E9%9B%86/">pytorch学习8-加载数据集</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-26/pytorch%E5%AD%A6%E4%B9%A07-%E5%A4%84%E7%90%86%E5%A4%9A%E7%BB%B4%E7%89%B9%E5%BE%81%E7%9A%84%E8%BE%93%E5%85%A5/">pytorch学习7-处理多维特征的输入</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-23/pytorch%E5%AD%A6%E4%B9%A06-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98Logistic%E5%9B%9E%E5%BD%92/">pytorch学习6-分类问题Logistic回归</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-22/pytorch%E5%AD%A6%E4%B9%A05-pytorch%E5%AE%9E%E7%8E%B0%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">pytorch学习5-pytorch实现线性回归</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-21/pytorch%E5%AD%A6%E4%B9%A04-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">pytorch学习4-反向传播</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-20/pytorch%E5%AD%A6%E4%B9%A03-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95/">pytorch学习3-梯度下降算法</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-15/pytorch%E5%AD%A6%E4%B9%A02-%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B/">pytorch学习2-线性模型</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

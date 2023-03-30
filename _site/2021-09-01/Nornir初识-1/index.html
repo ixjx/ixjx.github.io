@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Nornir初识-1</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Nornir初识-1, 网络自动化, nornir, CodeShurrik" />
+    <meta name="description" content="Nornir初识-1, 网络自动化, nornir, 大半年没更新blog了，最近关注了下NetDevops，也就是网络的Devops，从而了解到Nornir。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2021-09-01/Nornir%E5%88%9D%E8%AF%86-1/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Nornir初识-1</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Sep 1, 2021
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#网络自动化"><span class="octicon octicon-list-unordered"></span>&nbsp;网络自动化</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#nornir"><span class="octicon octicon-tag"></span>&nbsp;nornir</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>大半年没更新blog了，最近关注了下NetDevops，也就是网络的Devops，从而了解到Nornir。</p>
+
+<p>简单来说Nornir就是网络版的Ansible，不过Nornir的效率完全是秒杀和吊打Ansible的存在（虽然两者都支持多线程并发，但是处理1万台设备，Ansible需要2300秒，Nornir只需要17秒，处理5000台设备Ansible需要900秒，Nornir只需要9秒，差距之大让你怀疑这俩根本不是一个量级的产品。）</p>
+
+<p>Nornir当前3.1.1版本，插件化设计，创建几个yaml配置文件就能跑起来，属实牛逼。默认多线程的并发，相比asyncio又简单许多。</p>
+
+<p><code class="language-plaintext highlighter-rouge">config.yaml</code></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">inventory</span><span class="pi">:</span>
+    <span class="na">plugin</span><span class="pi">:</span> <span class="s">SimpleInventory</span>
+    <span class="na">options</span><span class="pi">:</span>
+        <span class="na">host_file</span><span class="pi">:</span> <span class="s2">"</span><span class="s">hosts.yaml"</span>
+        <span class="na">group_file</span><span class="pi">:</span> <span class="s2">"</span><span class="s">groups.yaml"</span>
+        <span class="na">defaults_file</span><span class="pi">:</span> <span class="s2">"</span><span class="s">defaults.yaml"</span>
+<span class="na">runner</span><span class="pi">:</span>
+    <span class="na">plugin</span><span class="pi">:</span> <span class="s">threaded</span>
+    <span class="na">options</span><span class="pi">:</span>
+        <span class="na">num_workers</span><span class="pi">:</span> <span class="m">100</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">defaults.yaml</code></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">username</span><span class="pi">:</span> <span class="s">python</span>
+<span class="na">password</span><span class="pi">:</span> <span class="s1">'</span><span class="s">123'</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">groups.yaml</code></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">huawei</span><span class="pi">:</span>
+    <span class="na">platform</span><span class="pi">:</span> <span class="s">huawei_vrpv8</span>
+
+<span class="na">h3c</span><span class="pi">:</span>
+    <span class="na">platform</span><span class="pi">:</span> <span class="s">hp_comware</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">hosts.yaml</code></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">sw1</span><span class="pi">:</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">192.168.11.11</span>
+    <span class="na">groups</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">huawei</span>
+<span class="na">sw2</span><span class="pi">:</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">192.168.11.12</span>
+    <span class="na">groups</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">h3c</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">playbook.py</code></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
+<span class="kn">from</span> <span class="nn">nornir_netmiko</span> <span class="kn">import</span> <span class="n">netmiko_send_command</span>
+<span class="kn">from</span> <span class="nn">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
+
+<span class="n">nr</span> <span class="o">=</span> <span class="n">InitNornir</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="s">"config.yaml"</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">netmiko_send_command</span><span class="p">,</span> <span class="n">command_string</span><span class="o">=</span><span class="s">'display clock'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="n">print_result</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>虽然nr模块确实非常好用，但从实践的角度我发现一个问题，就是从现有的资料来看并不适合大规模跑批操作，因为网上分享的内容（包括官方案例）都有一个问题，就是nr模块强依赖<code class="language-plaintext highlighter-rouge">hosts.yaml</code>这个文件，看来接下来主要是需要将设备信息从数据库读出来再写入yaml文件。</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#nornir"><span class="octicon octicon-tag"></span>&nbsp;nornir</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-02-15/paramiko%E6%B5%85%E6%9E%90/">Paramiko浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-10-08/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Processor-4/">Nornir自定义Processor-4</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-27/Nornir%E7%95%AA%E5%A4%96%E7%AF%87-3.5/">Nornir番外篇-3.5</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-15/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Task%E6%8F%92%E4%BB%B6-3/">Nornir自定义Task插件-3</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-07/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Inventory%E6%8F%92%E4%BB%B6-2/">Nornir自定义Inventory插件-2</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-08-27/%E7%BD%91%E7%BB%9C%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84python%E4%B9%8B%E8%B7%AF/">网络工程师的python之路</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

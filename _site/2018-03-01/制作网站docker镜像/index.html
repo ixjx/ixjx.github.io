@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>制作网站docker镜像</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="制作网站docker镜像, 网络, 容器, CodeShurrik" />
+    <meta name="description" content="制作网站docker镜像, 网络, 容器, 　　看docker官方文档的时候，官网总被墙，怎么办呢？" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2018-03-01/%E5%88%B6%E4%BD%9C%E7%BD%91%E7%AB%99docker%E9%95%9C%E5%83%8F/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>制作网站docker镜像</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Mar 1, 2018
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#网络"><span class="octicon octicon-list-unordered"></span>&nbsp;网络</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>　　看docker官方文档的时候，官网总被墙，怎么办呢？</p>
+
+<p>　　首先 <em>感谢</em> 伟大的墙及其先祖。</p>
+
+<p>　　然后，我们可以本地运行 Docker 官方文档的网站，以 docker 的方式：</p>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">$ docker run -d -p 80:4000 docs/docker.github.io</code></p>
+</blockquote>
+
+<p>　　这样访问docker宿主机的 80 端口，如<a href="http://localhost">http://localhost</a>，就会看到官网文档了。</p>
+
+<p>　　最近有朋友说我的blog被墙了打不开，我大惊，定睛一看发现是github pages改成了https，也就是说网址要改成<a href="https://ixjx.github.io/blog">https://ixjx.github.io/blog</a> 。</p>
+
+<p>　　想到同样可以用docker的方式来本地运行网站，说干就干。依然是利用docker cloud的automated build，在blog的github里写Dockerfile，Dockerfile很简单，一共就5行~~</p>
+
+<p>　　因为使用了caddy作为web服务器，同时还要写一个Caddyfile。</p>
+
+<p>　　然后就可以通过:</p>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">$ docker run -d -p 80:80 ixjx/ixjx.github.io</code></p>
+</blockquote>
+
+<p>　　然后就可以访问本地 80 端口看到最新的blog了 <del>说得好像有人看一样</del></p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-12-22/NAT%E8%AE%BF%E9%97%AE%E5%9B%9E%E6%B5%81%E9%97%AE%E9%A2%98/">NAT访问回流问题</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-09-10/AnyCast%E5%AE%9E%E7%8E%B0DNS%E9%AB%98%E5%8F%AF%E7%94%A8/">Anycast实现DNS高可用</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-08-20/Linux-namespace/">Linux namespace</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-07-17/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3UDP/">深入理解UDP</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-06-06/Docker%E9%83%A8%E7%BD%B2Calico%E7%BD%91%E7%BB%9C/">Docker部署Calico网络</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-03-05/%E4%BD%BF%E7%94%A8-prometheus-%E5%92%8C-grafana-%E7%9B%91%E6%8E%A7-linux-%E6%9C%BA%E5%99%A8/">使用 prometheus 和 grafana 监控 linux 机器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/">基于Docker+Jenkins+Gitlab搭建持续集成测试环境</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-07-10/ELK-Docker-image%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3/">ELK Docker image中文文档</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-01-16/%E4%BD%BF%E7%94%A8docker%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/">使用docker科学上网</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-08-24/Docker%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%87%BA%E9%97%A8/">Docker从入门到出门</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-08-16/%E5%85%B3%E4%BA%8Ecacti/">关于cacti</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-06-05/%E7%A7%91%E5%AD%A6%E5%A7%BF%E5%8A%BF%E4%B8%8Agoogle%E6%8C%87%E5%8C%97/">科学姿势上google指北</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-10-09/%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97RAID/">磁盘阵列RAID</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-09-13/SDN%E7%BD%91%E7%BB%9C%E4%B9%8BMininet/">SDN网络之Mininet</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-04-16/%E6%95%B0%E6%8D%AE%E7%BD%91%E4%B8%8E%E4%BC%A0%E9%80%81%E7%BD%91%E6%80%BB%E7%BB%93/">数据网与传送网总结</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PaddleOCR文字识别API搭建</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="PaddleOCR文字识别API搭建, 随编, OCR, CodeShurrik" />
+    <meta name="description" content="PaddleOCR文字识别API搭建, 随编, OCR, 最近有个需求是进行验证码识别，之前一直用百度的开放OCR API。突然有一天应用报错，一看原来是免费API调用额度用光了。花钱是不可能花钱的，正好之前有用过PaddlePaddle飞桨这个深度学习框架 还是百度的，逮着薅羊毛呢，里面有个开源的PaddleOCR，测试下来文本识别效果不输于商用的开放API，那还不整一个?" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2022-04-22/PaddleOCR%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>PaddleOCR文字识别API搭建</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Apr 22, 2022
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#随编"><span class="octicon octicon-list-unordered"></span>&nbsp;随编</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#OCR"><span class="octicon octicon-tag"></span>&nbsp;OCR</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>最近有个需求是进行验证码识别，之前一直用百度的开放OCR API。突然有一天应用报错，一看原来是免费API调用额度用光了。花钱是不可能花钱的，正好之前有用过PaddlePaddle飞桨这个深度学习框架 <del>还是百度的，逮着薅羊毛呢</del>，里面有个开源的<a href="https://github.com/PaddlePaddle/PaddleOCR">PaddleOCR</a>，测试下来文本识别效果不输于商用的开放API，那还不整一个?</p>
+
+<h1 id="运行环境准备">运行环境准备</h1>
+
+<p>Windows和Mac用户推荐使用Anaconda搭建Python环境，Linux用户建议使用docker搭建Python环境。</p>
+
+<blockquote>
+  <p>推荐环境：</p>
+  <ul>
+    <li>PaddlePaddle &gt;= 2.1.2</li>
+    <li>Python 3.7</li>
+    <li>CUDA10.1 / CUDA10.2</li>
+    <li>CUDNN 7.6</li>
+  </ul>
+</blockquote>
+
+<p>我用Windows没搭起来，始终报cv2的DLL动态链接库错误，最后还是采用docker方案。</p>
+
+<h2 id="docker环境配置">Docker环境配置</h2>
+
+<p><strong>注意：第一次使用这个镜像，会自动下载该镜像，请耐心等待。您也可以访问<a href="https://hub.docker.com/r/paddlepaddle/paddle/tags/">DockerHub</a>获取与您机器适配的镜像。</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 切换到工作目录下</span>
+<span class="nb">cd</span> /home/Projects
+<span class="c"># 首次运行需创建一个docker容器，再次运行时不需要运行当前命令</span>
+<span class="c"># 创建一个名字为ppocr的docker容器，并将当前目录映射到容器的/paddle目录下</span>
+
+<span class="c">#如果您希望在CPU环境下使用docker，使用docker而不是nvidia-docker创建docker</span>
+<span class="nb">sudo </span>docker run <span class="nt">--name</span> ppocr <span class="nt">-v</span> <span class="nv">$PWD</span>:/paddle <span class="nt">--network</span><span class="o">=</span>host <span class="nt">-it</span> registry.baidubce.com/paddlepaddle/paddle:2.1.3-gpu-cuda10.2-cudnn7 /bin/bash
+
+<span class="c">#如果使用CUDA10，请运行以下命令创建容器，设置docker容器共享内存shm-size为64G，建议设置32G以上</span>
+<span class="c"># 如果是CUDA11+CUDNN8，推荐使用镜像registry.baidubce.com/paddlepaddle/paddle:2.1.3-gpu-cuda11.2-cudnn8</span>
+<span class="nb">sudo </span>nvidia-docker run <span class="nt">--name</span> ppocr <span class="nt">-v</span> <span class="nv">$PWD</span>:/paddle <span class="nt">--shm-size</span><span class="o">=</span>64G <span class="nt">--network</span><span class="o">=</span>host <span class="nt">-it</span> registry.baidubce.com/paddlepaddle/paddle:2.1.3-gpu-cuda10.2-cudnn7 /bin/bash
+
+<span class="c"># ctrl+P+Q可退出docker 容器，重新进入docker 容器使用如下命令</span>
+<span class="nb">sudo </span>docker container <span class="nb">exec</span> <span class="nt">-it</span> ppocr /bin/bash
+</code></pre></div></div>
+
+<h2 id="安装paddlepaddle">安装PaddlePaddle</h2>
+
+<p>PaddleOCR是基于PaddlePaddle框架的，首先需要安装PaddlePaddle</p>
+
+<ul>
+  <li>
+    <p>您的机器安装的是CUDA9或CUDA10，请运行以下命令安装</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> pip <span class="nb">install </span>paddlepaddle-gpu <span class="nt">-i</span> https://mirror.baidu.com/pypi/simple
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>您的机器是CPU，请运行以下命令安装</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> pip <span class="nb">install </span>paddlepaddle <span class="nt">-i</span> https://mirror.baidu.com/pypi/simple
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>更多的版本需求，请参照<a href="https://www.paddlepaddle.org.cn/install/quick">飞桨官网安装文档</a>中的说明进行操作。</p>
+
+<p><a name="12"></a></p>
+
+<h2 id="安装paddleocr-whl包">安装PaddleOCR whl包</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install</span> <span class="s2">"paddleocr&gt;=2.0.1"</span> <span class="c"># 推荐使用2.0.1+版本</span>
+</code></pre></div></div>
+
+<h2 id="项目克隆">项目克隆</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>【推荐】git clone https://github.com/PaddlePaddle/PaddleOCR
+</code></pre></div></div>
+
+<p>如果因为网络问题无法pull成功，也可选择使用码云上的托管：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://gitee.com/paddlepaddle/PaddleOCR
+</code></pre></div></div>
+
+<p>注：码云托管代码可能无法实时同步本github项目更新，存在3~5天延时，请优先使用推荐方式。</p>
+
+<h2 id="安装第三方库">安装第三方库</h2>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>PaddleOCR
+pip3 <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+</code></pre></div></div>
+
+<h2 id="服务部署">服务部署</h2>
+
+<h3 id="基于paddlehub-serving的服务部署">基于PaddleHub Serving的服务部署</h3>
+
+<p>hubserving服务部署目录下包括检测、识别、2阶段串联三种服务包，请根据需求选择相应的服务包进行安装和启动。目录结构如下：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>deploy/hubserving/
+  └─  ocr_cls     分类模块服务包
+  └─  ocr_det     检测模块服务包
+  └─  ocr_rec     识别模块服务包
+  └─  ocr_system  检测+识别串联服务包
+</code></pre></div></div>
+
+<p>我这里只是用识别模块，目录如下：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>deploy/hubserving/ocr_rec/
+  └─  __init__.py    空文件，必选
+  └─  config.json    配置文件，可选，使用配置启动服务时作为参数传入
+  └─  module.py      主模块，必选，包含服务的完整逻辑
+  └─  params.py      参数文件，必选，包含模型路径、前后处理参数等参数
+</code></pre></div></div>
+
+<h3 id="快速启动服务">快速启动服务</h3>
+<h4 id="1-准备环境">1. 准备环境</h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 安装paddlehub  </span>
+<span class="c"># paddlehub 需要 python&gt;3.6.2</span>
+pip3 <span class="nb">install </span><span class="nv">paddlehub</span><span class="o">==</span>2.1.0 <span class="nt">--upgrade</span> <span class="nt">-i</span> https://pypi.tuna.tsinghua.edu.cn/simple
+</code></pre></div></div>
+
+<h4 id="2-下载推理模型">2. 下载推理模型</h4>
+<p>安装服务模块前，需要准备推理模型并放到正确路径。默认使用的是PP-OCRv2模型，默认模型路径为：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>检测模型：./inference/ch_PP-OCRv2_det_infer/
+识别模型：./inference/ch_PP-OCRv2_rec_infer/
+方向分类器：./inference/ch_ppocr_mobile_v2.0_cls_infer/
+</code></pre></div></div>
+
+<p><strong>模型路径可在<code class="language-plaintext highlighter-rouge">params.py</code>中查看和修改。</strong> 更多模型可以从PaddleOCR提供的<a href="../../doc/doc_ch/models_list.md">模型库</a>下载，也可以替换成自己训练转换好的模型。</p>
+
+<h4 id="3-安装服务模块">3. 安装服务模块</h4>
+<ul>
+  <li>在Linux环境下，安装示例如下：
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 安装识别服务模块：  </span>
+hub <span class="nb">install </span>deploy/hubserving/ocr_rec/
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="4-启动服务">4. 启动服务</h4>
+<h5 id="配置文件启动支持cpugpu">配置文件启动（支持CPU、GPU）</h5>
+<p><strong>启动命令：</strong><br />
+<code class="language-plaintext highlighter-rouge">hub serving start -c config.json</code></p>
+
+<p>其中，<code class="language-plaintext highlighter-rouge">config.json</code>格式如下：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+    <span class="s">"modules_info"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"ocr_rec"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"init_args"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"version"</span><span class="p">:</span> <span class="s">"1.0.0"</span><span class="p">,</span>
+                <span class="s">"use_gpu"</span><span class="p">:</span> <span class="n">false</span>
+            <span class="p">},</span>
+            <span class="s">"predict_args"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s">"port"</span><span class="p">:</span> <span class="mi">8867</span><span class="p">,</span>
+    <span class="s">"use_multiprocess"</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+    <span class="s">"workers"</span><span class="p">:</span> <span class="mi">2</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">init_args</code>中的可配参数与<code class="language-plaintext highlighter-rouge">module.py</code>中的<code class="language-plaintext highlighter-rouge">_initialize</code>函数接口一致。其中，<strong>当<code class="language-plaintext highlighter-rouge">use_gpu</code>为<code class="language-plaintext highlighter-rouge">true</code>时，表示使用GPU启动服务</strong>。</li>
+  <li><code class="language-plaintext highlighter-rouge">predict_args</code>中的可配参数与<code class="language-plaintext highlighter-rouge">module.py</code>中的<code class="language-plaintext highlighter-rouge">predict</code>函数接口一致。</li>
+</ul>
+
+<p><strong>注意:</strong></p>
+<ul>
+  <li>使用配置文件启动服务时，其他参数会被忽略。</li>
+  <li>如果使用GPU预测(即，<code class="language-plaintext highlighter-rouge">use_gpu</code>置为<code class="language-plaintext highlighter-rouge">true</code>)，则需要在启动服务之前，设置CUDA_VISIBLE_DEVICES环境变量，如：<code class="language-plaintext highlighter-rouge">export CUDA_VISIBLE_DEVICES=0</code>，否则不用设置。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">use_gpu</code>不可与<code class="language-plaintext highlighter-rouge">use_multiprocess</code>同时为<code class="language-plaintext highlighter-rouge">true</code></strong>。</li>
+</ul>
+
+<h4 id="5-发送预测请求">5. 发送预测请求</h4>
+<p>配置好服务端，可使用以下命令发送预测请求，获取预测结果:</p>
+
+<p><code class="language-plaintext highlighter-rouge">python tools/test_hubserving.py server_url image_path</code></p>
+
+<p>需要给脚本传递2个参数：</p>
+<ul>
+  <li>
+    <p><strong>server_url</strong>：服务地址，格式为<br />
+<code class="language-plaintext highlighter-rouge">http://[ip_address]:[port]/predict/[module_name]</code><br />
+例如，如果使用配置文件启动识别服务，那么发送请求的url将分别是： 
+<code class="language-plaintext highlighter-rouge">http://127.0.0.1:8867/predict/ocr_rec</code></p>
+  </li>
+  <li>
+    <p><strong>image_path</strong>：测试图像路径，可以是单张图片路径，也可以是图像集合目录路径</p>
+  </li>
+</ul>
+
+<p>访问示例：<br />
+<code class="language-plaintext highlighter-rouge">python tools/test_hubserving.py http://127.0.0.1:8867/predict/ocr_rec ./doc/imgs/</code></p>
+
+<h4 id="返回结果格式说明">返回结果格式说明</h4>
+<p>返回结果为列表（list），列表中的每一项为字典（dict），信息如下：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>字段名称</th>
+      <th>数据类型</th>
+      <th>意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>text</td>
+      <td>str</td>
+      <td>文本内容</td>
+    </tr>
+    <tr>
+      <td>confidence</td>
+      <td>float</td>
+      <td>文本识别置信度或文本角度分类置信度</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="效果">效果</h4>
+<p><img src="https://user-images.githubusercontent.com/4729226/164590320-9d2a855d-dd5d-4fcb-9ceb-27a53b688ef1.png" alt="ocr1" /></p>
+
+<p>可以看到置信度还不错99%，并且能分清字母o和数字0。</p>
+
+<p>后期还可以自己训练模型，以达到更好的识别效果。</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#OCR"><span class="octicon octicon-tag"></span>&nbsp;OCR</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-06-10/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A5%E6%94%B6/">基于企业微信的消息接收</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-05-30/python%E7%BA%BF%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%B5%85%E6%9E%90/">python线程与线程池浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/">基于企业微信API的消息推送</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-27/Nornir%E7%95%AA%E5%A4%96%E7%AF%87-3.5/">Nornir番外篇-3.5</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/">基于Docker+Jenkins+Gitlab搭建持续集成测试环境</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-08-24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%A3%85%E9%A5%B0%E5%99%A8/">深入理解装饰器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-10-26/F2E_8%E4%BB%8E%E5%AE%9C%E5%AE%B6%E7%9A%84%E5%AE%B6%E5%85%B7%E8%AE%BE%E8%AE%A1%E5%88%B0%E6%A8%A1%E5%9D%97%E5%8C%96/">F2E_8从宜家的家具设计到模块化</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-08-11/F2E_7markdown%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-02/">F2E_7markdown编辑器的实现-02(文件操作)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-05-17/F2E_6markdown%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-01/">F2E_6markdown编辑器的实现-01</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-03-03/github%E7%9A%84%E6%B8%85%E7%82%B9%E5%AF%B9%E8%B1%A1%E7%AE%97%E6%B3%95/">git的清点对象算法</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-03-25/F2E_5sticker%E8%B4%B4%E7%BA%B8%E6%95%88%E6%9E%9C/">F2E_5sticker贴纸效果</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-03-23/F2E_4js%E8%BE%93%E5%87%BA%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">F2E_4js输出浏览器与操作系统</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-02-09/F2E_3JS%E5%8E%9F%E5%9E%8B%E4%B8%8E%E9%97%AD%E5%8C%85/">F2E_3JS原型与闭包</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-01-11/F2E_2CSS%E4%B8%89%E8%A7%92%E5%BD%A2/">F2E_2CSS三角形</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-12-01/F2E_1CSS%E8%87%AA%E5%AE%9A%E4%B9%89%E6%BB%9A%E5%8A%A8%E6%9D%A1%E6%A0%B7%E5%BC%8F/">F2E_1CSS自定义滚动条样式</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

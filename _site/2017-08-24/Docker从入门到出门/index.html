@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Docker从入门到出门</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Docker从入门到出门, Linux, 容器, CodeShurrik" />
+    <meta name="description" content="Docker从入门到出门, Linux, 容器, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2017-08-24/Docker%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%87%BA%E9%97%A8/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Docker从入门到出门</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Aug 24, 2017
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#Linux"><span class="octicon octicon-list-unordered"></span>&nbsp;Linux</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <ul id="markdown-toc">
+  <li><a href="#什么是docker" id="markdown-toc-什么是docker">什么是Docker</a></li>
+  <li><a href="#准备" id="markdown-toc-准备">准备</a></li>
+  <li><a href="#安装docker" id="markdown-toc-安装docker">安装Docker</a></li>
+  <li><a href="#搜索docker镜像" id="markdown-toc-搜索docker镜像">搜索Docker镜像</a></li>
+  <li><a href="#下载docker镜像" id="markdown-toc-下载docker镜像">下载Docker镜像</a></li>
+  <li><a href="#在容器中运行hello-world" id="markdown-toc-在容器中运行hello-world">在容器中运行hello world</a></li>
+  <li><a href="#在容器中安装新的程序" id="markdown-toc-在容器中安装新的程序">在容器中安装新的程序</a></li>
+  <li><a href="#运行新的镜像" id="markdown-toc-运行新的镜像">运行新的镜像</a></li>
+</ul>
+
+<p>　　最近测试NFV时接触了Docker，不禁惊为天人。相比虚拟机，Docker真是太方便了，那么就再来一个入门系列吧^-^。</p>
+
+<p><img src="http://shurriklab.qiniudn.com/la0rjhdjx6t4vynv58bahkz4fs.png" alt="" /></p>
+
+<blockquote>
+  <h3 id="什么是docker">什么是Docker</h3>
+</blockquote>
+
+<p>　　Docker是一个开源的引擎，可以轻松的为任何应用创建一个轻量级的、可移植的、自给自足的容器。开发者在自己电脑上编译测试通过的容器可以批量地在生产环境中部署，包括VMs（虚拟机）、bare metal、OpenStack 集群和其他的基础应用平台。</p>
+
+<p>　　<strong>Docker通常用于如下场景：</strong></p>
+<ul>
+  <li>web应用的自动化打包和发布</li>
+  <li>自动化测试和持续集成、发布</li>
+  <li>在服务型环境中部署和调整数据库或其他的后台应用</li>
+  <li>从头编译或者扩展现有的OpenShift或Cloud Foundry平台来搭建自己的PaaS环境</li>
+</ul>
+
+<blockquote>
+  <h3 id="准备">准备</h3>
+</blockquote>
+
+<p>　　Docker系统有两个程序：docker服务端和docker客户端。其中docker服务端是一个服务进程，管理着所有的容器。docker客户端则扮演着docker服务端的远程控制器，可以用来控制docker的服务端进程。大部分情况下，docker服务端和客户端运行在一台机器上。</p>
+
+<p>　　Docker的核心是镜像(image)，和容器(container)。image 里面是一层层文件系统，叫做 Union FS，可以将几层目录挂载到一起，成为同一个虚拟文件系统。文件系统的目录结构就像普通 linux 的目录结构一样，docker 通过这些文件与宿主机的内核提供了一个 linux 的虚拟环境。每一层文件系统我们叫做一层 layer，联合文件系统可以对每一层文件系统设置三种权限，只读（readonly）、读写（readwrite）和写出（whiteout-able），但是 docker 镜像中每一层文件系统都是只读的。</p>
+
+<p>　　构建镜像的时候，从一个最基本的操作系统开始，每个构建的操作都相当于做一层修改，增加了一层文件系统，一层层往上叠加，上层的修改会覆盖底层该位置的可见性，这也很容易理解，就像上层把底层遮住了一样。当你使用的时候，你只会看到一个完全的整体，你不知道里面有几层，也不清楚每一层所做的修改是什么。结构类似这样：</p>
+
+<p><img src="http://shurriklab.qiniudn.com/96s3f8ipoqci8uridcw6sbfixj.png" alt="" /></p>
+
+<blockquote>
+  <h3 id="安装docker">安装Docker</h3>
+</blockquote>
+
+<p>　　推荐安装1.10.0以上版本的Docker客户端。可以通过阿里云的镜像仓库下载：<a href="http://mirrors.aliyun.com/help/docker-engine">docker-engine</a>、<a href="http://mirrors.aliyun.com/help/docker-ce">docker-ce</a> 或执行以下命令：</p>
+
+<p><code class="language-plaintext highlighter-rouge">curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/internet | sh -</code></p>
+
+<p><strong>如何使用Docker加速器</strong></p>
+
+<p>　　在伟大的GWF下，访问官方Docker网站速度感人，针对Docker客户端版本大于1.10的用户，可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器：</p>
+<div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">sudo</span> <span class="nb">mkdir</span> <span class="o">-</span><span class="nv">p</span> <span class="sr">/etc/doc</span><span class="nv">ker</span>
+<span class="nv">sudo</span> <span class="nv">tee</span> <span class="sr">/etc/doc</span><span class="nv">ker</span><span class="o">/</span><span class="nv">daemon</span><span class="o">.</span><span class="nv">json</span> <span class="o">&lt;&lt;-</span><span class="p">'</span><span class="s1">EOF</span><span class="p">'</span>
+<span class="p">{</span>
+  <span class="p">"</span><span class="s2">registry-mirrors</span><span class="p">":</span> <span class="p">["</span><span class="s2">your own url</span><span class="p">"]</span>
+<span class="p">}</span>
+<span class="nv">EOF</span>
+<span class="nv">sudo</span> <span class="nv">systemctl</span> <span class="nv">daemon</span><span class="o">-</span><span class="nv">reload</span>
+<span class="nv">sudo</span> <span class="nv">systemctl</span> <span class="nv">restart</span> <span class="nv">docker</span>
+</code></pre></div></div>
+
+<blockquote>
+  <h3 id="搜索docker镜像">搜索Docker镜像</h3>
+</blockquote>
+
+<p>　　使用docker最简单的方式莫过于从现有的容器镜像开始。Docker官方网站专门有一个页面来存储所有可用的镜像，网址是：<a href="https://hub.docker.com/">https://hub.docker.com</a>。你可以通过浏览这个网页来查找你想要使用的镜像，或者使用命令行的工具来检索。</p>
+
+<p>　　就像这样：</p>
+
+<p><img src="http://shurriklab.qiniudn.com/nxlupg71j1sgurgegp00y6zkyy.png" alt="" /></p>
+
+<blockquote>
+  <h3 id="下载docker镜像">下载Docker镜像</h3>
+</blockquote>
+
+<p>　　下载镜像的命令非常简单，使用docker pull命令即可。(docker命令和git有许多类似的地方，如果你会git，那么上手会很快）。在docker的镜像索引网站上面，镜像都是按照用户名/镜像名的方式来存储的。有一组比较特殊的镜像，比如ubuntu这类基础镜像，经过官方的验证，值得信任，可以直接用镜像名来检索到。</p>
+
+<p><img src="http://shurriklab.qiniudn.com/r58j4ff1miwqxc9762k5kpe6d2.png" alt="" /></p>
+
+<p>　　能看到主流的应用/系统都有镜像，都有10M+的PULL量。那么现在把我之前做的镜像ixjx/ping 下载下来。(PS:务必使用加速器)</p>
+
+<p><img src="http://shurriklab.qiniudn.com/1lw9a6r6wa2x1cw3ncrjam7ca0.png" alt="" /></p>
+
+<blockquote>
+  <h3 id="在容器中运行hello-world">在容器中运行hello world</h3>
+</blockquote>
+
+<p>　　docker容器可以理解为在沙盒中运行的进程，类似于虚拟机。这个沙盒包含了该进程运行所必须的资源，包括文件系统、系统类库、shell 环境等等。但这个沙盒默认是不会运行任何程序的。你需要在沙盒中运行一个进程来启动某一个容器。这个进程是该容器的唯一进程，所以当该进程结束的时候，容器也会完全的停止。</p>
+
+<p>　　老规矩，先来一个hello world：(–rm是为了在container结束时自动删除)</p>
+
+<p><img src="http://shurriklab.qiniudn.com/fm7cwjc3ob8lrdbyaewn280rda.png" alt="" /></p>
+
+<blockquote>
+  <h3 id="在容器中安装新的程序">在容器中安装新的程序</h3>
+</blockquote>
+
+<p>　　下一步要做的事情是在容器里面安装一个简单的程序(ping)。之前下载的镜像是基于ubuntu的，所以你可以使用ubuntu的apt-get命令来安装ping程序：<code class="language-plaintext highlighter-rouge">apt-get install -y ping</code></p>
+
+<p>备注：apt-get 命令执行完毕之后，容器就会停止，但对容器的改动不会丢失。</p>
+
+<p>　　另外在执行apt-get 命令的时候，要带上-y参数。如果不指定-y参数的话，apt-get命令会进入交互模式，需要用户输入命令来进行确认，但在docker环境中是无法响应这种交互的。(除非进入docker run -i -t  /bash/bin模式)</p>
+
+<p>　　当你对某一个容器做了修改之后（通过在容器中运行某一个命令），可以把对容器的修改保存下来，这样下次可以从保存后的最新状态运行该容器。docker中保存状态的过程称之为committing，它保存的新旧状态之间的区别，从而产生一个新的版本。</p>
+
+<p>　　首先使用<code class="language-plaintext highlighter-rouge">docker ps -l</code>命令获得安装完ping命令之后容器的id，然后把这个镜像保存为ixjx/pingtest。(是不是和git一样?)
+　　
+<img src="http://shurriklab.qiniudn.com/6mafjouyrea02z2j7kytog4zbm.png" alt="" /></p>
+
+<p>　　执行完docker commit命令之后，会返回新版本镜像的id号。</p>
+
+<blockquote>
+  <h3 id="运行新的镜像">运行新的镜像</h3>
+</blockquote>
+
+<p>　　ok，到现在为止，你已经建立了一个完整的、自成体系的docker环境，并且安装了ping命令在里面。它可以在任何支持docker环境的系统中运行啦！</p>
+
+<p>　　一定要使用新的镜像名learn/pingtest来运行ping命令。(最开始下载的镜像中是没有ping命令的)</p>
+
+<p><img src="http://shurriklab.qiniudn.com/a1w3rf73m41dzw1pintksn8psn.png" alt="" /></p>
+
+<p>　　以上操作都是在CentOS7下完成，Docker目前也有for Windows版本，不过推荐在ubuntu下安装，因为docker是在ubuntu下面开发的，安装包测试比较充分，可以保证软件包的可用性。</p>
+
+<p>　　到此，入门阶段完毕。Docker原理、架构、常用命令这些就可以出门到官网或者社区去看，网上docker资料也多如牛毛。
+　　</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-04-14/tmux-+-oh-my-tmux%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8C%97/">tmux + oh-my-tmux使用指北</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-08-20/Linux-namespace/">Linux namespace</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-07-17/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3UDP/">深入理解UDP</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-06-06/Docker%E9%83%A8%E7%BD%B2Calico%E7%BD%91%E7%BB%9C/">Docker部署Calico网络</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-03-05/%E4%BD%BF%E7%94%A8-prometheus-%E5%92%8C-grafana-%E7%9B%91%E6%8E%A7-linux-%E6%9C%BA%E5%99%A8/">使用 prometheus 和 grafana 监控 linux 机器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/">基于Docker+Jenkins+Gitlab搭建持续集成测试环境</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-07-10/ELK-Docker-image%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3/">ELK Docker image中文文档</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-26/%E5%B9%B2%E6%8E%89Linux-Firefox%E7%9A%84Title-bar/">干掉Linux Firefox的Title bar</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-01/%E5%88%B6%E4%BD%9C%E7%BD%91%E7%AB%99docker%E9%95%9C%E5%83%8F/">制作网站docker镜像</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5Linux-VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(13)/">动手实践Linux VLAN-每天5分钟的OpenStack(13)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-08/Linux%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0VLAN-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(12)/">Linux如何实现VLAN-每天5分钟的OpenStack(12)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-06/%E7%90%86%E8%A7%A3virbr0-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(11)/">理解virbr0-每天5分钟的OpenStack(11)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-06/%E5%8A%A8%E6%89%8B%E5%AE%9E%E8%B7%B5%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(10)/">动手实践虚拟网络-每天5分钟的OpenStack(10)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-05/KVM%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96%E5%9F%BA%E7%A1%80-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(9)/">KVM网络虚拟化基础-每天5分钟的OpenStack(9)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-03/LVM%E7%B1%BB%E5%9E%8B%E7%9A%84Storage-Pool-%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%9A%84OpenStack(8)/">LVM类型的Storage Pool-每天5分钟的OpenStack(8)</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

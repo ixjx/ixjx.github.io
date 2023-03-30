@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>基于Docker+Jenkins+Gitlab搭建持续集成测试环境</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="基于Docker+Jenkins+Gitlab搭建持续集成测试环境, 随编, 容器, CodeShurrik" />
+    <meta name="description" content="基于Docker+Jenkins+Gitlab搭建持续集成测试环境, 随编, 容器, 　　七牛云的测试域名到期了，所有图片的图床都崩了，早知如此不该图方便，自己做静态资源算了。进入今天的正题，到新公司一个月，项目开发前后端分离，差不多拉通了开发到测试的流程，在此记录一下。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>基于Docker+Jenkins+Gitlab搭建持续集成测试环境</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Nov 6, 2018
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#随编"><span class="octicon octicon-list-unordered"></span>&nbsp;随编</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>　　七牛云的测试域名到期了，所有图片的图床都崩了，早知如此不该图方便，自己做静态资源算了。进入今天的正题，到新公司一个月，项目开发前后端分离，差不多拉通了开发到测试的流程，在此记录一下。</p>
+
+<p>　　随着DevOps理念和敏捷理念的发展，我们希望通过自动化技术，加快项目的迭代。尤其是当使用微服务方案后，面临在大量的项目构建和部署工作，借助于jenkins的持续集成，可以快速把应用打包成docker镜像，实现自动部署。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/56795878-f2f8cd00-6843-11e9-9188-214621243639.png" alt="jenkins" /></p>
+
+<p>如图演示了以下的场景：</p>
+
+<ul>
+  <li>
+    <p>开发者向自己的gitlab提交了代码</p>
+  </li>
+  <li>
+    <p>jenkins通过定时任务检测到了代码有变成，执行自动化构建过程</p>
+  </li>
+  <li>
+    <p>jenkins在自动化构建脚本中调用docker命令将构建好的镜像push到私有镜像中心harbor</p>
+  </li>
+  <li>
+    <p>同时，jenkins也可以直接执行remote shell启动构建好的容器</p>
+  </li>
+  <li>
+    <p>构建失败或者成功，可以及时将结果推送给相关人员，比如测试人员，安排测试</p>
+  </li>
+  <li>
+    <p>服务端可以手动通过docker命令，从镜像仓库中心拉取镜像，进行手动部署</p>
+  </li>
+</ul>
+
+<blockquote>
+  <p>环境如下:</p>
+</blockquote>
+
+<table>
+  <tbody>
+    <tr>
+      <td>192.168.110.202</td>
+      <td>harbor</td>
+    </tr>
+    <tr>
+      <td>192.168.110.203</td>
+      <td>gitlab jenkins</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>　　除了jenkins均采用docker部署。</p>
+
+<h2 id="1-搭建harbor">1. 搭建harbor</h2>
+
+<p><del>docker run -d -p 5000:5000 -v /opt/docker-registry:/var/lib/registry registry</del> 一开始用的registry，连个UI都没有，使用不便，弃了</p>
+
+<p><a href="https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md">harbor官方安装文档</a></p>
+
+<p>采用offline安装包,在执行./prepare的时候抛出如下异常：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@ubuntu:~/harbor# ./prepare 
+Fail to generate key file: ./common/config/ui/private_key.pem, cert file: ./common/config/registry/root.crt
+</code></pre></div></div>
+
+<p>需要修改prepare文件，将第498行：</p>
+
+<p><code class="language-plaintext highlighter-rouge">empty_subj = "/C=/ST=/L=/O=/CN=/"</code></p>
+
+<p>修改如下：</p>
+
+<p><code class="language-plaintext highlighter-rouge">empty_subj = "/C=US/ST=California/L=Palo Alto/O=VMware, Inc./OU=Harbor/CN=notarysigner"</code></p>
+
+<p>配置daemon.json，去掉docker(每个docker client都需要配置)默认的https的访问<code class="language-plaintext highlighter-rouge">vim /etc/docker/daemon.json</code></p>
+
+<p>里面的内容是一个json对象,加上一项insecure-registries，地址自己更改：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "insecure-registries":["192.168.1.78"]
+}
+</code></pre></div></div>
+
+<p>然后重启docker,执行</p>
+
+<p><code class="language-plaintext highlighter-rouge">systemctl daemon-reload</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">systemctl restart docker</code></p>
+
+<h2 id="2-搭建gitlab">2. 搭建gitlab</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--detach</span> <span class="se">\</span>
+<span class="nt">--hostname</span> localhost <span class="se">\</span>
+<span class="nt">--publish</span> 443:443 <span class="nt">--publish</span> 80:80 <span class="se">\</span>
+<span class="nt">--name</span> gitlab <span class="se">\</span>
+<span class="nt">--restart</span> always <span class="se">\</span>
+<span class="nt">--volume</span> /opt/gitlab/config:/etc/gitlab <span class="se">\</span>
+<span class="nt">--volume</span> /opt/gitlab/logs:/var/log/gitlab <span class="se">\</span>
+<span class="nt">--volume</span> /opt/gitlab/data:/var/opt/gitlab <span class="se">\</span>
+gitlab/gitlab-ce:latest
+</code></pre></div></div>
+
+<p>　　之后push demo代码。</p>
+
+<h2 id="3-jenkins安装">3. jenkins安装</h2>
+
+<p>　　这一块比较复杂，不讲了</p>
+
+<h2 id="4-流水线demo">4. 流水线demo</h2>
+
+<p>　　前端用npm打包，后端用的maven。</p>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pipeline</span><span class="o">{</span>
+    <span class="n">agent</span> <span class="o">{</span>
+        <span class="n">label</span> <span class="s1">'master'</span>
+    <span class="o">}</span>
+
+    <span class="n">stages</span><span class="o">{</span>
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'拉取代码'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">git</span> <span class="nl">branch:</span> <span class="s1">'alarm_system_v2'</span><span class="o">,</span>
+                <span class="nl">credentialsId:</span> <span class="s1">'5d7cb03e-66df-4002-a2d5-70f8aa196ac1'</span><span class="o">,</span>
+                <span class="nl">url:</span> <span class="s1">'http://192.168.110.8:10080/fehz/react-garden-system.git'</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'安装依赖，进行前端代码鉴定'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">nodejs</span><span class="o">(</span><span class="s1">'node-v10.6.0'</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">sh</span><span class="s1">'''
+                    npm -v
+                    node -v
+                    npm install react-tree-module-web --registry=http://192.168.110.26:8088/repository/npm/
+                    npm install react-common-module-web --registry=http://192.168.110.26:8088/repository/npm/
+                    npm install
+                    npm run lint --force
+                    '''</span>
+                    <span class="n">checkstyle</span> <span class="nl">canComputeNew:</span> <span class="kc">false</span><span class="o">,</span> <span class="nl">defaultEncoding:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">healthy:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">pattern:</span> <span class="s1">'eslint.xml'</span><span class="o">,</span> <span class="nl">unHealthy:</span> <span class="s1">''</span>
+                    <span class="n">hygieiaCodeQualityPublishStep</span> <span class="nl">checkstyleFilePattern:</span> <span class="s1">'**/*/eslint.xml'</span><span class="o">,</span> <span class="nl">findbugsFilePattern:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">jacocoFilePattern:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">junitFilePattern:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">pmdFilePattern:</span> <span class="s1">''</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'npm打包'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">nodejs</span><span class="o">(</span><span class="s1">'node-v10.6.0'</span><span class="o">){</span>
+                    <span class="n">hygieiaBuildPublishStep</span> <span class="nl">buildStatus:</span> <span class="s1">'InProgress'</span>
+                    <span class="n">sh</span><span class="s1">'''
+                    npm run build:test
+                    cp /var/lib/jenkins/workspace/build_prj/*.js $WORKSPACE/node_modules/connect-cas2/lib/
+                    '''</span>
+                    <span class="n">hygieiaBuildPublishStep</span> <span class="nl">buildStatus:</span> <span class="s1">'Success'</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'构建docker镜像'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">sh</span><span class="s1">'''
+                ###根据git库设置包名
+                jar_name=192.168.110.202/isp/react-garden-alarm-system
+                echo "包名:$jar_name"
+                docker build -t $jar_name .
+                '''</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'将docker镜像上传到镜像仓库'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">sh</span> <span class="s1">'docker push 192.168.110.202/isp/react-garden-alarm-system:latest'</span>
+                <span class="n">sh</span> <span class="s1">'docker image prune -f'</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'测试环境部署'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">sh</span><span class="s1">'''
+                echo "登录到192.168.110.211服务器执行部署脚本"
+                ssh root@192.168.110.211 "sh /opt/jenkins/deploy.sh react_garden_alarm_system"
+                '''</span>
+                <span class="n">hygieiaDeployPublishStep</span> <span class="nl">applicationName:</span> <span class="s1">'react-garden-system-alarm-dev'</span><span class="o">,</span> <span class="nl">artifactDirectory:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">artifactGroup:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">artifactName:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">artifactVersion:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">buildStatus:</span> <span class="s1">'Success'</span><span class="o">,</span> <span class="nl">environmentName:</span> <span class="s1">'TEST'</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pipeline</span><span class="o">{</span>
+    <span class="n">agent</span> <span class="o">{</span>
+        <span class="n">label</span> <span class="s1">'master'</span>
+    <span class="o">}</span>
+
+    <span class="n">stages</span><span class="o">{</span>
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'拉取代码'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">git</span> <span class="nl">branch:</span> <span class="s1">'develop-isp'</span><span class="o">,</span>
+                <span class="nl">credentialsId:</span> <span class="s1">'5d7cb03e-66df-4002-a2d5-70f8aa196ac1'</span><span class="o">,</span>
+                <span class="nl">url:</span> <span class="s1">'http://192.168.110.8:10080/liuran/framework-alarm.git/'</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'后端代码鉴定'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">build</span> <span class="nl">job:</span><span class="s1">'garden-sonar-dev'</span><span class="o">,</span>
+                <span class="nl">parameters:</span> <span class="o">[</span><span class="n">string</span><span class="o">(</span><span class="nl">name:</span> <span class="s1">'choose_service'</span><span class="o">,</span> <span class="nl">value:</span> <span class="s1">'framework-alarm-log-sonar'</span><span class="o">)]</span>
+                <span class="n">hygieiaSonarPublishStep</span> <span class="nl">ceQueryIntervalInSeconds:</span> <span class="s1">'10'</span><span class="o">,</span> <span class="nl">ceQueryMaxAttempts:</span> <span class="s1">'30'</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'构建并打包成docker镜像'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">withMaven</span><span class="o">(</span><span class="nl">jdk:</span> <span class="s1">'jdk'</span><span class="o">,</span> <span class="nl">maven:</span> <span class="s1">'apache-maven-3.5.4'</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">hygieiaBuildPublishStep</span> <span class="nl">buildStatus:</span> <span class="s1">'InProgress'</span>
+                    <span class="n">sh</span> <span class="s1">'mvn clean package docker:build'</span>
+                    <span class="n">hygieiaBuildPublishStep</span> <span class="nl">buildStatus:</span> <span class="s1">'Success'</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'将docker镜像上传到镜像仓库'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">sh</span> <span class="s1">'docker push 192.168.110.202/isp/java/framework-alarm-log:latest'</span>
+                <span class="n">sh</span> <span class="s1">'docker image prune -f'</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'测试环境部署'</span><span class="o">){</span>
+            <span class="n">steps</span><span class="o">{</span>
+                <span class="n">sh</span><span class="s1">'''
+                echo "登录到192.168.110.211服务器执行脚本"
+                ssh root@192.168.110.211 "sh /opt/jenkins/deploy.sh java_framework_alarm_log"
+                echo "登录到192.168.110.212部署自动化测试环境"
+                ssh root@192.168.110.212 "sh /root/isp-alarm.sh"
+                '''</span>
+                <span class="n">hygieiaDeployPublishStep</span> <span class="nl">applicationName:</span> <span class="s1">'garden-framework-alarm-log-dev'</span><span class="o">,</span> <span class="nl">artifactDirectory:</span> <span class="s1">'target'</span><span class="o">,</span> <span class="nl">artifactGroup:</span> <span class="s1">'com.letv.dashboard'</span><span class="o">,</span> <span class="nl">artifactName:</span> <span class="s1">'*.jar'</span><span class="o">,</span> <span class="nl">artifactVersion:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">buildStatus:</span> <span class="s1">'Success'</span><span class="o">,</span> <span class="nl">environmentName:</span> <span class="s1">'TEST'</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/*post {
+        always {
+            
+            echo 'One way or another, I have finished'
+  
+        }
+        success {
+            echo 'I succeeeded!'
+			hygieiaBuildPublishStep buildStatus: 'Success'
+        }
+        unstable {
+            echo 'I am unstable :/'
+			hygieiaBuildPublishStep buildStatus: 'Unstable'
+        }
+        failure {
+            echo 'I failed :('
+			hygieiaBuildPublishStep buildStatus: 'Failure'
+			
+        }
+        changed {
+            echo 'Things were different before...'
+        }
+    }*/</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>后面可以加个post阶段给老大发邮件。。</p>
+
+<p><code class="language-plaintext highlighter-rouge">deploy.sh</code>参考</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+
+login_harbor<span class="o">(){</span>
+
+    <span class="nv">REGISTRY</span><span class="o">=</span><span class="s2">"192.168.110.202"</span>
+    <span class="nv">HARBOR_USER</span><span class="o">=</span><span class="s2">"admin"</span>
+    <span class="nv">HARBOR_PASSWD</span><span class="o">=</span><span class="s2">"Harbor12345"</span>
+
+    docker login <span class="nt">-u</span> <span class="k">${</span><span class="nv">HARBOR_USER</span><span class="k">}</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">HARBOR_PASSWD</span><span class="k">}</span> <span class="k">${</span><span class="nv">REGISTRY</span><span class="k">}</span>
+<span class="o">}</span>
+
+deploy_new_container<span class="o">(){</span>
+    <span class="c"># $1 : $CONTAINER_NAME</span>
+    <span class="c"># $2 : $OLD_IMAGE_NAME </span>
+    <span class="c"># $3 : $IMAGE_NAME </span>
+    <span class="c"># $4 : $PORT </span>
+    <span class="nv">cid</span><span class="o">=</span><span class="si">$(</span>docker ps <span class="nt">-a</span> | <span class="nb">grep</span> <span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span> | <span class="nb">awk</span> <span class="s1">'{print $1}'</span><span class="si">)</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="nv">$cid</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span><span class="k">then
+        </span>docker <span class="nb">rm</span> <span class="nt">-f</span> <span class="nv">$cid</span>
+    <span class="k">fi
+    </span><span class="nb">echo</span> <span class="s2">"******删除旧容器完成******"</span>
+
+    <span class="nv">iid</span><span class="o">=</span><span class="si">$(</span>docker images | <span class="nb">grep</span> <span class="s2">"</span><span class="nv">$2</span><span class="s2">"</span> | <span class="nb">awk</span> <span class="s1">'{print $3}'</span><span class="si">)</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="nv">$iid</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span><span class="k">then
+        </span>docker rmi <span class="nt">-f</span> <span class="nv">$iid</span>
+    <span class="k">fi
+    </span><span class="nb">echo</span> <span class="s2">"******删除旧镜像完成******"</span>
+
+    docker pull <span class="nv">$3</span>
+    <span class="nb">echo</span> <span class="s2">"******拉取新镜像完成******"</span>
+
+    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$3</span> <span class="o">=</span>~ <span class="s2">"java"</span> <span class="o">]]</span><span class="p">;</span><span class="k">then
+        </span>docker run <span class="nt">-d</span> <span class="nt">--restart</span> always <span class="nt">-p</span> <span class="nv">$4</span>:<span class="nv">$4</span> <span class="nt">--name</span> <span class="nv">$1</span> <span class="nt">-e</span> <span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"-Denv=UAT"</span> <span class="nv">$3</span>
+        <span class="nb">echo</span> <span class="s2">"******远程部署后端容器完成******"</span>
+    <span class="k">elif</span> <span class="o">[[</span> <span class="nv">$3</span> <span class="o">=</span>~ <span class="s2">"react"</span> <span class="o">]]</span><span class="p">;</span><span class="k">then
+        </span>docker run <span class="nt">-d</span> <span class="nt">--restart</span> always <span class="nt">-p</span> <span class="nv">$4</span>:<span class="nv">$4</span> <span class="nt">--name</span> <span class="nv">$1</span> <span class="nt">-e</span> <span class="nv">ENV_OPTS</span><span class="o">=</span><span class="s2">"--env test"</span> <span class="nv">$3</span>
+        <span class="nb">echo</span> <span class="s2">"******远程部署前端容器完成******"</span>
+    <span class="k">else
+        </span><span class="nb">echo</span> <span class="s2">"镜像名字不合法，请确认!"</span>
+    <span class="k">fi</span>
+<span class="o">}</span>
+
+<span class="c"># 后端微服务</span>
+java_framework_alarm_log<span class="o">(){</span>
+    <span class="nv">CONTAINER_NAME</span><span class="o">=</span><span class="s2">"java-alarm-test"</span>
+    <span class="nv">OLD_IMAGE_NAME</span><span class="o">=</span><span class="s2">"192.168.110.202/isp/java/framework-alarm-log"</span>
+    <span class="nv">IMAGE_NAME</span><span class="o">=</span><span class="s2">"192.168.110.202/isp/java/framework-alarm-log:latest"</span>
+    <span class="nv">PORT</span><span class="o">=</span><span class="s2">"8086"</span>
+
+    deploy_new_container <span class="nv">$CONTAINER_NAME</span> <span class="nv">$OLD_IMAGE_NAME</span> <span class="nv">$IMAGE_NAME</span> <span class="nv">$PORT</span>
+<span class="o">}</span>
+
+java_isp_ias<span class="o">(){</span>
+    <span class="nv">CONTAINER_NAME</span><span class="o">=</span><span class="s2">"java-ias-test"</span>
+    <span class="nv">OLD_IMAGE_NAME</span><span class="o">=</span><span class="s2">"192.168.110.202/isp/java/isp-ias"</span>
+    <span class="nv">IMAGE_NAME</span><span class="o">=</span><span class="s2">"192.168.110.202/isp/java/isp-ias:latest"</span>
+    <span class="nv">PORT</span><span class="o">=</span><span class="s2">"8089"</span>
+
+    deploy_new_container <span class="nv">$CONTAINER_NAME</span> <span class="nv">$OLD_IMAGE_NAME</span> <span class="nv">$IMAGE_NAME</span> <span class="nv">$PORT</span>
+<span class="o">}</span>
+
+<span class="c"># 前端</span>
+react_garden_alarm_system<span class="o">(){</span>
+    <span class="nv">CONTAINER_NAME</span><span class="o">=</span><span class="s2">"react-alarm-test"</span>
+    <span class="nv">OLD_IMAGE_NAME</span><span class="o">=</span><span class="s2">"192.168.110.202/isp/react-garden-alarm-system"</span>
+    <span class="nv">IMAGE_NAME</span><span class="o">=</span><span class="s2">"192.168.110.202/isp/react-garden-alarm-system:latest"</span>
+    <span class="nv">PORT</span><span class="o">=</span><span class="s2">"8003"</span>
+
+    deploy_new_container <span class="nv">$CONTAINER_NAME</span> <span class="nv">$OLD_IMAGE_NAME</span> <span class="nv">$IMAGE_NAME</span> <span class="nv">$PORT</span>
+<span class="o">}</span>
+
+react_garden_inbreak_system<span class="o">(){</span>
+    <span class="nv">CONTAINER_NAME</span><span class="o">=</span><span class="s2">"react-ias-test"</span>
+    <span class="nv">OLD_IMAGE_NAME</span><span class="o">=</span><span class="s2">"192.168.110.202/isp/react-garden-inbreak-system"</span>
+    <span class="nv">IMAGE_NAME</span><span class="o">=</span><span class="s2">"192.168.110.202/isp/react-garden-inbreak-system:latest"</span>
+    <span class="nv">PORT</span><span class="o">=</span><span class="s2">"8005"</span>
+
+    deploy_new_container <span class="nv">$CONTAINER_NAME</span> <span class="nv">$OLD_IMAGE_NAME</span> <span class="nv">$IMAGE_NAME</span> <span class="nv">$PORT</span>
+<span class="o">}</span>
+
+login_harbor
+
+<span class="k">case</span> <span class="nv">$1</span> <span class="k">in 
+    </span>java_framework_alarm_log<span class="p">)</span>
+        java_framework_alarm_log
+    <span class="p">;;</span>
+    java_isp_ias<span class="p">)</span>
+        java_isp_ias
+    <span class="p">;;</span>
+    react_garden_alarm_system<span class="p">)</span>
+        react_garden_alarm_system
+    <span class="p">;;</span>
+    react_garden_inbreak_system<span class="p">)</span>
+        react_garden_inbreak_system
+    <span class="p">;;</span>
+    <span class="k">*</span><span class="p">)</span>
+    <span class="nb">echo</span> <span class="s2">"请输入正确参数!
+    java_framework_alarm_log
+    java_isp_ias
+    react_garden_alarm_system
+    react_garden_inbreak_system"</span>
+    <span class="p">;;</span>
+<span class="k">esac</span>
+</code></pre></div></div>
+
+<h2 id="5-问题">5. 问题</h2>
+
+<ol>
+  <li>gitlab需通过root账号登录，允许本地webhook。这是因为gitlab和jenkins在同一个节点部署，实际分开部署不会有这个问题</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gitlab-rails console production   <span class="c">#gitlab居然是用ruby写的</span>
+u <span class="o">=</span> User.where<span class="o">(</span>email: <span class="s1">'admin@example.com'</span><span class="o">)</span>.first
+u.password<span class="o">=</span><span class="s1">'new_password'</span>
+u.save!
+</code></pre></div></div>
+
+<p>gitlab配置Admin area：</p>
+
+<p>Setting-&gt;Network-&gt;Outbound requests</p>
+
+<p>勾选Allow requests to the local network from hooks and services</p>
+
+<p>jenkins配置：</p>
+
+<p>Jenkins–&gt;Jenkins Manages–&gt;Configure System，找到GitLab配置，去掉勾选</p>
+
+<p>系统管理–&gt;全局安全配置，勾选匿名用户具有可读权限和去掉CSRF防止跨站点请求伪造</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-06-10/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A5%E6%94%B6/">基于企业微信的消息接收</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-05-30/python%E7%BA%BF%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%B5%85%E6%9E%90/">python线程与线程池浅析</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-04-22/PaddleOCR%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/">PaddleOCR文字识别API搭建</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/">基于企业微信API的消息推送</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2021-09-27/Nornir%E7%95%AA%E5%A4%96%E7%AF%87-3.5/">Nornir番外篇-3.5</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-08-20/Linux-namespace/">Linux namespace</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-07-17/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3UDP/">深入理解UDP</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-06-06/Docker%E9%83%A8%E7%BD%B2Calico%E7%BD%91%E7%BB%9C/">Docker部署Calico网络</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-03-05/%E4%BD%BF%E7%94%A8-prometheus-%E5%92%8C-grafana-%E7%9B%91%E6%8E%A7-linux-%E6%9C%BA%E5%99%A8/">使用 prometheus 和 grafana 监控 linux 机器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-08-24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%A3%85%E9%A5%B0%E5%99%A8/">深入理解装饰器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-07-10/ELK-Docker-image%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3/">ELK Docker image中文文档</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-01/%E5%88%B6%E4%BD%9C%E7%BD%91%E7%AB%99docker%E9%95%9C%E5%83%8F/">制作网站docker镜像</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-08-24/Docker%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%87%BA%E9%97%A8/">Docker从入门到出门</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-10-26/F2E_8%E4%BB%8E%E5%AE%9C%E5%AE%B6%E7%9A%84%E5%AE%B6%E5%85%B7%E8%AE%BE%E8%AE%A1%E5%88%B0%E6%A8%A1%E5%9D%97%E5%8C%96/">F2E_8从宜家的家具设计到模块化</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-08-11/F2E_7markdown%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0-02/">F2E_7markdown编辑器的实现-02(文件操作)</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

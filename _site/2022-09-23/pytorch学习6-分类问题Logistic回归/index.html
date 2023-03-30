@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>pytorch学习6-分类问题Logistic回归</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="pytorch学习6-分类问题Logistic回归, pytorch, AI, CodeShurrik" />
+    <meta name="description" content="pytorch学习6-分类问题Logistic回归, pytorch, AI, 在前篇中提到的耗时效益的问题，是线性回归问题，也就是输入和输出间有数值上的关系。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2022-09-23/pytorch%E5%AD%A6%E4%B9%A06-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98Logistic%E5%9B%9E%E5%BD%92/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>pytorch学习6-分类问题Logistic回归</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Sep 23, 2022
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#pytorch"><span class="octicon octicon-list-unordered"></span>&nbsp;pytorch</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>在前篇中提到的耗时效益的问题，是线性回归问题，也就是输入和输出间有数值上的关系。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>x(hours)</th>
+      <th>y(points)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>如果将y的值记为是否合格，此问题就变换成一个（二）分类问题。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>x(hours)</th>
+      <th>y(pass or fail)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>fail(0)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>fail(0)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>pass(1)</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>实际上是计算在4工时下是否合格的概率，即对概率的计算与比较，而非类别之间的数值比较。</p>
+
+<p>分类问题中，实际上是对概率的计算与比较，而非类别之间的数值比较</p>
+
+<p>下文中介绍常见的<code class="language-plaintext highlighter-rouge">MNIST</code>数据集。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/191885088-19a0d1b6-7da9-44b4-9e31-d7e9bb9bf3e0.png" alt="MINIST" /></p>
+
+<p>数据集规格：</p>
+
+<ol>
+  <li>Training_set： 60000</li>
+  <li>Test_set： 10000</li>
+  <li>Classes： 10</li>
+</ol>
+
+<h2 id="逻辑回归"><strong>逻辑回归</strong></h2>
+
+<h3 id="二分类问题"><strong>二分类问题</strong></h3>
+
+<p>分类问题是非0即1的问题，由于隐藏条件的限制</p>
+
+\[P(\widehat y=1)+P(\widehat y=0) = 1\]
+
+<p>对于二分类问题结果的预测，仅需要计算在0或1的条件下即可得到答案。</p>
+
+<p>通常计算
+\(P(\widehat y=1)\)</p>
+
+<h3 id="逻辑函数"><strong>逻辑函数</strong></h3>
+
+<p>在线性回归问题中，所利用的模型为</p>
+
+\[\widehat y = \omega x+b\]
+
+<p>此时的
+\(\widehat y \in R\)
+，但当问题为分类问题时，所求结果的值域应当发生改变，变为一个概率即
+\(\widehat y \in [0,1]\)</p>
+
+<p>因此，需要引入逻辑函数（sigmod）来实现。</p>
+
+\[\sigma(x) = \frac{1}{1+e^{-x}}\]
+
+<p><strong>本函数原名为logistics函数，属于sigmod类函数</strong>，由于其特性优异，代码中的sigmod函数就指的是该函数。其函数图像为</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/191887717-42527619-3ec8-4d63-a50e-9991aa071e81.png" alt="image-20210302151314093" /></p>
+
+<p>特点：</p>
+
+<ol>
+  <li>函数值在0到1之间变化明显（导数大）</li>
+  <li>在趋近于0和1处函数逐渐平滑（导数小）</li>
+  <li>函数为饱和函数[<a href="http://biranda.top/Pytorch学习笔记007——分类问题/#fn1">1]</a></li>
+  <li>单调增函数</li>
+</ol>
+
+<p>除上述以外，还有其他类的sigmod函数。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/191887864-e23154d6-bd72-4f81-bfe0-b958c526a601.png" alt="image-20210302152008499" /></p>
+
+<h3 id="模型变化"><strong>模型变化</strong></h3>
+
+<h4 id="模型结构变化"><strong>模型结构变化</strong></h4>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/191888156-8d53c83d-f279-4e0a-8856-395d9e127899.png" alt="image-20210302153609035" /></p>
+
+<h4 id="loss变化"><strong>Loss变化</strong></h4>
+
+<p>原先是计算两个标量数值间的差距，也就是数轴上的距离。</p>
+
+<p>现在为了计算两个概率之间的差异，需要利用到交叉熵的理论。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/191888194-9e6bee9e-5ee2-4777-9989-10394df333fd.png" alt="image-20210302153738384" /></p>
+
+<p>这一段信息论有点懵，看不懂。。。</p>
+
+<p>总之二分类模型中的Loss改用交叉熵计算，即BCE</p>
+
+\[Loss = -(y log(\widehat y)+(1-y)log((1-\widehat y))\]
+
+<p>在mini-batch损失函数的计算中</p>
+
+\[Loss = -\frac{1}{N}\sum_{n=1}^N y_nlog(\widehat y_n) + (1-y_n)log(1-\widehat y_n)\]
+
+<h3 id="代码部分"><strong>代码部分</strong></h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">3.0</span><span class="p">]])</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">],[</span><span class="mf">1.0</span><span class="p">]])</span>
+
+<span class="c1">#改用LogisticRegressionModel 同样继承于Module
+</span><span class="k">class</span> <span class="nc">LogisticRegressionModel</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LogisticRegressionModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1">#对原先的linear结果进行sigmod激活
+</span>        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">linear</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">y_pred</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegressionModel</span><span class="p">()</span>
+
+<span class="c1">#构造的criterion对象所接受的参数为（y',y） 改用BCE
+</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">BCELoss</span><span class="p">(</span><span class="n">size_average</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_data</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">y_data</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">loss</span><span class="p">)</span>
+    <span class="n">optimizer</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">'w = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'b = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+
+<span class="n">x_test</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">]])</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">'y_pred = '</span><span class="p">,</span><span class="n">y_test</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/191888684-177fac0a-faff-4d23-bc62-e67d517bb968.png" alt="微信截图_20220923114602" /></p>
+
+<p>本文参考自<a href="https://www.bilibili.com/video/BV1Y7411d7Ys?p=6">B站《PyTorch深度学习实践》P6</a></p>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2023-01-03/pytorch%E5%AD%A6%E4%B9%A016-transformer%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习16-transformer流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-12-03/pytorch%E5%AD%A6%E4%B9%A015-%E5%8A%A0%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E7%9A%84seq2seq%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习15-加入注意力机制的seq2seq优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-11-09/pytorch%E5%AD%A6%E4%B9%A014-%E4%BD%BF%E7%94%A8GPU%E8%AE%AD%E7%BB%83/">pytorch学习14-使用GPU训练</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-16/pytorch%E5%AD%A6%E4%B9%A013-%E4%BD%BF%E7%94%A8RNN%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习13-使用RNN优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-14/pytorch%E5%AD%A6%E4%B9%A012-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">pytorch学习12-循环神经网络基础</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-09/pytorch%E5%AD%A6%E4%B9%A011-%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">pytorch学习11-卷积神经网络基础</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-30/pytorch%E5%AD%A6%E4%B9%A010-%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B%E5%AE%9E%E6%88%98/">pytorch学习10-流量预测实战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-29/pytorch%E5%AD%A6%E4%B9%A09-%E5%A4%9A%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/">pytorch学习9-多分类问题</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-27/pytorch%E5%AD%A6%E4%B9%A08-%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE%E9%9B%86/">pytorch学习8-加载数据集</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-26/pytorch%E5%AD%A6%E4%B9%A07-%E5%A4%84%E7%90%86%E5%A4%9A%E7%BB%B4%E7%89%B9%E5%BE%81%E7%9A%84%E8%BE%93%E5%85%A5/">pytorch学习7-处理多维特征的输入</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-22/pytorch%E5%AD%A6%E4%B9%A05-pytorch%E5%AE%9E%E7%8E%B0%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">pytorch学习5-pytorch实现线性回归</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-21/pytorch%E5%AD%A6%E4%B9%A04-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">pytorch学习4-反向传播</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-20/pytorch%E5%AD%A6%E4%B9%A03-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95/">pytorch学习3-梯度下降算法</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-15/pytorch%E5%AD%A6%E4%B9%A02-%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B/">pytorch学习2-线性模型</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-13/pytorch%E5%AD%A6%E4%B9%A01-%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/">pytorch学习1-人工智能基础</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

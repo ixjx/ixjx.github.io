@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Docker部署Calico网络</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Docker部署Calico网络, 网络, 容器, CodeShurrik" />
+    <meta name="description" content="Docker部署Calico网络, 网络, 容器, 　　今天交流了NSX-T和K8S的集成，赶紧了解了一下原生开源的Calico网络。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2019-06-06/Docker%E9%83%A8%E7%BD%B2Calico%E7%BD%91%E7%BB%9C/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Docker部署Calico网络</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Jun 6, 2019
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#网络"><span class="octicon octicon-list-unordered"></span>&nbsp;网络</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>　　今天交流了NSX-T和K8S的集成，赶紧了解了一下原生开源的Calico网络。</p>
+
+<p>　　Calico是一个纯三层的虚拟网络方案，Calico为每个容器分配一个IP，每个host都是router，host之间采用了BGP协议发布路由，把不同host的容器连接起来。与VxLAN不同的是，Calico不对数据包做额外封装，不需要NAT和端口映射，扩展性和性能都很好。</p>
+
+<h2 id="实验环境">实验环境</h2>
+
+<p>Calico依赖etcd在不同主机间共享和交换信息，存储Calico网络状态。我们将在host 192.168.33.10上运行etcd。</p>
+
+<p>Calico网络中的每个主机都需要运行Calico组件，提供容器interface管理、动态路由、动态ACL、报告状态等功能。</p>
+
+<p>将就了之前搭的vagrant，实验环境如下图所示：</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/59015243-1f572e80-8871-11e9-9c7b-e5493bb6cb16.jpg" alt="calico1" /></p>
+
+<h2 id="首先安装etcd">首先安装etcd</h2>
+
+<p>在192.168.33.10主机上安装etcd:</p>
+
+<p><code class="language-plaintext highlighter-rouge">yum install -y etcd</code></p>
+
+<p>修改etcd配置文件：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@master etc]# <span class="nb">cat</span> /etc/etcd/etcd.conf 
+<span class="c">#[Member]</span>
+<span class="c">#ETCD_CORS=""</span>
+<span class="nv">ETCD_DATA_DIR</span><span class="o">=</span><span class="s2">"/var/lib/etcd/default.etcd"</span>
+<span class="c">#ETCD_WAL_DIR=""</span>
+<span class="c">#ETCD_LISTEN_PEER_URLS="http://localhost:2380"</span>
+<span class="nv">ETCD_LISTEN_CLIENT_URLS</span><span class="o">=</span><span class="s2">"http://192.168.33.10:2379"</span>
+...
+<span class="c">#[Clustering]</span>
+<span class="c">#ETCD_INITIAL_ADVERTISE_PEER_URLS="http://localhost:2380"</span>
+<span class="nv">ETCD_ADVERTISE_CLIENT_URLS</span><span class="o">=</span><span class="s2">"http://192.168.33.10:2379"</span>
+...
+</code></pre></div></div>
+
+<p>启动etcd服务<code class="language-plaintext highlighter-rouge">systemctl start etcd &amp;&amp; systemctl enable etcd</code></p>
+
+<p>修改docker配置文件连接etcd:</p>
+
+<p>修改 node1 和 node2 的 Docker daemon 配置文件/etc/docker/daemon.json</p>
+
+<p>连接 etcd：–cluster-store=etcd://192.168.33.10:2379</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# <span class="nb">cat</span> /etc/docker/daemon.json 
+<span class="o">{</span>
+  <span class="s2">"registry-mirrors"</span>: <span class="o">[</span><span class="s2">"https://x3h8v36l.mirror.aliyuncs.com"</span><span class="o">]</span>,
+  <span class="s2">"cluster-store"</span>: <span class="s2">"etcd://192.168.33.10:2379"</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>重启 Docker daemon<code class="language-plaintext highlighter-rouge"> systemctl daemon-reload &amp;&amp; systemctl restart docker.service</code></p>
+
+<h2 id="部署calicoctl">部署calicoctl</h2>
+
+<p>官方参考文档： https://docs.projectcalico.org/v2.6/getting-started/docker/installation/manual</p>
+
+<p>在node1和node2上下载calicoctl并运行calico容器:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# wget <span class="nt">-O</span> /usr/local/bin/calicoctl https://github.com/projectcalico/calicoctl/releases/download/v1.6.5/calicoctl
+<span class="o">[</span>root@node1 ~]# <span class="nb">chmod</span> +x /usr/local/bin/calicoctl
+</code></pre></div></div>
+
+<p>创建calico配置文件:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# <span class="nb">mkdir</span> /etc/calico/
+<span class="o">[</span>root@node1 ~]# vim /etc/calico/calicoctl.cfg
+apiVersion: v1
+kind: calicoApiConfig
+metadata:
+spec:
+  datastoreType: <span class="s2">"etcdv2"</span>
+  etcdEndpoints: <span class="s2">"http://192.168.33.10:2379"</span>
+</code></pre></div></div>
+
+<p>分别在两个节点上创建calico容器，执行后会自动下载calico镜像并运行容器:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# calicoctl node run <span class="nt">--node-image</span><span class="o">=</span>quay.io/calico/node:v2.6.12 <span class="nt">-c</span> /etc/calico/calicoctl.cfg
+Running <span class="nb">command </span>to load modules: modprobe <span class="nt">-a</span> xt_set ip6_tables
+Enabling IPv4 forwarding
+Enabling IPv6 forwarding
+Increasing conntrack limit
+Removing old calico-node container <span class="o">(</span><span class="k">if </span>running<span class="o">)</span><span class="nb">.</span>
+Running the following <span class="nb">command </span>to start calico-node:
+
+docker run <span class="nt">--net</span><span class="o">=</span>host <span class="nt">--privileged</span> <span class="nt">--name</span><span class="o">=</span>calico-node <span class="nt">-d</span> <span class="nt">--restart</span><span class="o">=</span>always <span class="nt">-e</span> <span class="nv">NODENAME</span><span class="o">=</span>node1 <span class="nt">-e</span> <span class="nv">CALICO_NETWORKING_BACKEND</span><span class="o">=</span>bird <span class="nt">-e</span> <span class="nv">CALICO_LIBNETWORK_ENABLED</span><span class="o">=</span><span class="nb">true</span> <span class="nt">-e</span> <span class="nv">ETCD_ENDPOINTS</span><span class="o">=</span>http://192.168.33.10:2379 <span class="nt">-v</span> /var/log/calico:/var/log/calico <span class="nt">-v</span> /var/run/calico:/var/run/calico <span class="nt">-v</span> /lib/modules:/lib/modules <span class="nt">-v</span> /run:/run <span class="nt">-v</span> /run/docker/plugins:/run/docker/plugins <span class="nt">-v</span> /var/run/docker.sock:/var/run/docker.sock quay.io/calico/node:v2.6.12
+
+Image may take a short <span class="nb">time </span>to download <span class="k">if </span>it is not available locally.
+Container started, checking progress logs.
+
+2019-06-06 07:16:41.433 <span class="o">[</span>INFO][8] startup.go 173: Early log level <span class="nb">set </span>to info
+2019-06-06 07:16:41.433 <span class="o">[</span>INFO][8] client.go 202: Loading config from environment
+2019-06-06 07:16:41.434 <span class="o">[</span>INFO][8] startup.go 83: Skipping datastore connection <span class="nb">test
+</span>2019-06-06 07:16:41.439 <span class="o">[</span>INFO][8] startup.go 259: Building new node resource <span class="nv">Name</span><span class="o">=</span><span class="s2">"node1"</span>
+2019-06-06 07:16:41.439 <span class="o">[</span>INFO][8] startup.go 273: Initialise BGP data
+2019-06-06 07:16:41.441 <span class="o">[</span>INFO][8] startup.go 467: Using autodetected IPv4 address on interface eth1: 192.168.33.11/24
+2019-06-06 07:16:41.441 <span class="o">[</span>INFO][8] startup.go 338: Node IPv4 changed, will check <span class="k">for </span>conflicts
+2019-06-06 07:16:41.444 <span class="o">[</span>INFO][8] etcd.go 430: Error enumerating host directories <span class="nv">error</span><span class="o">=</span>100: Key not found <span class="o">(</span>/calico<span class="o">)</span> <span class="o">[</span>11]
+2019-06-06 07:16:41.444 <span class="o">[</span>INFO][8] startup.go 530: No AS number configured on node resource, using global value
+2019-06-06 07:16:41.448 <span class="o">[</span>INFO][8] etcd.go 105: Ready flag is now <span class="nb">set
+</span>2019-06-06 07:16:41.452 <span class="o">[</span>INFO][8] client.go 133: Assigned cluster GUID <span class="nv">ClusterGUID</span><span class="o">=</span><span class="s2">"05d43659a30f4f08a15f9515fcd0278f"</span>
+2019-06-06 07:16:41.471 <span class="o">[</span>INFO][8] startup.go 419: CALICO_IPV4POOL_NAT_OUTGOING is <span class="nb">true</span> <span class="o">(</span>defaulted<span class="o">)</span> through environment variable
+2019-06-06 07:16:41.471 <span class="o">[</span>INFO][8] startup.go 659: Ensure default IPv4 pool is created. IPIP mode: off
+2019-06-06 07:16:41.473 <span class="o">[</span>INFO][8] startup.go 670: Created default IPv4 pool <span class="o">(</span>192.168.0.0/16<span class="o">)</span> with NAT outgoing true. IPIP mode: off
+2019-06-06 07:16:41.473 <span class="o">[</span>INFO][8] startup.go 419: FELIX_IPV6SUPPORT is <span class="nb">true</span> <span class="o">(</span>defaulted<span class="o">)</span> through environment variable
+2019-06-06 07:16:41.473 <span class="o">[</span>INFO][8] startup.go 626: IPv6 supported on this platform: <span class="nb">true
+</span>2019-06-06 07:16:41.473 <span class="o">[</span>INFO][8] startup.go 419: CALICO_IPV6POOL_NAT_OUTGOING is <span class="nb">false</span> <span class="o">(</span>defaulted<span class="o">)</span> through environment variable
+2019-06-06 07:16:41.473 <span class="o">[</span>INFO][8] startup.go 659: Ensure default IPv6 pool is created. IPIP mode: off
+2019-06-06 07:16:41.475 <span class="o">[</span>INFO][8] startup.go 670: Created default IPv6 pool <span class="o">(</span>fd80:24e2:f998:72d6::/64<span class="o">)</span> with NAT outgoing false. IPIP mode: off
+2019-06-06 07:16:41.514 <span class="o">[</span>INFO][8] startup.go 131: Using node name: node1
+2019-06-06 07:16:41.814 <span class="o">[</span>INFO][12] client.go 202: Loading config from environment
+Starting libnetwork service
+Calico node started successfully
+</code></pre></div></div>
+
+<ol>
+  <li>
+    <p>设置主机网络，例如 enable IP forwarding。</p>
+  </li>
+  <li>
+    <p>下载并启动 calico-node 容器，calico 会以容器的形式运行（与 weave 类似）。</p>
+  </li>
+  <li>
+    <p>连接 etcd。</p>
+  </li>
+  <li>
+    <p>calico 启动成功。</p>
+  </li>
+</ol>
+
+<p>查看calico运行状态:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++---------------+-------------------+-------+----------+--------+
+| PEER ADDRESS  |     PEER TYPE     | STATE |  SINCE   |  INFO  |
++---------------+-------------------+-------+----------+--------+
+| 192.168.33.12 | node-to-node mesh | start | 07:17:09 | Active |
++---------------+-------------------+-------+----------+--------+
+
+IPv6 BGP status
+No IPv6 peers found.
+
+<span class="o">[</span>root@node1 ~]# calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++---------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS  |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++---------------+-------------------+-------+----------+-------------+
+| 192.168.33.12 | node-to-node mesh | up    | 07:17:13 | Established |
++---------------+-------------------+-------+----------+-------------+
+
+IPv6 BGP status
+No IPv6 peers found.
+
+</code></pre></div></div>
+
+<p>创建calico网络：</p>
+
+<p>在 node1 或 node2 上执行如下命令创建 calico 网络 cal_ent1：</p>
+
+<p><code class="language-plaintext highlighter-rouge">docker network create --driver calico --ipam-driver calico-ipam cal_net1</code></p>
+
+<ul>
+  <li>
+    <p>–driver calico 指定使用 calico 的 libnetwork CNM driver。</p>
+  </li>
+  <li>
+    <p>–ipam-driver calico-ipam 指定使用 calico 的 IPAM driver 管理 IP。</p>
+  </li>
+</ul>
+
+<p>calico 为 global 网络，etcd 会将 cal_net 同步到所有主机。</p>
+
+<h2 id="calico网络结构">Calico网络结构</h2>
+
+<p>在 node1 中运行容器 bbox1 并连接到 cal_net1：</p>
+
+<p><code class="language-plaintext highlighter-rouge">docker container run --net cal_net1 --name bbox1 -tid busybox</code></p>
+
+<p>查看 bbox1 的网络配置:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# docker <span class="nb">exec </span>bbox1 ip a
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue qlen 1
+    <span class="nb">link</span>/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+5: cali0@if6: &lt;BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN&gt; mtu 1500 qdisc noqueue 
+    <span class="nb">link</span>/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff
+    inet 192.168.166.128/32 brd 192.168.166.128 scope global cali0
+       valid_lft forever preferred_lft forever
+</code></pre></div></div>
+
+<p>cali0 是 calico interface，分配的 IP 为 192.168.166.128。cali0 对应 node1 编号 6 的 interface calicce21fc3677@if5</p>
+
+<p>node1 将作为 router 负责转发目的地址为 bbox1 的数据包</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# ip r
+default via 10.0.2.2 dev eth0 proto static metric 100 
+10.0.2.0/24 dev eth0 proto kernel scope <span class="nb">link </span>src 10.0.2.15 metric 100 
+172.17.0.0/16 dev docker0 proto kernel scope <span class="nb">link </span>src 172.17.0.1 
+192.168.33.0/24 dev eth1 proto kernel scope <span class="nb">link </span>src 192.168.33.11 metric 100 
+192.168.104.0/26 via 192.168.33.12 dev eth1 proto bird 
+192.168.166.128 dev calicce21fc3677 scope <span class="nb">link 
+</span>blackhole 192.168.166.128/26 proto bird 
+</code></pre></div></div>
+
+<p>所有发送到 bbox1 的数据都会发给calicce21fc3677，因为calicce21fc3677 与 cali0 是一对 veth pair，bbox1 能够接收到数据。</p>
+
+<p>接下来我们在 host2 中运行容器 bbox2，也连接到 cal_net1：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node2 ~]# docker <span class="nb">exec </span>bbox2 ip a
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue qlen 1
+    <span class="nb">link</span>/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+5: cali0@if6: &lt;BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN&gt; mtu 1500 qdisc noqueue 
+    <span class="nb">link</span>/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff
+    inet 192.168.104.0/32 brd 192.168.104.0 scope global cali0
+       valid_lft forever preferred_lft forever
+</code></pre></div></div>
+<p>IP 为192.168.104.0</p>
+
+<p>node2 添加了两条路由：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node2 ~]# ip r
+default via 10.0.2.2 dev eth0 proto static metric 100 
+10.0.2.0/24 dev eth0 proto kernel scope <span class="nb">link </span>src 10.0.2.15 metric 100 
+172.17.0.0/16 dev docker0 proto kernel scope <span class="nb">link </span>src 172.17.0.1 
+192.168.33.0/24 dev eth1 proto kernel scope <span class="nb">link </span>src 192.168.33.12 metric 100 
+192.168.104.0 dev calib5228fd5fcd scope <span class="nb">link 
+</span>blackhole 192.168.104.0/26 proto bird 
+192.168.166.128/26 via 192.168.33.11 dev eth1 proto bird 
+</code></pre></div></div>
+
+<ol>
+  <li>目的地址为 node1 容器 subnet 192.168.166.128/26 的路由。</li>
+  <li>目的地址为本地 bbox2 容器 192.168.104.0 的路由。</li>
+  <li>注意到node1的路由表，同样的，node1 也自动添加了到 192.168.104.0/26 的路由。</li>
+</ol>
+
+<h2 id="calico-的默认连通性">Calico 的默认连通性</h2>
+
+<p>测试一下 bbox1 与 bbox2 的连通性：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@node1 ~]# docker <span class="nb">exec </span>bbox1 ping bbox2
+PING bbox2 <span class="o">(</span>192.168.104.0<span class="o">)</span>: 56 data bytes
+64 bytes from 192.168.104.0: <span class="nb">seq</span><span class="o">=</span>0 <span class="nv">ttl</span><span class="o">=</span>62 <span class="nb">time</span><span class="o">=</span>0.996 ms
+64 bytes from 192.168.104.0: <span class="nb">seq</span><span class="o">=</span>1 <span class="nv">ttl</span><span class="o">=</span>62 <span class="nb">time</span><span class="o">=</span>0.568 ms
+64 bytes from 192.168.104.0: <span class="nb">seq</span><span class="o">=</span>2 <span class="nv">ttl</span><span class="o">=</span>62 <span class="nb">time</span><span class="o">=</span>0.498 ms
+64 bytes from 192.168.104.0: <span class="nb">seq</span><span class="o">=</span>3 <span class="nv">ttl</span><span class="o">=</span>62 <span class="nb">time</span><span class="o">=</span>0.539 ms
+</code></pre></div></div>
+
+<blockquote>
+  <p>calico 默认的 policy 规则是：容器只能与同一个 calico 网络中的容器通信。</p>
+</blockquote>
+
+<blockquote>
+  <p>既然这是默认 policy，那就有方法定制 policy，这也是 calico 较其他网络方案最大的特性。</p>
+</blockquote>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#容器"><span class="octicon octicon-tag"></span>&nbsp;容器</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2020-12-22/NAT%E8%AE%BF%E9%97%AE%E5%9B%9E%E6%B5%81%E9%97%AE%E9%A2%98/">NAT访问回流问题</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-09-10/AnyCast%E5%AE%9E%E7%8E%B0DNS%E9%AB%98%E5%8F%AF%E7%94%A8/">Anycast实现DNS高可用</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-08-20/Linux-namespace/">Linux namespace</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-07-17/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3UDP/">深入理解UDP</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-03-05/%E4%BD%BF%E7%94%A8-prometheus-%E5%92%8C-grafana-%E7%9B%91%E6%8E%A7-linux-%E6%9C%BA%E5%99%A8/">使用 prometheus 和 grafana 监控 linux 机器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-11-06/%E5%9F%BA%E4%BA%8EDocker+Jenkins+Gitlab%E6%90%AD%E5%BB%BA%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83/">基于Docker+Jenkins+Gitlab搭建持续集成测试环境</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-07-10/ELK-Docker-image%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3/">ELK Docker image中文文档</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-01/%E5%88%B6%E4%BD%9C%E7%BD%91%E7%AB%99docker%E9%95%9C%E5%83%8F/">制作网站docker镜像</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-01-16/%E4%BD%BF%E7%94%A8docker%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/">使用docker科学上网</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-08-24/Docker%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%87%BA%E9%97%A8/">Docker从入门到出门</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-08-16/%E5%85%B3%E4%BA%8Ecacti/">关于cacti</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-06-05/%E7%A7%91%E5%AD%A6%E5%A7%BF%E5%8A%BF%E4%B8%8Agoogle%E6%8C%87%E5%8C%97/">科学姿势上google指北</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-10-09/%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97RAID/">磁盘阵列RAID</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-09-13/SDN%E7%BD%91%E7%BB%9C%E4%B9%8BMininet/">SDN网络之Mininet</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-04-16/%E6%95%B0%E6%8D%AE%E7%BD%91%E4%B8%8E%E4%BC%A0%E9%80%81%E7%BD%91%E6%80%BB%E7%BB%93/">数据网与传送网总结</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

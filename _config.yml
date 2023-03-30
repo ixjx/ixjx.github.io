@@ -1,0 +1,49 @@
+permalink: /:year-:month-:day/:title/
+
+highlighter: rouge
+markdown: kramdown
+kramdown:
+  input:  GFM
+  syntax_highlighter: rouge
+
+gems: [jekyll-paginate]
+
+paginate: 5
+paginate_path: "/page:num"
+
+
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+      styles : [highlight.css,post.css]
+      scripts : [post.js]
+
+
+
+title: "CodeShurrik"
+email: "shurrik.dly@gmail.com"
+description: "shurrik blog"
+github_username:  "ixjx"
+swiftype_searchId: ""
+disqus_shortname: ""
+
+
+
+#url: "http://127.0.0.1:4000"
+#imgrepo: "http://127.0.0.1:4000/static/img"
+
+url: "/"
+baseurl: "/"
+imgrepo: "https://ixjx.github.io/demo/static/img"
+
+
+# 服务器选项
+detach:  false
+port:    4000
+host:    127.0.0.1
+baseurl: "" # does not include hostname

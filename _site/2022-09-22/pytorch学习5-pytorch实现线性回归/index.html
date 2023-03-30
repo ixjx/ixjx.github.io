@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>pytorch学习5-pytorch实现线性回归</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="pytorch学习5-pytorch实现线性回归, pytorch, AI, CodeShurrik" />
+    <meta name="description" content="pytorch学习5-pytorch实现线性回归, pytorch, AI, 终于到pytorch（本文使用1.12.1版本）实战了，利用pytorch进行深度学习一般分为以下4步：" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2022-09-22/pytorch%E5%AD%A6%E4%B9%A05-pytorch%E5%AE%9E%E7%8E%B0%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>pytorch学习5-pytorch实现线性回归</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Sep 22, 2022
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#pytorch"><span class="octicon octicon-list-unordered"></span>&nbsp;pytorch</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>终于到pytorch（本文使用1.12.1版本）实战了，利用pytorch进行深度学习一般分为以下4步：</p>
+
+<ol>
+  <li>准备数据集（Prepare dataset）</li>
+  <li>设计用于计算最终结果的模型（Design model）</li>
+  <li>构造损失函数及优化器（Construct loss and optimizer）</li>
+  <li>设计循环周期（Training cycle）——前馈、反馈、更新</li>
+</ol>
+
+<h2 id="以线性模型为例"><strong>以线性模型为例</strong></h2>
+
+<p>题目如前，数据如表所示：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>x(hours)</th>
+      <th>y(points)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>?</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>构建线性模型</p>
+
+\[\widehat y = \omega x +b\]
+
+<h3 id="准备数据"><strong>准备数据</strong></h3>
+
+<p>在原先的题设中，
+\(x,\widehat y \in R\)</p>
+
+<p>在pytorch中，若使用mini-batch的算法，一次性求出一个批量的y^，则需要x以及y^作为矩阵参与计算，此时利用其<strong>广播</strong>机制，可以将原标量参数ω扩写为同维度的矩阵 [w] ,参与运算而不改变其Tensor的性质。</p>
+
+<p>对于矩阵，行表示样本，列表示特征。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="c1">#数据作为矩阵参与Tensor计算，并行计算可利用GPU加速
+</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">3.0</span><span class="p">]])</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">4.0</span><span class="p">],[</span><span class="mf">6.0</span><span class="p">]])</span>
+</code></pre></div></div>
+
+<h3 id="构造计算图"><strong>构造计算图</strong></h3>
+
+<p>在如下线性模型的计算图中，红框区域为线性单元，其中的ω以及b是需要反复训练确定的，在设计时，需要率先设计出此二者的<strong>维度</strong>。</p>
+
+<p>而由于公式
+\(\widehat y = \omega x +b\)</p>
+
+<p>因此，只要确定了y^以及x的维度，就可以确定上述两个量的维度大小。</p>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/191685289-d2e67128-df19-4926-ae4d-d9d9f27b7374.png" alt="image-20210302100645010" /></p>
+
+<p>按照上述理论，由于前边的计算过程都是针对矩阵的，因此最后的loss也是矩阵，但由于要进行<strong>反向传播</strong>调整参数，因此loss应当是个标量，因此要对矩阵[loss]内的每个量求和求均值(MSE)。</p>
+
+\[loss = \frac{1}{N}\Sigma
+\begin{bmatrix}
+{loss_1}\\
+{\vdots}\\
+{loss_n}\\
+\end{bmatrix}\]
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#固定继承于Module
+</span><span class="k">class</span> <span class="nc">LinearModel</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="c1">#构造函数初始化
+</span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#调用父类的init
+</span>        <span class="nb">super</span><span class="p">(</span><span class="n">LinearModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="c1">#Linear对象包括weight(w)以及bias(b)两个成员张量
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1">#前馈函数forward，对父类函数中的overwrite
+</span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1">#调用linear中的call()，以利用父类forward()计算wx+b
+</span>        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y_pred</span>
+    <span class="c1">#反馈函数backward由module自动根据计算图生成
+</span><span class="n">model</span> <span class="o">=</span> <span class="n">LinearModel</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="构造loss和optimizer"><strong>构造Loss和Optimizer</strong></h3>
+
+<p>在公式中可知，由于Loss的计算也是有张量参与的计算，因此仍然需要进行计算图的构造。即在设计中也需要继承于Module的类和方法。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">MSELoss</span><span class="p">(</span><span class="n">size_average</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>其中的MSELoss也是继承于nn.Module</p>
+
+<p>优化器Optimizer并不构建计算图，生成的优化器对象可以直接对整个模型进行优化。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#model.parameters()用于检查模型中所能进行优化的张量
+#learningrate(lr)表学习率，可以统一也可以不统一
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h3 id="模型训练"><strong>模型训练</strong></h3>
+
+<ol>
+  <li>前馈计算预测值与损失函数</li>
+  <li>forward前馈计算预测值即损失loss</li>
+  <li>梯度或前文清零并进行backward</li>
+  <li>更新参数</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="c1">#前馈计算y_pred
+</span>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_data</span><span class="p">)</span>
+    <span class="c1">#前馈计算损失loss
+</span>    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">y_data</span><span class="p">)</span>
+    <span class="c1">#打印调用loss时，会自动调用内部__str__()函数，避免产生计算图
+</span>    <span class="k">print</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">loss</span><span class="p">)</span>
+    <span class="c1">#梯度清零
+</span>    <span class="n">optimizer</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1">#梯度反向传播，计算图清除
+</span>    <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="c1">#根据传播的梯度以及学习率更新参数
+</span>    <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="测试模型"><strong>测试模型</strong></h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Output
+</span><span class="k">print</span><span class="p">(</span><span class="s">'w = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'b = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+
+<span class="c1">#TestModel
+</span><span class="n">x_test</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">]])</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">'y_pred = '</span><span class="p">,</span><span class="n">y_test</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/4729226/191688736-5a5ffaa9-f5b9-470a-9062-223b37b5e772.png" alt="训练1000轮" /></p>
+
+<h3 id="整体代码"><strong>整体代码</strong></h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="c1">#数据作为矩阵参与Tensor计算
+</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">3.0</span><span class="p">]])</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">4.0</span><span class="p">],[</span><span class="mf">6.0</span><span class="p">]])</span>
+
+<span class="c1">#固定继承于Module
+</span><span class="k">class</span> <span class="nc">LinearModel</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="c1">#构造函数初始化
+</span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#调用父类的init
+</span>        <span class="nb">super</span><span class="p">(</span><span class="n">LinearModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="c1">#Linear对象包括weight(w)以及bias(b)两个成员张量
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1">#前馈函数forward，对父类函数中的overwrite
+</span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1">#调用linear中的call()，以利用父类forward()计算wx+b
+</span>        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y_pred</span>
+    <span class="c1">#反馈函数backward由module自动根据计算图生成
+</span><span class="n">model</span> <span class="o">=</span> <span class="n">LinearModel</span><span class="p">()</span>
+
+<span class="c1">#构造的criterion对象所接受的参数为（y',y）
+</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">MSELoss</span><span class="p">(</span><span class="n">size_average</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="c1">#model.parameters()用于检查模型中所能进行优化的张量
+#learningrate(lr)表学习率，可以统一也可以不统一
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="c1">#前馈计算y_pred
+</span>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_data</span><span class="p">)</span>
+    <span class="c1">#前馈计算损失loss
+</span>    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">y_data</span><span class="p">)</span>
+    <span class="c1">#打印调用loss时，会自动调用内部__str__()函数，避免产生计算图
+</span>    <span class="k">print</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">loss</span><span class="p">)</span>
+    <span class="c1">#梯度清零
+</span>    <span class="n">optimizer</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1">#梯度反向传播，计算图清除
+</span>    <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="c1">#根据传播的梯度以及学习率更新参数
+</span>    <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+
+ <span class="c1">#Output
+</span><span class="k">print</span><span class="p">(</span><span class="s">'w = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'b = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+
+<span class="c1">#TestModel
+</span><span class="n">x_test</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">]])</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">'y_pred = '</span><span class="p">,</span><span class="n">y_test</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>本文参考自<a href="https://www.bilibili.com/video/BV1Y7411d7Ys?p=5">B站《PyTorch深度学习实践》P5</a></p>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#AI"><span class="octicon octicon-tag"></span>&nbsp;AI</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2023-01-03/pytorch%E5%AD%A6%E4%B9%A016-transformer%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习16-transformer流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-12-03/pytorch%E5%AD%A6%E4%B9%A015-%E5%8A%A0%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E7%9A%84seq2seq%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习15-加入注意力机制的seq2seq优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-11-09/pytorch%E5%AD%A6%E4%B9%A014-%E4%BD%BF%E7%94%A8GPU%E8%AE%AD%E7%BB%83/">pytorch学习14-使用GPU训练</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-16/pytorch%E5%AD%A6%E4%B9%A013-%E4%BD%BF%E7%94%A8RNN%E4%BC%98%E5%8C%96%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/">pytorch学习13-使用RNN优化流量预测</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-14/pytorch%E5%AD%A6%E4%B9%A012-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">pytorch学习12-循环神经网络基础</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-10-09/pytorch%E5%AD%A6%E4%B9%A011-%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">pytorch学习11-卷积神经网络基础</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-30/pytorch%E5%AD%A6%E4%B9%A010-%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B%E5%AE%9E%E6%88%98/">pytorch学习10-流量预测实战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-29/pytorch%E5%AD%A6%E4%B9%A09-%E5%A4%9A%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/">pytorch学习9-多分类问题</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-27/pytorch%E5%AD%A6%E4%B9%A08-%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE%E9%9B%86/">pytorch学习8-加载数据集</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-26/pytorch%E5%AD%A6%E4%B9%A07-%E5%A4%84%E7%90%86%E5%A4%9A%E7%BB%B4%E7%89%B9%E5%BE%81%E7%9A%84%E8%BE%93%E5%85%A5/">pytorch学习7-处理多维特征的输入</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-23/pytorch%E5%AD%A6%E4%B9%A06-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98Logistic%E5%9B%9E%E5%BD%92/">pytorch学习6-分类问题Logistic回归</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-21/pytorch%E5%AD%A6%E4%B9%A04-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">pytorch学习4-反向传播</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-20/pytorch%E5%AD%A6%E4%B9%A03-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95/">pytorch学习3-梯度下降算法</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-15/pytorch%E5%AD%A6%E4%B9%A02-%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B/">pytorch学习2-线性模型</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2022-09-13/pytorch%E5%AD%A6%E4%B9%A01-%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/">pytorch学习1-人工智能基础</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>黑科技之Andriod LAMP网站服务器</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="黑科技之Andriod LAMP网站服务器, 转载, 黑科技, CodeShurrik" />
+    <meta name="description" content="黑科技之Andriod LAMP网站服务器, 转载, 黑科技, 　　河畔上看到的，感觉折腾下这个可以有。。。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2015-01-05/%E9%BB%91%E7%A7%91%E6%8A%80%E4%B9%8BAndriod-LAMP%E7%BD%91%E7%AB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>黑科技之Andriod LAMP网站服务器</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Jan 5, 2015
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#转载"><span class="octicon octicon-list-unordered"></span>&nbsp;转载</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#黑科技"><span class="octicon octicon-tag"></span>&nbsp;黑科技</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>　　河畔上看到的，感觉折腾下这个可以有。。。</p>
+
+<p>　　曾经你想建站，可是免费的不好，收费的太贵，
+　　曾经你想用自己主机搞定，可是笔记本要用，台式太费电。
+　　好吧，你换手机就跟换衣服一样，一定有旧手机在墙角落灰了吧？ 那就拿来用用吧。
+　　跟着下面的步骤，你的手机就和VPS一样，可以远程访问，远程上传，远程管理，可以建站。</p>
+
+<!--more -->
+
+<p>　　神器1请到此下载<a href="http://alfanla.com/palapa-web-server/">http://alfanla.com/palapa-web-server/</a>
+　　神器2,3请到百度助手和各大市场搜索正确的名字下载
+　　神器4请视自己情况下载和设置。
+　　配置好了，你就把手机插上电，和路由器丢在一起，你的个人网站服务器就这么蛋生了！！</p>
+
+<p>　　&gt; 神器1：啪~啦~啪
+　　palapa web server (PWS)运行于安卓系统的web服务器。</p>
+
+<p>　　Turn your Android devices into a web and database server with Palapa Web Server, a suite of web developer. This application has been designed for low memory consumption and CPU usage, specially used for smartphone and tablet. Hey, it’s free and you don’t need a root access to run Palapa Web Server!
+　　# Requirements
+　　- Internal memory should not be less than 50MB!
+　　- ARM based processor
+　　- Minimum Android 2.2 Froyo</p>
+
+<p>　　# Features
+　　- Lighttpd 1.4.32
+　　- PHP 5.5.1
+　　- MySQL 5.1.69
+　　- Msmtp 1.4.31
+　　- phpMyAdmin 4.0.4.1
+　　- Web Admin 1.0.1</p>
+
+<p>　　# Default Document Root
+　　- Path : /sdcard/pws/www/</p>
+
+<p>　　# Default URL
+　　- Address : http://127.0.0.1:8080/</p>
+
+<p>　　# Web Admin Informations
+　　- Address : http://127.0.0.1:9999
+　　- Username : admin
+　　- Password : admin</p>
+
+<p>　　# MySQL Informations
+　　- Host : localhost (127.0.0.1)
+　　- Port : 3306
+　　- Username : root
+　　- Password : adminadmin</p>
+
+<p>　　# phpMyAdmin Informations
+　　- Address : http://127.0.0.1:9999/phpmyadmin
+　　- Username : root
+　　- Password : adminadmin</p>
+
+<p>　　# Problem?
+　　If something is not working properly, please try to restart your phone.</p>
+
+<p>　　# Known Issues
+　　As you know, compatibility issue is a big problem of Android phone, I can’t test it in all phones. So if it can’t work for your phone, just uninstall it, I’m sorry to waste your time. You also can send a mail to let me know your phone model, if I solve it, I will let you know.</p>
+
+<p>　　<a href="http://ixjx.sinaapp.com/%e9%bb%91%e7%a7%91%e6%8a%80%e4%b9%8bandriod-lamp%e7%bd%91%e7%ab%99%e6%9c%8d%e5%8a%a1%e5%99%a8/pws-action-17/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/pws-action-17.jpg" alt="" title="pws-action-17" /></a></p>
+
+<blockquote>
+  <p>神器2：SSH Server</p>
+</blockquote>
+
+<p>　　安装在手机上保持常开，
+　　让你能够通过诸如winSCP的软件管理手机内的文件夹。
+　　将这个在手机上设置好后，电脑上安装WINSCP或FTP软件并设置好链接即可。
+　　<a href="http://ixjx.sinaapp.com/%e9%bb%91%e7%a7%91%e6%8a%80%e4%b9%8bandriod-lamp%e7%bd%91%e7%ab%99%e6%9c%8d%e5%8a%a1%e5%99%a8/08b0f53c94a476d676d4eabfa9a0e0ab20141226074413/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/08b0f53c94a476d676d4eabfa9a0e0ab20141226074413.png" alt="" title="08b0f53c94a476d676d4eabfa9a0e0ab20141226074413" /></a></p>
+
+<blockquote>
+  <p>神器3： VMlite VNC Server</p>
+</blockquote>
+
+<p>　　让你能够远程控制你的手机
+　　将这个安装好后启动保持常开，电脑上通过VNC Viewer访问你的手机
+　　<a href="http://ixjx.sinaapp.com/%e9%bb%91%e7%a7%91%e6%8a%80%e4%b9%8bandriod-lamp%e7%bd%91%e7%ab%99%e6%9c%8d%e5%8a%a1%e5%99%a8/e36f4046bae5014779fb89c5faaefe5d20141226074416/"><img src="http://ixjx-sae.stor.sinaapp.com/uploads/e36f4046bae5014779fb89c5faaefe5d20141226074416.png" alt="" title="e36f4046bae5014779fb89c5faaefe5d20141226074416" /></a></p>
+
+<blockquote>
+  <p>神器4： 极路由自带的DDNS 或者 花生壳DDNS</p>
+</blockquote>
+
+<p>　　解析你的动态IP从而能使你的手机远程访问。
+　　请直接在路由器设置花生壳，并设置端口映射到你的手机
+　　极路由：安装动态域名和端口转发插件。</p>
+
+<p>　　其他路由设置花生壳和端口转发：请看自己路由器的支持情况。
+　　<a href="http://hsk.oray.com/"> http://hsk.oray.com/</a></p>
+
+<p>　　现在万事具备只差一部android手机。。。</p>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#黑科技"><span class="octicon octicon-tag"></span>&nbsp;黑科技</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-04-22/%E6%B8%A3%E6%8A%80%E6%9C%AF%E8%80%83%E6%8D%AE-HMS-Glowworm%E7%BB%9D%E5%A2%83%E4%B8%8B%E7%9A%84%E5%A5%8B%E6%88%98/">渣技术考据——HMS Glowworm绝境下的奋战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-09-22/%E8%B4%9F%E8%83%BD%E9%87%8F%E6%89%8D%E6%98%AF%E7%A4%BE%E4%BC%9A%E7%9A%84%E7%9C%9F%E7%90%86/">负能量才是社会的真理</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-12-30/%E5%8F%91%E5%B8%83%E9%82%AE%E4%BB%B6%E5%9C%B0%E5%9D%80%E6%97%B6%E7%94%A8-at-%E7%AD%89%E6%9B%BF%E4%BB%A3-@-%E5%AF%B9%E4%BA%8E%E9%98%B2%E5%9E%83%E5%9C%BE%E9%82%AE%E4%BB%B6%E7%9C%9F%E7%9A%84%E6%9C%89%E4%BD%9C%E7%94%A8%E5%90%97/">发布邮件地址时用「#」「at」等替代「@」对于防垃圾邮件真的有作用吗？</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-11-06/event-loop/">Event Loop（事件轮询）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-09-07/JavaScript%E4%B8%8E%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA/">JavaScript与有限状态机</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-08-18/Linux-%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">Linux 的启动流程</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-30/%E5%86%8D%E8%AE%BAIP-QAM%E6%8A%80%E6%9C%AF/">再论IP QAM技术</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-12/RSA%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86-%E4%BA%8C/">RSA算法原理（二）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-10/RSA%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86-%E4%B8%80/">RSA算法原理（一）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-07-04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%98%AF%E5%A6%82%E4%BD%95%E5%90%AF%E5%8A%A8%E7%9A%84/">计算机是如何启动的？</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

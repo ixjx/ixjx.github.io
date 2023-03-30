@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Linux 的启动流程</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Linux 的启动流程, 转载, Linux, CodeShurrik" />
+    <meta name="description" content="Linux 的启动流程, 转载, Linux, 半年前，我写了《计算机是如何启动的？》，探讨BIOS和主引导记录的作用。" />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2013-08-18/Linux-%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" />
+    <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <script async defer data-website-id="bef53d4f-2117-4edd-b7a8-8754ea01f2c2" src="http://localhost:4000/static/js/umami.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">CodeShurrik</a>
+                    <p class="navbar-text">
+                        <span id="typed"></span>
+                        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+                        <script>
+                            var typed = new Typed("#typed", {
+                                strings: ['welcome to','shurrik blog'],
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: true,
+                                backSpeed: 50,
+                                showCursor: true
+                            });
+                        </script>
+                    </p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/tags/" class="word-keep"><span class="octicon octicon-tag"></span>&nbsp;&nbsp;Tag</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/monitor/" class="word-keep"><span class="octicon octicon-tools"></span>&nbsp;&nbsp;Monitor</a>
+                        </li>
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/about/" class="word-keep"><span class="octicon octicon-terminal"></span>&nbsp;&nbsp;About</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Linux 的启动流程</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Aug 18, 2013
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#转载"><span class="octicon octicon-list-unordered"></span>&nbsp;转载</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#Linux"><span class="octicon octicon-tag"></span>&nbsp;Linux</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <p>半年前，我写了《计算机是如何启动的？》，探讨BIOS和主引导记录的作用。</p>
+
+<p>那篇文章不涉及操作系统，只与主板的板载程序有关。今天，我想接着往下写，探讨操作系统接管硬件以后发生的事情，也就是操作系统的启动流程。<!--more--></p>
+
+<p><img src="http://image.beekka.com/blog/201308/bg2013081701.png" alt="" /></p>
+
+<p>这个部分比较有意思。因为在BIOS阶段，计算机的行为基本上被写死了，程序员可以做的事情并不多；但是，一旦进入操作系统，程序员几乎可以定制所有方面。所以，这个部分与程序员的关系更密切。</p>
+
+<p>我主要关心的是Linux操作系统，它是目前服务器端的主流操作系统。下面的内容针对的是<a href="http://en.wikipedia.org/wiki/Debian">Debian</a>发行版，因为我对其他发行版不够熟悉。</p>
+
+<p>第一步、加载内核</p>
+
+<p>操作系统接管硬件以后，首先读入 /boot 目录下的内核文件。</p>
+
+<p><img src="http://image.beekka.com/blog/201308/bg2013081702.png" alt="" /></p>
+
+<p>以我的电脑为例，/boot 目录下面大概是这样一些文件：</p>
+<blockquote>
+  <p>$ ls /boot 　　 　　config-3.2.0-3-amd64 　　config-3.2.0-4-amd64 　　grub 　　initrd.img-3.2.0-3-amd64 　　initrd.img-3.2.0-4-amd64 　　System.map-3.2.0-3-amd64 　　System.map-3.2.0-4-amd64 　　vmlinuz-3.2.0-3-amd64 　　vmlinuz-3.2.0-4-amd64 　　 `&lt;/pre&gt;
+    第二步、启动初始化进程</p>
+</blockquote>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>内核文件加载以后，就开始运行第一个程序 /sbin/init，它的作用是初始化系统环境。
+
+![](http://image.beekka.com/blog/201308/bg2013081703.png)
+
+由于init是第一个运行的程序，它的进程编号（pid）就是1。其他所有进程都从它衍生，都是它的子进程。
+
+第三步、确定运行级别
+
+许多程序需要开机启动。它们在Windows叫做"服务"（service），在Linux就叫做"[守护进程](http://zh.wikipedia.org/wiki/%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B)"（daemon）。
+
+init进程的一大任务，就是去运行这些开机启动的程序。但是，不同的场合需要启动不同的程序，比如用作服务器时，需要启动Apache，用作桌面就不需要。Linux允许为不同的场合，分配不同的开机启动程序，这就叫做"[运行级别](http://zh.wikipedia.org/wiki/%E8%BF%90%E8%A1%8C%E7%BA%A7%E5%88%AB)"（runlevel）。也就是说，启动时根据"运行级别"，确定要运行哪些程序。
+
+![](http://image.beekka.com/blog/201308/bg2013081704.png)
+
+Linux预置七种运行级别（0-6）。一般来说，0是关机，1是单用户模式（也就是维护模式），6是重启。运行级别2-5，各个发行版不太一样，对于Debian来说，都是同样的多用户模式（也就是正常模式）。
+
+init进程首先读取文件 /etc/inittab，它是运行级别的设置文件。如果你打开它，可以看到第一行是这样的：
+&gt; &lt;pre&gt;` 　　id:2:initdefault: 　　 `&lt;/pre&gt;
+initdefault的值是2，表明系统启动时的运行级别为2。如果需要指定其他级别，可以手动修改这个值。
+
+那么，运行级别2有些什么程序呢，系统怎么知道每个级别应该加载哪些程序呢？......回答是每个运行级别在/etc目录下面，都有一个对应的子目录，指定要加载的程序。
+&gt; &lt;pre&gt;` 　　/etc/rc0.d 　　/etc/rc1.d 　　/etc/rc2.d 　　/etc/rc3.d 　　/etc/rc4.d 　　/etc/rc5.d 　　/etc/rc6.d 　　 `&lt;/pre&gt;
+上面目录名中的"rc"，表示run command（运行程序），最后的d表示directory（目录）。下面让我们看看 /etc/rc2.d 目录中到底指定了哪些程序。
+&gt; &lt;pre&gt;` 　　$ ls /etc/rc2.d 　　 　　README 　　S01motd 　　S13rpcbind 　　S14nfs-common 　　S16binfmt-support 　　S16rsyslog 　　S16sudo 　　S17apache2 　　S18acpid 　　... 　　 `&lt;/pre&gt;
+可以看到，除了第一个文件README以外，其他文件名都是"字母S+两位数字+程序名"的形式。字母S表示Start，也就是启动的意思（启动脚本的运行参数为start），如果这个位置是字母K，就代表Kill（关闭），即如果从其他运行级别切换过来，需要关闭的程序（启动脚本的运行参数为stop）。后面的两位数字表示处理顺序，数字越小越早处理，所以第一个启动的程序是motd，然后是rpcbing、nfs......数字相同时，则按照程序名的字母顺序启动，所以rsyslog会先于sudo启动。
+
+这个目录里的所有文件（除了README），就是启动时要加载的程序。如果想增加或删除某些程序，不建议手动修改 /etc/rcN.d 目录，最好是用一些专门命令进行管理（参考[这里](http://www.debianadmin.com/manage-linux-init-or-startup-scripts.html)和[这里](http://www.debianadmin.com/remove-unwanted-startup-files-or-services-in-debian.html)）。
+
+第四步、加载开机启动程序
+
+前面提到，七种预设的"运行级别"各自有一个目录，存放需要开机启动的程序。不难想到，如果多个"运行级别"需要启动同一个程序，那么这个程序的启动脚本，就会在每一个目录里都有一个拷贝。这样会造成管理上的困扰：如果要修改启动脚本，岂不是每个目录都要改一遍？
+
+Linux的解决办法，就是七个 /etc/rcN.d 目录里列出的程序，都设为链接文件，指向另外一个目录 /etc/init.d ，真正的启动脚本都统一放在这个目录中。init进程逐一加载开机启动程序，其实就是运行这个目录里的启动脚本。
+
+![](http://image.beekka.com/blog/201308/bg2013081705.png)
+
+下面就是链接文件真正的指向。
+&gt; &lt;pre&gt;` 　　$ ls -l /etc/rc2.d 　　 　　README 　　S01motd -&amp;gt; ../init.d/motd 　　S13rpcbind -&amp;gt; ../init.d/rpcbind 　　S14nfs-common -&amp;gt; ../init.d/nfs-common 　　S16binfmt-support -&amp;gt; ../init.d/binfmt-support 　　S16rsyslog -&amp;gt; ../init.d/rsyslog 　　S16sudo -&amp;gt; ../init.d/sudo 　　S17apache2 -&amp;gt; ../init.d/apache2 　　S18acpid -&amp;gt; ../init.d/acpid 　　... 　　 `&lt;/pre&gt;
+这样做的另一个好处，就是如果你要手动关闭或重启某个进程，直接到目录 /etc/init.d 中寻找启动脚本即可。比如，我要重启Apache服务器，就运行下面的命令：
+&gt; &lt;pre&gt;` 　　$ sudo /etc/init.d/apache2 restart 　　 `&lt;/pre&gt;
+/etc/init.d 这个目录名最后一个字母d，是directory的意思，表示这是一个目录，用来与程序 /etc/init 区分。
+
+第五步、用户登录
+
+开机启动程序加载完毕以后，就要让用户登录了。
+
+![](http://image.beekka.com/blog/201308/bg2013081706.png)
+
+一般来说，用户的登录方式有三种：
+&gt; （1）命令行登录 &gt;  &gt;  &gt;     （2）ssh登录 &gt;  &gt;  &gt;     （3）图形界面登录
+这三种情况，都有自己的方式对用户进行认证。
+
+（1）命令行登录：init进程调用getty程序（意为get teletype），让用户输入用户名和密码。输入完成后，再调用login程序，核对密码（Debian还会再多运行一个身份核对程序/etc/pam.d/login）。如果密码正确，就从文件 /etc/passwd 读取该用户指定的shell，然后启动这个shell。
+
+（2）ssh登录：这时系统调用sshd程序（Debian还会再运行/etc/pam.d/ssh ），取代getty和login，然后启动shell。
+
+（3）图形界面登录：init进程调用显示管理器，Gnome图形界面对应的显示管理器为gdm（GNOME Display Manager），然后用户输入用户名和密码。如果密码正确，就读取/etc/gdm3/Xsession，启动用户的会话。
+
+第六步、进入 login shell
+
+所谓shell，简单说就是命令行界面，让用户可以直接与操作系统对话。用户登录时打开的shell，就叫做login shell。
+
+![](http://image.beekka.com/blog/201308/bg2013081707.png)
+
+Debian默认的shell是[Bash](http://zh.wikipedia.org/wiki/Bash)，它会读入一系列的配置文件。上一步的三种情况，在这一步的处理，也存在差异。
+
+（1）命令行登录：首先读入 /etc/profile，这是对所有用户都有效的配置；然后依次寻找下面三个文件，这是针对当前用户的配置。
+&gt; &lt;pre&gt;` 　　~/.bash_profile 　　~/.bash_login 　　~/.profile 　　 `&lt;/pre&gt;
+需要注意的是，这三个文件只要有一个存在，就不再读入后面的文件了。比如，要是 ~/.bash_profile 存在，就不会再读入后面两个文件了。
+
+（2）ssh登录：与第一种情况完全相同。
+
+（3）图形界面登录：只加载 /etc/prfile 和 ~/.profile。也就是说，~/.bash_profile 不管有没有，都不会运行。
+
+第七步，打开 non-login shell
+
+老实说，上一步完成以后，Linux的启动过程就算结束了，用户已经可以看到命令行提示符或者图形界面了。但是，为了内容的完整，必须再介绍一下这一步。
+
+用户进入操作系统以后，常常会再手动开启一个shell。这个shell就叫做 non-login shell，意思是它不同于登录时出现的那个shell，不读取/etc/profile和.profile等配置文件。
+
+![](http://image.beekka.com/blog/201308/bg2013081708.png)
+
+non-login shell的重要性，不仅在于它是用户最常接触的那个shell，还在于它会读入用户自己的bash配置文件 ~/.bashrc。大多数时候，我们对于bash的定制，都是写在这个文件里面的。
+
+你也许会问，要是不进入 non-login shell，岂不是.bashrc就不会运行了，因此bash 也就不能完成定制了？事实上，Debian已经考虑到这个问题了，请打开文件 ~/.profile，可以看到下面的代码：
+&gt; &lt;pre&gt;` 　　if [ -n "$BASH_VERSION" ]; then 　　　　if [ -f "$HOME/.bashrc" ]; then 　　　　　　. "$HOME/.bashrc" 　　　　fi 　　fi 　　 `&lt;/pre&gt;
+上面代码先判断变量 $BASH_VERSION 是否有值，然后判断主目录下是否存在 .bashrc 文件，如果存在就运行该文件。第三行开头的那个点，是source命令的简写形式，表示运行某个文件，写成"source ~/.bashrc"也是可以的。
+
+因此，只要运行～/.profile文件，～/.bashrc文件就会连带运行。但是上一节的第一种情况提到过，如果存在～/.bash_profile文件，那么有可能不会运行～/.profile文件。解决这个问题很简单，把下面代码写入.bash_profile就行了。
+&gt; &lt;pre&gt;` 　　if [ -f ~/.profile ]; then 　　　　. ~/.profile 　　fi 这样一来，不管是哪种情况，.bashrc都会执行，用户的设置可以放心地都写入这个文件了。
+</code></pre></div></div>
+
+<p>Bash的设置之所以如此繁琐，是由于历史原因造成的。早期的时候，计算机运行速度很慢，载入配置文件需要很长时间，Bash的作者只好把配置文件分成了几个部分，阶段性载入。系统的通用设置放在 /etc/profile，用户个人的、需要被所有子进程继承的设置放在.profile，不需要被继承的设置放在.bashrc。</p>
+
+<p>顺便提一下，除了Linux以外， Mac OS X 使用的shell也是Bash。但是，它只加载.bash_profile，然后在.bash_profile里面调用.bashrc。而且，不管是ssh登录，还是在图形界面里启动shell窗口，都是如此。</p>
+
+<p>参考链接</p>
+<blockquote>
+  <p>[1] Debian Wiki, <a href="https://wiki.debian.org/EnvironmentVariables">Environment Variables</a></p>
+
+  <p>[2] Debian Wiki, <a href="https://wiki.debian.org/DotFiles">Dot Files</a></p>
+
+  <p>[3] Debian Administration, <a href="http://www.debian-administration.org/articles/212">An introduction to run-levels</a></p>
+
+  <p>[4] Debian Admin，<a href="http://www.debianadmin.com/debian-and-ubuntu-linux-run-levels.html">Debian and Ubuntu Linux Run Levels</a></p>
+
+  <p>[5] Linux Information Project (LINFO), <a href="http://www.linfo.org/runlevel_def.html">Runlevel Definition</a></p>
+
+  <p>[6] LinuxQuestions.org, <a href="http://wiki.linuxquestions.org/wiki/Run_Levels">What are run levels?</a></p>
+
+  <p>[7] Dalton Hubble, <a href="http://dghubble.com/.bashprofile-.profile-and-.bashrc-conventions.html">Bash Configurations Demystified</a>
+（完）</p>
+</blockquote>
+<div>
+
+### 文档信息
+
+*   版权声明：自由转载-非商用-非衍生-保持署名 | [Creative Commons BY-NC-ND 3.0](http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh)
+*   原文网址：[http://www.ruanyifeng.com/blog/2013/08/linux_boot_process.html](http://www.ruanyifeng.com/blog/2013/08/linux_boot_process.html)
+*   最后修改时间：2013年8月18日 14:31
+*   付费支持：[![人民币 - 支付宝](http://www.ruanyifeng.com/blog/images/rmb_32.png "人民币")](https://me.alipay.com/ruanyf) | [![美元 - paypal](http://www.ruanyifeng.com/blog/images/dollar_32.png "美元")](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=yifeng.ruan@gmail.com&amp;currency_code=USD&amp;amount=0.99&amp;return=http://www.ruanyifeng.com/thank.html&amp;item_name=Ruan%20YiFeng)
+</div>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share" class="bdsharebuttonbox">
+              <a href="#" class="bds_more" data-cmd="more"></a>
+              <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+              <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+              <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+              <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+              <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+       <!-- <div id="post-comment" class="sheet post"> -->
+        <!--PC和WAP自适应版-->
+        <!-- <div id="SOHUCS" ></div>  -->
+        <!-- <script type="text/javascript"> 
+        (function(){ 
+        var appid = 'cyt71nso6'; 
+        var conf = 'prod_d224308500d6b59d843a38fa4a3b0fd9'; 
+        var width = window.innerWidth || document.documentElement.clientWidth; 
+        if (width < 960) { 
+        window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+
+        <div id="disqus_thread"></div> -->
+        <!-- </div> -->
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#Linux"><span class="octicon octicon-tag"></span>&nbsp;Linux</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2019-11-11/ms17-010%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">ms17-010渗透测试</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2018-03-26/%E5%B9%B2%E6%8E%89Linux-Firefox%E7%9A%84Title-bar/">干掉Linux Firefox的Title bar</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-03-06/awk-sed-grep%E6%80%BB%E7%BB%93/">awk & sed & grep总结</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-04-22/%E6%B8%A3%E6%8A%80%E6%9C%AF%E8%80%83%E6%8D%AE-HMS-Glowworm%E7%BB%9D%E5%A2%83%E4%B8%8B%E7%9A%84%E5%A5%8B%E6%88%98/">渣技术考据——HMS Glowworm绝境下的奋战</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-02-16/Read-only-file-system/">Read-only file system</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-10-17/mysql%E6%97%A5%E5%BF%97%E8%BD%AC%E5%82%A8%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7/">log转储的重要性</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-09-22/%E8%B4%9F%E8%83%BD%E9%87%8F%E6%89%8D%E6%98%AF%E7%A4%BE%E4%BC%9A%E7%9A%84%E7%9C%9F%E7%90%86/">负能量才是社会的真理</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-08-16/%E5%85%B3%E4%BA%8Ecacti/">关于cacti</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2015-01-05/%E9%BB%91%E7%A7%91%E6%8A%80%E4%B9%8BAndriod-LAMP%E7%BD%91%E7%AB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/">黑科技之Andriod LAMP网站服务器</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-09-13/SDN%E7%BD%91%E7%BB%9C%E4%B9%8BMininet/">SDN网络之Mininet</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-08-07/%E7%BB%88%E7%AB%AF%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E5%91%BD%E4%BB%A4/">终端后台运行命令</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-07-24/CentOS-5%E5%8D%87%E7%BA%A7Python%E7%89%88%E6%9C%AC-2.4-2.7/">CentOS 5升级Python版本（2.4->2.7）</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-06-26/Vim%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B-CoolShell/">Vim简明教程【CoolShell】</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2014-05-25/apt-get-update%E7%9A%84%E6%97%B6%E5%80%99%E9%81%87%E5%88%B0-Hash-Sum-mismatch-%E9%94%99%E8%AF%AF/">apt-get update的时候遇到“Hash Sum mismatch”错误</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2013-12-30/%E5%8F%91%E5%B8%83%E9%82%AE%E4%BB%B6%E5%9C%B0%E5%9D%80%E6%97%B6%E7%94%A8-at-%E7%AD%89%E6%9B%BF%E4%BB%A3-@-%E5%AF%B9%E4%BA%8E%E9%98%B2%E5%9E%83%E5%9C%BE%E9%82%AE%E4%BB%B6%E7%9C%9F%E7%9A%84%E6%9C%89%E4%BD%9C%E7%94%A8%E5%90%97/">发布邮件地址时用「#」「at」等替代「@」对于防垃圾邮件真的有作用吗？</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    </div>
+    
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:shurrik.dly@gmail.com" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ixjx" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a>
+                &nbsp;
+                <a href="https://ixjx.github.io/blog"><span class="word-keep">&copy; Codeshurrik</span></a>
+                <br>
+                <span>珍爱生命，远离IE。请使用Chrome或Safari，你懂的 :)</span>
+                <br>
+                <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                <script>// <![CDATA[
+                    var now = new Date(); function createtime(){ var grt= new Date("07/28/2013 21:00:00");now.setTime(now.getTime()+250); days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} document.getElementById("timeDate").innerHTML = "已安全运行"+dnum+"天"; document.getElementById("times").innerHTML = hnum + "小时" + mnum + "分" + snum + "秒"; } setInterval("createtime()",250);
+                // ]]></script>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- <script id="MathJax-script" async src="https://cdn.bootcss.com/mathjax/3.0.5/es5/tex-mml-chtml.js"></script> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>
