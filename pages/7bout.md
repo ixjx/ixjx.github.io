@@ -2,7 +2,7 @@
 layout: page
 title: About
 permalink: /about/
-icon: octicon-terminal
+icon: octicon-thumbsup
 isNavItem: true
 ---
 　　<a href="https://github.com/ixjx" target="_blank">

@@ -28,7 +28,7 @@
                         {% if page.url == "/index.html" %}
                         <li class="active">{% else %}
                         <li>{% endif %}
-                        <a href="{{ site.baseurl | prepend: site.url }}/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        <a href="{{ site.baseurl | prepend: site.url }}/" class="word-keep"><span class="octicon octicon-home"></span></span>&nbsp;&nbsp;Blog</a>
                         </li>
                         {% for p in site.pages %}{% if p.isNavItem %}
                         {% if p.url == page.url %}
