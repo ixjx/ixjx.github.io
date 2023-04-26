@@ -4,3 +4,4 @@
 .local/*
 .jekyll-cache/*
 Gemfile.lock
+_posts/.obsidian/*
