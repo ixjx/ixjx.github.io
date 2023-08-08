@@ -5,6 +5,7 @@
     <title>基于企业微信的消息接收</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="keywords" content="基于企业微信的消息接收, 随编, python, CodeShurrik" />
     <meta name="description" content="基于企业微信的消息接收, 随编, python, 本篇是基于企业微信API的消息推送的下集，之前也提到过，接收信息比推送稍微复杂一丢丢，需要实现一个回调服务。" />
@@ -20,7 +21,8 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
+     crossorigin="anonymous"></script>
 </head>
 
 
@@ -125,7 +127,7 @@
           </header>
           <hr class="boundary">
           <article>
-            <p>本篇是<a href="https://ixjx.github.io/blog/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/">基于企业微信API的消息推送</a>的下集，之前也提到过，接收信息比推送稍微复杂一丢丢，需要实现一个回调服务。</p>
+            <p>本篇是<a href="https://ixjx.github.io/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/">基于企业微信API的消息推送</a>的下集，之前也提到过，接收信息比推送稍微复杂一丢丢，需要实现一个回调服务。</p>
 
 <p>根据<a href="https://developer.work.weixin.qq.com/document/path/90238">官方文档</a>，配置回调服务时，<strong>需要能同时支持HttpGet以及HttpPost两种能力</strong>。</p>
 
@@ -244,7 +246,6 @@
 </span>        <span class="c1"># 假如企业无法保证在五秒内处理并回复，或者不想回复任何内容，可以直接返回200（即以空串为返回包）。
 </span>        <span class="c1"># 企业后续可以使用主动发消息接口进行异步回复。
 </span>        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">sEncryptMsg</span><span class="p">)</span>
-
 </code></pre></div></div>
 
 <p>python版本有个坑的地方在于使用了<code class="language-plaintext highlighter-rouge">pycrypto</code>第三方库</p>

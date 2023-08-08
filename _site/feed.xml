@@ -5,8 +5,8 @@
     <description>shurrik blog</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 30 Mar 2023 12:52:40 +0800</pubDate>
-    <lastBuildDate>Thu, 30 Mar 2023 12:52:40 +0800</lastBuildDate>
+    <pubDate>Tue, 08 Aug 2023 08:53:08 +0800</pubDate>
+    <lastBuildDate>Tue, 08 Aug 2023 08:53:08 +0800</lastBuildDate>
     <generator>Jekyll v4.2.2</generator>
     
       <item>
@@ -3310,7 +3310,7 @@ services:
     
       <item>
         <title>基于企业微信的消息接收</title>
-        <description>&lt;p&gt;本篇是&lt;a href=&quot;https://ixjx.github.io/blog/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/&quot;&gt;基于企业微信API的消息推送&lt;/a&gt;的下集，之前也提到过，接收信息比推送稍微复杂一丢丢，需要实现一个回调服务。&lt;/p&gt;
+        <description>&lt;p&gt;本篇是&lt;a href=&quot;https://ixjx.github.io/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/&quot;&gt;基于企业微信API的消息推送&lt;/a&gt;的下集，之前也提到过，接收信息比推送稍微复杂一丢丢，需要实现一个回调服务。&lt;/p&gt;
 
 &lt;p&gt;根据&lt;a href=&quot;https://developer.work.weixin.qq.com/document/path/90238&quot;&gt;官方文档&lt;/a&gt;，配置回调服务时，&lt;strong&gt;需要能同时支持HttpGet以及HttpPost两种能力&lt;/strong&gt;。&lt;/p&gt;
 
@@ -3429,7 +3429,6 @@ services:
 &lt;/span&gt;        &lt;span class=&quot;c1&quot;&gt;# 假如企业无法保证在五秒内处理并回复，或者不想回复任何内容，可以直接返回200（即以空串为返回包）。
 &lt;/span&gt;        &lt;span class=&quot;c1&quot;&gt;# 企业后续可以使用主动发消息接口进行异步回复。
 &lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HttpResponse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sEncryptMsg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;python版本有个坑的地方在于使用了&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pycrypto&lt;/code&gt;第三方库&lt;/p&gt;
