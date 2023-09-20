@@ -10,6 +10,7 @@
     <meta name="keywords" content="炉石卡组原理解析, 游戏, 炉石传说, CodeShurrik" />
     <meta name="description" content="炉石卡组原理解析, 游戏, 炉石传说, 最近看Base64的时候看到了知乎上一个关于炉石卡组代码的帖子，它本质上就是用一个Base64编码的字符串来存储卡组信息。你有时会见到以=或者==结尾的卡组代码，这正是Base64编码的典型特征。" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2020-05-21/%E7%82%89%E7%9F%B3%E5%8D%A1%E7%BB%84%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -139,27 +138,27 @@
 <h3 id="格式">格式</h3>
 
 <p>如前所述，卡组代码是 Base64 编码的字符串。我们先来解码它，许多编程语言都可以做到这一点，以js 为例：</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">parse_deckstring</span><span class="p">(</span><span class="nx">deckstring</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">parse_deckstring</span><span class="p">(</span><span class="nx">deckstring</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">binary</span> <span class="o">=</span> <span class="nx">Buffer</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="nx">deckstring</span><span class="p">,</span> <span class="dl">"</span><span class="s2">base64</span><span class="dl">"</span><span class="p">);</span>
-    <span class="kd">let</span> <span class="nx">hex</span> <span class="o">=</span> <span class="nx">binary</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="dl">"</span><span class="s2">hex</span><span class="dl">"</span><span class="p">);</span>
-    <span class="kd">let</span> <span class="nx">arr</span> <span class="o">=</span> <span class="nx">hex</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/.</span><span class="se">{1,2}</span><span class="sr">/g</span><span class="p">);</span>
-    <span class="k">return</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span> <span class="o">=&gt;</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="mi">16</span><span class="p">));</span>
+    <span class="kd">let</span> <span class="nx">hex</span> <span class="o">=</span> <span class="nx">binary</span><span class="p">.</span><span class="nf">toString</span><span class="p">(</span><span class="dl">"</span><span class="s2">hex</span><span class="dl">"</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">arr</span> <span class="o">=</span> <span class="nx">hex</span><span class="p">.</span><span class="nf">match</span><span class="p">(</span><span class="sr">/.</span><span class="se">{1,2}</span><span class="sr">/g</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">arr</span><span class="p">.</span><span class="nf">map</span><span class="p">(</span><span class="nx">x</span> <span class="o">=&gt;</span> <span class="nf">parseInt</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="mi">16</span><span class="p">));</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <p>这个函数会先将Base64字符串解码成2进制，然后转换成16进制，再按每两个元素切割，最后从16进制字符串转化为整型并返回。也就是说，它们可以是 0x00-0xff，即 0-255。</p>
 
 <p>现在我们得到的是一个由整数组成的数组。更具体的来说，就是 varint。还需要进一步的解码，才能读取出有用的信息：</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">shift</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="kd">let</span> <span class="nx">c</span><span class="p">;</span>
     <span class="k">do</span> <span class="p">{</span>
-        <span class="nx">c</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+        <span class="nx">c</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nf">shift</span><span class="p">();</span>
         <span class="nx">result</span> <span class="o">|=</span> <span class="p">(</span><span class="nx">c</span> <span class="o">&amp;</span> <span class="mh">0x7f</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="nx">shift</span><span class="p">;</span>
         <span class="nx">shift</span> <span class="o">+=</span> <span class="mi">7</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="k">while</span> <span class="p">(</span><span class="nx">c</span> <span class="o">&amp;</span> <span class="mh">0x80</span><span class="p">);</span>
+    <span class="k">while </span><span class="p">(</span><span class="nx">c</span> <span class="o">&amp;</span> <span class="mh">0x80</span><span class="p">);</span>
     <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -197,37 +196,37 @@
 <p>所谓「卡组中存在 n 张的卡」，指的是卡组中的所有其他卡牌。此数组是一个 varint 对组成的列表，每一对的第一个元素表示 DBF ID，第二个元素是该卡牌在卡组中出现的次数。它应该只包含在牌组中至少出现三次的牌，因而意味着它（在这种情况下）对于构筑卡组应当是空的（毕竟一张卡最多只能带两张）。</p>
 
 <p>尽管最终排序无关紧要，但卡牌仍会在各自所在的数组中，按 DBF ID 的升序进行排序，以便始终为相同的卡组生成相同的卡组代码。我们称所有按照这种方式排列卡牌列表（包括英雄）的卡组代码为规范的卡组代码。下面的参考实现应该已经可以生成规范的卡组代码：</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">parse_deck</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">let</span> <span class="nx">reserve</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">reserve</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">parse_deck</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">reserve</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">reserve</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="dl">"</span><span class="s2">Invalid deckstring</span><span class="dl">"</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="kd">let</span> <span class="nx">version</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">version</span> <span class="o">!==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">version</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">version</span> <span class="o">!==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="dl">"</span><span class="s2">Unsupported deckstring version </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">version</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="kd">let</span> <span class="nx">format</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">format</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
     <span class="kd">let</span> <span class="nx">heroes</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="kd">let</span> <span class="nx">num_heroes</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_heroes</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">heroes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+    <span class="kd">let</span> <span class="nx">num_heroes</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">for </span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_heroes</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">heroes</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
     <span class="p">}</span>
     <span class="kd">let</span> <span class="nx">cards</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="kd">let</span> <span class="nx">num_cards_x1</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_cards_x1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">card_id</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-        <span class="nx">cards</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">card_id</span><span class="p">,</span> <span class="mi">1</span><span class="p">]);</span>
+    <span class="kd">let</span> <span class="nx">num_cards_x1</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">for </span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_cards_x1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">card_id</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">cards</span><span class="p">.</span><span class="nf">push</span><span class="p">([</span><span class="nx">card_id</span><span class="p">,</span> <span class="mi">1</span><span class="p">]);</span>
     <span class="p">}</span>
-    <span class="kd">let</span> <span class="nx">num_cards_x2</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_cards_x2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">card_id</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-        <span class="nx">cards</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">card_id</span><span class="p">,</span> <span class="mi">2</span><span class="p">]);</span>
+    <span class="kd">let</span> <span class="nx">num_cards_x2</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">for </span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_cards_x2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">card_id</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">cards</span><span class="p">.</span><span class="nf">push</span><span class="p">([</span><span class="nx">card_id</span><span class="p">,</span> <span class="mi">2</span><span class="p">]);</span>
     <span class="p">}</span>
-    <span class="kd">let</span> <span class="nx">num_cards_xn</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_cards_xn</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">let</span> <span class="nx">card_id</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-        <span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="nx">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-        <span class="nx">cards</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">card_id</span><span class="p">,</span> <span class="nx">count</span><span class="p">]);</span>
+    <span class="kd">let</span> <span class="nx">num_cards_xn</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">for </span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">num_cards_xn</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">card_id</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="nf">read_varint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">cards</span><span class="p">.</span><span class="nf">push</span><span class="p">([</span><span class="nx">card_id</span><span class="p">,</span> <span class="nx">count</span><span class="p">]);</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="nx">cards</span><span class="p">,</span>

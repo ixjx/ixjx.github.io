@@ -10,6 +10,7 @@
     <meta name="keywords" content="Nornir自定义Task插件-3, 网络自动化, nornir, CodeShurrik" />
     <meta name="description" content="Nornir自定义Task插件-3, 网络自动化, nornir, 接上篇，之前我们一直是用的nornir_netmiko作为Task。所谓Task，是一个可重用的代码段，可为单个host实现某些功能。用python的话来说，它是一个将Task作为第一个参数并返回Result的函数。" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2021-09-15/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Task%E6%8F%92%E4%BB%B6-3/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -138,16 +137,16 @@
 <p>在<a href="https://nornir.tech/nornir/plugins/">https://nornir.tech/nornir/plugins/</a>可以看到nornir已经支持paramiko，不过大概看了下源码后发现该作者目前只实现了一个paramiko_command，更偏向与服务器的交互。不过嘛，在nornir框架下自定义一个Task也很简单，这里我简单的重写了paramiko_commands:</p>
 
 <p><code class="language-plaintext highlighter-rouge">paramiko_commands.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">nornir.core.task</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Task</span>
-<span class="kn">from</span> <span class="nn">nornir_paramiko.plugins.connections</span> <span class="kn">import</span> <span class="n">CONNECTION_NAME</span>
-<span class="kn">from</span> <span class="nn">nornir_paramiko.exceptions</span> <span class="kn">import</span> <span class="n">CommandError</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="n">nornir.core.task</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="n">nornir_paramiko.plugins.connections</span> <span class="kn">import</span> <span class="n">CONNECTION_NAME</span>
+<span class="kn">from</span> <span class="n">nornir_paramiko.exceptions</span> <span class="kn">import</span> <span class="n">CommandError</span>
 
-<span class="kn">from</span> <span class="nn">paramiko.agent</span> <span class="kn">import</span> <span class="n">AgentRequestHandler</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="n">paramiko.agent</span> <span class="kn">import</span> <span class="n">AgentRequestHandler</span>
+<span class="kn">import</span> <span class="n">time</span>
 
 <span class="k">def</span> <span class="nf">paramiko_commands</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-    <span class="s">"""
+    <span class="sh">"""</span><span class="s">
     Executes a command remotely on the host
     Arguments:
         commands (``List``): commands to execute
@@ -158,23 +157,23 @@
           * stderr (``str``): stderr
     Raises:
         :obj:`nornir.core.exceptions.CommandError`: when there is a command error
-    """</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="p">.</span><span class="n">get_connection</span><span class="p">(</span><span class="n">CONNECTION_NAME</span><span class="p">,</span> <span class="n">task</span><span class="p">.</span><span class="n">nornir</span><span class="p">.</span><span class="n">config</span><span class="p">)</span>
+    </span><span class="sh">"""</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="p">.</span><span class="nf">get_connection</span><span class="p">(</span><span class="n">CONNECTION_NAME</span><span class="p">,</span> <span class="n">task</span><span class="p">.</span><span class="n">nornir</span><span class="p">.</span><span class="n">config</span><span class="p">)</span>
 
-    <span class="n">chan</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">invoke_shell</span><span class="p">()</span>
+    <span class="n">chan</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">invoke_shell</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
-        <span class="n">chan</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">command</span><span class="o">+</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+        <span class="n">chan</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">command</span><span class="o">+</span><span class="sh">'</span><span class="se">\n</span><span class="sh">'</span><span class="p">)</span>
 
-    <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-    <span class="n">chan</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">with</span> <span class="n">chan</span><span class="p">.</span><span class="n">makefile</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">().</span><span class="n">decode</span><span class="p">()</span>
-    <span class="k">with</span> <span class="n">chan</span><span class="p">.</span><span class="n">makefile_stderr</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">().</span><span class="n">decode</span><span class="p">()</span>
+    <span class="n">time</span><span class="p">.</span><span class="nf">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">chan</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">chan</span><span class="p">.</span><span class="nf">makefile</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">read</span><span class="p">().</span><span class="nf">decode</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">chan</span><span class="p">.</span><span class="nf">makefile_stderr</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">read</span><span class="p">().</span><span class="nf">decode</span><span class="p">()</span>
 
-    <span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="p">.</span><span class="n">close_connection</span><span class="p">(</span><span class="n">CONNECTION_NAME</span><span class="p">)</span>
+    <span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="p">.</span><span class="nf">close_connection</span><span class="p">(</span><span class="n">CONNECTION_NAME</span><span class="p">)</span>
 
-    <span class="n">client</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">client</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
 
     <span class="c1">#测试中发现client.close()无效，暂时手动传入退出命令
 </span>    <span class="c1">#2022.2.15 update:坑爹的地方可能是因为程序跑的太快了，回显压根没来得及写入stdout
@@ -187,50 +186,50 @@
 </span>    <span class="c1">#     raise CommandError(command, exit_status_code, stdout, stderr)
 </span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">stderr</span> <span class="k">if</span> <span class="n">stderr</span> <span class="k">else</span> <span class="n">stdout</span>
-    <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nc">Result</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="p">)</span>
 
 </code></pre></div></div>
 
 <p><code class="language-plaintext highlighter-rouge">demo.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
-<span class="kn">from</span> <span class="nn">nornir.core.plugins.inventory</span> <span class="kn">import</span> <span class="n">InventoryPluginRegister</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
+<span class="kn">from</span> <span class="n">nornir.core.plugins.inventory</span> <span class="kn">import</span> <span class="n">InventoryPluginRegister</span>
 <span class="c1"># from nornir_netmiko import netmiko_send_command, netmiko_send_config
-</span><span class="kn">from</span> <span class="nn">nornir_paramiko.plugins.tasks</span> <span class="kn">import</span> <span class="n">paramiko_command</span><span class="p">,</span> <span class="n">paramiko_commands</span>
-<span class="kn">from</span> <span class="nn">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
-<span class="kn">from</span> <span class="nn">nornir.core.task</span> <span class="kn">import</span> <span class="n">Result</span>
+</span><span class="kn">from</span> <span class="n">nornir_paramiko.plugins.tasks</span> <span class="kn">import</span> <span class="n">paramiko_command</span><span class="p">,</span> <span class="n">paramiko_commands</span>
+<span class="kn">from</span> <span class="n">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
+<span class="kn">from</span> <span class="n">nornir.core.task</span> <span class="kn">import</span> <span class="n">Result</span>
 
-<span class="kn">from</span> <span class="nn">cmdb</span> <span class="kn">import</span> <span class="n">CMDBInventory</span>
+<span class="kn">from</span> <span class="n">cmdb</span> <span class="kn">import</span> <span class="n">CMDBInventory</span>
 
-<span class="n">InventoryPluginRegister</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"CMDBInventory"</span><span class="p">,</span> <span class="n">CMDBInventory</span><span class="p">)</span>
+<span class="n">InventoryPluginRegister</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="sh">"</span><span class="s">CMDBInventory</span><span class="sh">"</span><span class="p">,</span> <span class="n">CMDBInventory</span><span class="p">)</span>
 
 <span class="c1"># device_type改为platform也是兼容的
 </span><span class="n">devices</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.11'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'device_type'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span> <span class="p">{</span>
-        <span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.12'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'platform'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span>
+    <span class="p">{</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.11</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span> <span class="p">{</span>
+        <span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.12</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">platform</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span>
 <span class="p">]</span>
 
-<span class="n">nr</span> <span class="o">=</span> <span class="n">InitNornir</span><span class="p">(</span>
+<span class="n">nr</span> <span class="o">=</span> <span class="nc">InitNornir</span><span class="p">(</span>
     <span class="n">runner</span><span class="o">=</span><span class="p">{</span>
-        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"threaded"</span><span class="p">,</span>
-        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">"num_workers"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">plugin</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">threaded</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">options</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">num_workers</span><span class="sh">"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">},</span>
     <span class="n">inventory</span><span class="o">=</span><span class="p">{</span>
-        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"CMDBInventory"</span><span class="p">,</span>
-        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">"devices"</span><span class="p">:</span> <span class="n">devices</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">plugin</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">CMDBInventory</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">options</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">devices</span><span class="sh">"</span><span class="p">:</span> <span class="n">devices</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">},</span>
 <span class="p">)</span>
 
-<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="s">'sys'</span><span class="p">,</span> <span class="s">'dis this'</span><span class="p">]</span>
+<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">sys</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">dis this</span><span class="sh">'</span><span class="p">]</span>
 <span class="c1"># commands = ['sys', 'int loopback0', 'des paramiko',
 #             'ip address 1.1.1.1 32']
 </span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">paramiko_commands</span><span class="p">,</span> <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">paramiko_commands</span><span class="p">,</span> <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">)</span>
 
-<span class="n">print_result</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="nf">print_result</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
 </code></pre></div></div>
 

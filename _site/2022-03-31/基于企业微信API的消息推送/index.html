@@ -10,6 +10,7 @@
     <meta name="keywords" content="基于企业微信API的消息推送, 随编, python, CodeShurrik" />
     <meta name="description" content="基于企业微信API的消息推送, 随编, python, 基于 企业微信 API 的微信消息推送, 无需自建服务器的 Python 库解决方案." />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2022-03-31/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1API%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -208,16 +207,16 @@
 
 <h4 id="示例">示例</h4>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">wechat_push</span> <span class="kn">import</span> <span class="n">WechatPush</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span> <span class="o">=</span> <span class="n">WechatPush</span><span class="p">(</span><span class="s">"你的corp_id"</span><span class="p">,</span> <span class="s">"你的secret"</span><span class="p">,</span> <span class="s">"你的agent_id"</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span><span class="p">.</span><span class="n">send_text</span><span class="p">(</span><span class="s">'Hello!</span><span class="se">\n</span><span class="s">文本支持换行</span><span class="se">\n</span><span class="s">&lt;a href="https://github.com"&gt;文本支持超链接&lt;/a&gt;'</span><span class="p">)</span>
-<span class="p">{</span><span class="s">'errcode'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'errmsg'</span><span class="p">:</span> <span class="s">'ok'</span><span class="p">,</span> <span class="s">'msgid'</span><span class="p">:</span> <span class="s">'xxx'</span><span class="p">}</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span><span class="p">.</span><span class="n">send_markdown</span><span class="p">(</span><span class="s">"**Markdown here!**"</span><span class="p">)</span>
-<span class="p">{</span><span class="s">'errcode'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'errmsg'</span><span class="p">:</span> <span class="s">'ok'</span><span class="p">,</span> <span class="s">'msgid'</span><span class="p">:</span> <span class="s">'xxx'</span><span class="p">}</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span><span class="p">.</span><span class="n">send_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">"test.txt"</span><span class="p">,</span> <span class="s">"rb"</span><span class="p">),</span> <span class="s">"微信中显示的文件名称"</span><span class="p">)</span>
-<span class="p">{</span><span class="s">'errcode'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'errmsg'</span><span class="p">:</span> <span class="s">'ok'</span><span class="p">,</span> <span class="s">'msgid'</span><span class="p">:</span> <span class="s">'xxx'</span><span class="p">}</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span><span class="p">.</span><span class="n">send_image</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">"test.png"</span><span class="p">,</span> <span class="s">"rb"</span><span class="p">))</span>
-<span class="p">{</span><span class="s">'errcode'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'errmsg'</span><span class="p">:</span> <span class="s">'ok'</span><span class="p">,</span> <span class="s">'msgid'</span><span class="p">:</span> <span class="s">'xxx'</span><span class="p">}</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="n">wechat_push</span> <span class="kn">import</span> <span class="n">WechatPush</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span> <span class="o">=</span> <span class="nc">WechatPush</span><span class="p">(</span><span class="sh">"</span><span class="s">你的corp_id</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">你的secret</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">你的agent_id</span><span class="sh">"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span><span class="p">.</span><span class="nf">send_text</span><span class="p">(</span><span class="sh">'</span><span class="s">Hello!</span><span class="se">\n</span><span class="s">文本支持换行</span><span class="se">\n</span><span class="s">&lt;a href=</span><span class="sh">"</span><span class="s">https://github.com</span><span class="sh">"</span><span class="s">&gt;文本支持超链接&lt;/a&gt;</span><span class="sh">'</span><span class="p">)</span>
+<span class="p">{</span><span class="sh">'</span><span class="s">errcode</span><span class="sh">'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="sh">'</span><span class="s">errmsg</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">ok</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">msgid</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">xxx</span><span class="sh">'</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span><span class="p">.</span><span class="nf">send_markdown</span><span class="p">(</span><span class="sh">"</span><span class="s">**Markdown here!**</span><span class="sh">"</span><span class="p">)</span>
+<span class="p">{</span><span class="sh">'</span><span class="s">errcode</span><span class="sh">'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="sh">'</span><span class="s">errmsg</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">ok</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">msgid</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">xxx</span><span class="sh">'</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span><span class="p">.</span><span class="nf">send_file</span><span class="p">(</span><span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">test.txt</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rb</span><span class="sh">"</span><span class="p">),</span> <span class="sh">"</span><span class="s">微信中显示的文件名称</span><span class="sh">"</span><span class="p">)</span>
+<span class="p">{</span><span class="sh">'</span><span class="s">errcode</span><span class="sh">'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="sh">'</span><span class="s">errmsg</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">ok</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">msgid</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">xxx</span><span class="sh">'</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">push</span><span class="p">.</span><span class="nf">send_image</span><span class="p">(</span><span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">test.png</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rb</span><span class="sh">"</span><span class="p">))</span>
+<span class="p">{</span><span class="sh">'</span><span class="s">errcode</span><span class="sh">'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="sh">'</span><span class="s">errmsg</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">ok</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">msgid</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">xxx</span><span class="sh">'</span><span class="p">}</span>
 </code></pre></div></div>
 
           </article>

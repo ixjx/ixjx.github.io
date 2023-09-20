@@ -10,6 +10,7 @@
     <meta name="keywords" content="pytorch学习5-pytorch实现线性回归, pytorch, AI, CodeShurrik" />
     <meta name="description" content="pytorch学习5-pytorch实现线性回归, pytorch, AI, 终于到pytorch（本文使用1.12.1版本）实战了，利用pytorch进行深度学习一般分为以下4步：" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2022-09-22/pytorch%E5%AD%A6%E4%B9%A05-pytorch%E5%AE%9E%E7%8E%B0%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -180,10 +179,10 @@
 
 <p>对于矩阵，行表示样本，列表示特征。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">torch</span>
 <span class="c1">#数据作为矩阵参与Tensor计算，并行计算可利用GPU加速
-</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">3.0</span><span class="p">]])</span>
-<span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">4.0</span><span class="p">],[</span><span class="mf">6.0</span><span class="p">]])</span>
+</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nc">Tensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">3.0</span><span class="p">]])</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nc">Tensor</span><span class="p">([[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">4.0</span><span class="p">],[</span><span class="mf">6.0</span><span class="p">]])</span>
 </code></pre></div></div>
 
 <h3 id="构造计算图"><strong>构造计算图</strong></h3>
@@ -209,26 +208,26 @@
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#固定继承于Module
 </span><span class="k">class</span> <span class="nc">LinearModel</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="c1">#构造函数初始化
-</span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
         <span class="c1">#调用父类的init
-</span>        <span class="nb">super</span><span class="p">(</span><span class="n">LinearModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+</span>        <span class="nf">super</span><span class="p">(</span><span class="n">LinearModel</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">()</span>
         <span class="c1">#Linear对象包括weight(w)以及bias(b)两个成员张量
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1">#前馈函数forward，对父类函数中的overwrite
-</span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="c1">#调用linear中的call()，以利用父类forward()计算wx+b
-</span>        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span>        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">y_pred</span>
     <span class="c1">#反馈函数backward由module自动根据计算图生成
-</span><span class="n">model</span> <span class="o">=</span> <span class="n">LinearModel</span><span class="p">()</span>
+</span><span class="n">model</span> <span class="o">=</span> <span class="nc">LinearModel</span><span class="p">()</span>
 </code></pre></div></div>
 
 <h3 id="构造loss和optimizer"><strong>构造Loss和Optimizer</strong></h3>
 
 <p>在公式中可知，由于Loss的计算也是有张量参与的计算，因此仍然需要进行计算图的构造。即在设计中也需要继承于Module的类和方法。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">MSELoss</span><span class="p">(</span><span class="n">size_average</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">MSELoss</span><span class="p">(</span><span class="n">size_average</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>其中的MSELoss也是继承于nn.Module</p>
@@ -237,7 +236,7 @@
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#model.parameters()用于检查模型中所能进行优化的张量
 #learningrate(lr)表学习率，可以统一也可以不统一
-</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="nc">SGD</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="nf">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 
 </code></pre></div></div>
 
@@ -250,89 +249,89 @@
   <li>更新参数</li>
 </ol>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
     <span class="c1">#前馈计算y_pred
-</span>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_data</span><span class="p">)</span>
+</span>    <span class="n">y_pred</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_data</span><span class="p">)</span>
     <span class="c1">#前馈计算损失loss
-</span>    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">y_data</span><span class="p">)</span>
+</span>    <span class="n">loss</span> <span class="o">=</span> <span class="nf">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">y_data</span><span class="p">)</span>
     <span class="c1">#打印调用loss时，会自动调用内部__str__()函数，避免产生计算图
-</span>    <span class="k">print</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">loss</span><span class="p">)</span>
+</span>    <span class="nf">print</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">loss</span><span class="p">)</span>
     <span class="c1">#梯度清零
-</span>    <span class="n">optimizer</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+</span>    <span class="n">optimizer</span><span class="p">.</span><span class="nf">zero_grad</span><span class="p">()</span>
     <span class="c1">#梯度反向传播，计算图清除
-</span>    <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+</span>    <span class="n">loss</span><span class="p">.</span><span class="nf">backward</span><span class="p">()</span>
     <span class="c1">#根据传播的梯度以及学习率更新参数
-</span>    <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+</span>    <span class="n">optimizer</span><span class="p">.</span><span class="nf">step</span><span class="p">()</span>
 </code></pre></div></div>
 
 <h3 id="测试模型"><strong>测试模型</strong></h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Output
-</span><span class="k">print</span><span class="p">(</span><span class="s">'w = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
-<span class="k">print</span><span class="p">(</span><span class="s">'b = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">w = </span><span class="sh">'</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="nf">item</span><span class="p">())</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">b = </span><span class="sh">'</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="nf">item</span><span class="p">())</span>
 
 <span class="c1">#TestModel
-</span><span class="n">x_test</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">]])</span>
-<span class="n">y_test</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+</span><span class="n">x_test</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nc">Tensor</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">]])</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s">'y_pred = '</span><span class="p">,</span><span class="n">y_test</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">y_pred = </span><span class="sh">'</span><span class="p">,</span><span class="n">y_test</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p><img src="https://user-images.githubusercontent.com/4729226/191688736-5a5ffaa9-f5b9-470a-9062-223b37b5e772.png" alt="训练1000轮" /></p>
 
 <h3 id="整体代码"><strong>整体代码</strong></h3>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">torch</span>
 <span class="c1">#数据作为矩阵参与Tensor计算
-</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">3.0</span><span class="p">]])</span>
-<span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">4.0</span><span class="p">],[</span><span class="mf">6.0</span><span class="p">]])</span>
+</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nc">Tensor</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">3.0</span><span class="p">]])</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nc">Tensor</span><span class="p">([[</span><span class="mf">2.0</span><span class="p">],[</span><span class="mf">4.0</span><span class="p">],[</span><span class="mf">6.0</span><span class="p">]])</span>
 
 <span class="c1">#固定继承于Module
 </span><span class="k">class</span> <span class="nc">LinearModel</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="c1">#构造函数初始化
-</span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
         <span class="c1">#调用父类的init
-</span>        <span class="nb">super</span><span class="p">(</span><span class="n">LinearModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+</span>        <span class="nf">super</span><span class="p">(</span><span class="n">LinearModel</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">()</span>
         <span class="c1">#Linear对象包括weight(w)以及bias(b)两个成员张量
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1">#前馈函数forward，对父类函数中的overwrite
-</span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="c1">#调用linear中的call()，以利用父类forward()计算wx+b
-</span>        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span>        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">y_pred</span>
     <span class="c1">#反馈函数backward由module自动根据计算图生成
-</span><span class="n">model</span> <span class="o">=</span> <span class="n">LinearModel</span><span class="p">()</span>
+</span><span class="n">model</span> <span class="o">=</span> <span class="nc">LinearModel</span><span class="p">()</span>
 
 <span class="c1">#构造的criterion对象所接受的参数为（y',y）
-</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">MSELoss</span><span class="p">(</span><span class="n">size_average</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">MSELoss</span><span class="p">(</span><span class="n">size_average</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="c1">#model.parameters()用于检查模型中所能进行优化的张量
 #learningrate(lr)表学习率，可以统一也可以不统一
-</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="nc">SGD</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="nf">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
     <span class="c1">#前馈计算y_pred
-</span>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_data</span><span class="p">)</span>
+</span>    <span class="n">y_pred</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_data</span><span class="p">)</span>
     <span class="c1">#前馈计算损失loss
-</span>    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">y_data</span><span class="p">)</span>
+</span>    <span class="n">loss</span> <span class="o">=</span> <span class="nf">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">y_data</span><span class="p">)</span>
     <span class="c1">#打印调用loss时，会自动调用内部__str__()函数，避免产生计算图
-</span>    <span class="k">print</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">loss</span><span class="p">)</span>
+</span>    <span class="nf">print</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">loss</span><span class="p">)</span>
     <span class="c1">#梯度清零
-</span>    <span class="n">optimizer</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+</span>    <span class="n">optimizer</span><span class="p">.</span><span class="nf">zero_grad</span><span class="p">()</span>
     <span class="c1">#梯度反向传播，计算图清除
-</span>    <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+</span>    <span class="n">loss</span><span class="p">.</span><span class="nf">backward</span><span class="p">()</span>
     <span class="c1">#根据传播的梯度以及学习率更新参数
-</span>    <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+</span>    <span class="n">optimizer</span><span class="p">.</span><span class="nf">step</span><span class="p">()</span>
 
  <span class="c1">#Output
-</span><span class="k">print</span><span class="p">(</span><span class="s">'w = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
-<span class="k">print</span><span class="p">(</span><span class="s">'b = '</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">w = </span><span class="sh">'</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="nf">item</span><span class="p">())</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">b = </span><span class="sh">'</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">linear</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="nf">item</span><span class="p">())</span>
 
 <span class="c1">#TestModel
-</span><span class="n">x_test</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">]])</span>
-<span class="n">y_test</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+</span><span class="n">x_test</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nc">Tensor</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">]])</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s">'y_pred = '</span><span class="p">,</span><span class="n">y_test</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">y_pred = </span><span class="sh">'</span><span class="p">,</span><span class="n">y_test</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>本文参考自<a href="https://www.bilibili.com/video/BV1Y7411d7Ys?p=5">B站《PyTorch深度学习实践》P5</a></p>

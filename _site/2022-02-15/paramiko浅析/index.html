@@ -10,6 +10,7 @@
     <meta name="keywords" content="Paramiko浅析, 网络自动化, python, CodeShurrik" />
     <meta name="description" content="Paramiko浅析, 网络自动化, python, 回想起上次写blog，还是在上次，不禁令人感慨。目前所谓的网络运维自动化，绝大部分都是通过ssh实现的，使用ssh做网络自动化的本质，是对人类行为的模拟，说白了，你是在写代码模拟你日常的cli操作（这点肯定是不如api操作的）。而python实现ssh的模块Paramiko，也几乎是你首选的ssh轮子。" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2022-02-15/paramiko%E6%B5%85%E6%9E%90/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -163,27 +162,27 @@
 
 <p>无论如何，你总要实例化一个SSHClient的，所以</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">paramiko</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">paramiko</span>
 
-<span class="n">hostname</span> <span class="o">=</span> <span class="s">"YOUR DEVICE HOSTNAME"</span>
-<span class="n">username</span> <span class="o">=</span> <span class="s">"YOUR ACCOUNT USERNAME"</span>
-<span class="n">password</span> <span class="o">=</span> <span class="s">"YOUR PASSWORD"</span>
+<span class="n">hostname</span> <span class="o">=</span> <span class="sh">"</span><span class="s">YOUR DEVICE HOSTNAME</span><span class="sh">"</span>
+<span class="n">username</span> <span class="o">=</span> <span class="sh">"</span><span class="s">YOUR ACCOUNT USERNAME</span><span class="sh">"</span>
+<span class="n">password</span> <span class="o">=</span> <span class="sh">"</span><span class="s">YOUR PASSWORD</span><span class="sh">"</span>
 
-<span class="n">ssh_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="p">.</span><span class="n">SSHClient</span><span class="p">()</span>
-<span class="n">ssh_client</span><span class="p">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
-<span class="n">ssh_client</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+<span class="n">ssh_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="p">.</span><span class="nc">SSHClient</span><span class="p">()</span>
+<span class="n">ssh_client</span><span class="p">.</span><span class="nf">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="nc">AutoAddPolicy</span><span class="p">())</span>
+<span class="n">ssh_client</span><span class="p">.</span><span class="nf">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
 </code></pre></div></div>
 
 <blockquote>
   <p>通过exec_command发送单条命令</p>
 </blockquote>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="p">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s">"dis version</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="p">.</span><span class="nf">exec_command</span><span class="p">(</span><span class="sh">"</span><span class="s">dis version</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
 
-<span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>    <span class="o">//</span><span class="n">在读stdout之前中断一下</span><span class="err">，</span><span class="n">让回显完全写入</span>
-<span class="n">stdout</span><span class="p">.</span><span class="n">channel</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">stdout</span><span class="p">.</span><span class="n">readlines</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<span class="n">time</span><span class="p">.</span><span class="nf">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>    <span class="o">//</span><span class="n">在读stdout之前中断一下</span><span class="err">，</span><span class="n">让回显完全写入</span>
+<span class="n">stdout</span><span class="p">.</span><span class="n">channel</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">stdout</span><span class="p">.</span><span class="nf">readlines</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>\n其实就是在模拟敲回车。命令执行完之后需要关闭Channle，否则你会发现你根本不能读取到stdout中的数据。stdout实际上是在调用exec_command方法时自动调用了makefile()，返回了一个类文件的对象，你可以直接使用Python的file()函数和方法，比如readlines，逐行读取后返回一个列表。</p>
@@ -193,23 +192,23 @@
 </blockquote>
 
 <p>不再使用exec_command，实例化SSHClient的代码不变，然后</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">channel</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="p">.</span><span class="n">invoke_shell</span><span class="p">()</span>
-<span class="n">channel</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s">"sys</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
-<span class="n">channel</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s">"dis version</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
-<span class="n">channel</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="s">"dis vlan</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
-<span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">channel</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="p">.</span><span class="nf">invoke_shell</span><span class="p">()</span>
+<span class="n">channel</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sh">"</span><span class="s">sys</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">channel</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sh">"</span><span class="s">dis version</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">channel</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sh">"</span><span class="s">dis vlan</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">time</span><span class="p">.</span><span class="nf">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># RETURN A BYTES OBJECT THAT DECODED BY THE UNICODE
-</span><span class="k">print</span><span class="p">(</span><span class="n">channel</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">65535</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="s">"utf-8"</span><span class="p">))</span>
+</span><span class="nf">print</span><span class="p">(</span><span class="n">channel</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">65535</span><span class="p">).</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">))</span>
 </code></pre></div></div>
 
 <p>请注意，这里返回输出的，不再是可以调用file()方法的对象了，而是一个Bytes对象，顾名思义，是字节流 ，通过utf-8解码可以得到和CLI一样的回显。</p>
 
 <p>不过，字节流不好处理，数据提取会比较痛苦，所幸invoke_shell仍然是一个Channel，所以可以调用makefile()方法来达到和使用exec_command一样的效果。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stdout</span> <span class="o">=</span> <span class="n">channel</span><span class="p">.</span><span class="n">makefile</span><span class="p">()</span>
-<span class="n">channel</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="n">stdout</span><span class="p">.</span><span class="n">readlines</span><span class="p">())</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stdout</span> <span class="o">=</span> <span class="n">channel</span><span class="p">.</span><span class="nf">makefile</span><span class="p">()</span>
+<span class="n">channel</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">stdout</span><span class="p">.</span><span class="nf">readlines</span><span class="p">())</span>
 </code></pre></div></div>
 
           </article>

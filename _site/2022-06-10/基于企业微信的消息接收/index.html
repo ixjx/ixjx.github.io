@@ -10,6 +10,7 @@
     <meta name="keywords" content="基于企业微信的消息接收, 随编, python, CodeShurrik" />
     <meta name="description" content="基于企业微信的消息接收, 随编, python, 本篇是基于企业微信API的消息推送的下集，之前也提到过，接收信息比推送稍微复杂一丢丢，需要实现一个回调服务。" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2022-06-10/%E5%9F%BA%E4%BA%8E%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E7%9A%84%E6%B6%88%E6%81%AF%E6%8E%A5%E6%94%B6/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -163,71 +162,71 @@
 
 <p>views.py :</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
-<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
-<span class="kn">from</span> <span class="nn">django.views</span> <span class="kn">import</span> <span class="n">View</span>
-<span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
-<span class="kn">from</span> <span class="nn">django.utils.decorators</span> <span class="kn">import</span> <span class="n">method_decorator</span>
-<span class="kn">import</span> <span class="nn">urllib.parse</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="n">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="n">django.views</span> <span class="kn">import</span> <span class="n">View</span>
+<span class="kn">from</span> <span class="n">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
+<span class="kn">from</span> <span class="n">django.utils.decorators</span> <span class="kn">import</span> <span class="n">method_decorator</span>
+<span class="kn">import</span> <span class="n">urllib.parse</span>
 
-<span class="kn">from</span> <span class="nn">.WXBizMsgCrypt3</span> <span class="kn">import</span> <span class="n">WXBizMsgCrypt</span>
-<span class="kn">import</span> <span class="nn">xml.etree.cElementTree</span> <span class="k">as</span> <span class="n">ET</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="n">.WXBizMsgCrypt3</span> <span class="kn">import</span> <span class="n">WXBizMsgCrypt</span>
+<span class="kn">import</span> <span class="n">xml.etree.cElementTree</span> <span class="k">as</span> <span class="n">ET</span>
+<span class="kn">import</span> <span class="n">sys</span>
 
 <span class="c1"># Create your views here.
-</span><span class="o">@</span><span class="n">method_decorator</span><span class="p">(</span><span class="n">csrf_exempt</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'dispatch'</span><span class="p">)</span>
+</span><span class="nd">@method_decorator</span><span class="p">(</span><span class="n">csrf_exempt</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sh">'</span><span class="s">dispatch</span><span class="sh">'</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Receive</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">wxcpt</span> <span class="o">=</span> <span class="n">WXBizMsgCrypt</span><span class="p">(</span>
-            <span class="n">sToken</span><span class="o">=</span><span class="s">'你的Token'</span><span class="p">,</span> <span class="n">sEncodingAESKey</span><span class="o">=</span><span class="s">'你的EncodingAESKey'</span><span class="p">,</span> <span class="n">sReceiveId</span><span class="o">=</span><span class="s">'你的corp_id'</span><span class="p">)</span>  <span class="c1"># corp_id
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nf">super</span><span class="p">().</span><span class="nf">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">wxcpt</span> <span class="o">=</span> <span class="nc">WXBizMsgCrypt</span><span class="p">(</span>
+            <span class="n">sToken</span><span class="o">=</span><span class="sh">'</span><span class="s">你的Token</span><span class="sh">'</span><span class="p">,</span> <span class="n">sEncodingAESKey</span><span class="o">=</span><span class="sh">'</span><span class="s">你的EncodingAESKey</span><span class="sh">'</span><span class="p">,</span> <span class="n">sReceiveId</span><span class="o">=</span><span class="sh">'</span><span class="s">你的corp_id</span><span class="sh">'</span><span class="p">)</span>  <span class="c1"># corp_id
 </span>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-        <span class="n">msg_signature</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
-            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'msg_signature'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 加密签名
-</span>        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
-            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'timestamp'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 时间戳
-</span>        <span class="n">nonce</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'nonce'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 随机数
-</span>        <span class="n">echostr</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
-            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'echostr'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 加密的字符串
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">msg_signature</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="nf">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">msg_signature</span><span class="sh">'</span><span class="p">,</span> <span class="sh">''</span><span class="p">))</span>  <span class="c1"># 加密签名
+</span>        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="nf">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">timestamp</span><span class="sh">'</span><span class="p">,</span> <span class="sh">''</span><span class="p">))</span>  <span class="c1"># 时间戳
+</span>        <span class="n">nonce</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="nf">unquote</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">nonce</span><span class="sh">'</span><span class="p">,</span> <span class="sh">''</span><span class="p">))</span>  <span class="c1"># 随机数
+</span>        <span class="n">echostr</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="nf">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">echostr</span><span class="sh">'</span><span class="p">,</span> <span class="sh">''</span><span class="p">))</span>  <span class="c1"># 加密的字符串
 </span>
-        <span class="n">ret</span><span class="p">,</span> <span class="n">sEchoStr</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">wxcpt</span><span class="p">.</span><span class="n">VerifyURL</span><span class="p">(</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">sEchoStr</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">wxcpt</span><span class="p">.</span><span class="nc">VerifyURL</span><span class="p">(</span>
             <span class="n">msg_signature</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span> <span class="n">echostr</span><span class="p">)</span>
         <span class="c1"># print(sEchoStr)
-</span>        <span class="k">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">"ERR: VerifyURL ret: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
-            <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span>        <span class="nf">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">ERR: VerifyURL ret: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
+            <span class="n">sys</span><span class="p">.</span><span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># 验证URL成功，将sEchoStr返回给企业号
-</span>        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">sEchoStr</span><span class="p">)</span>
+</span>        <span class="k">return</span> <span class="nc">HttpResponse</span><span class="p">(</span><span class="n">sEchoStr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-        <span class="n">msg_signature</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
-            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'msg_signature'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 加密签名
-</span>        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span>
-            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'timestamp'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 时间戳
-</span>        <span class="n">nonce</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'nonce'</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>  <span class="c1"># 随机数
-</span>        <span class="n">sReqData</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">body</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>  <span class="c1"># 加密的消息
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">msg_signature</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="nf">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">msg_signature</span><span class="sh">'</span><span class="p">,</span> <span class="sh">''</span><span class="p">))</span>  <span class="c1"># 加密签名
+</span>        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="nf">unquote</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">timestamp</span><span class="sh">'</span><span class="p">,</span> <span class="sh">''</span><span class="p">))</span>  <span class="c1"># 时间戳
+</span>        <span class="n">nonce</span> <span class="o">=</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="nf">unquote</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">nonce</span><span class="sh">'</span><span class="p">,</span> <span class="sh">''</span><span class="p">))</span>  <span class="c1"># 随机数
+</span>        <span class="n">sReqData</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">body</span><span class="p">.</span><span class="nf">decode</span><span class="p">(</span><span class="sh">'</span><span class="s">utf-8</span><span class="sh">'</span><span class="p">)</span>  <span class="c1"># 加密的消息
 </span>
-        <span class="n">ret</span><span class="p">,</span> <span class="n">sMsg</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">wxcpt</span><span class="p">.</span><span class="n">DecryptMsg</span><span class="p">(</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">sMsg</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">wxcpt</span><span class="p">.</span><span class="nc">DecryptMsg</span><span class="p">(</span>
             <span class="n">sReqData</span><span class="p">,</span> <span class="n">msg_signature</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
         <span class="c1">#print(ret, sMsg)
-</span>        <span class="k">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">"ERR: DecryptMsg ret: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
-            <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span>        <span class="nf">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">ERR: DecryptMsg ret: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
+            <span class="n">sys</span><span class="p">.</span><span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># 解密成功，sMsg即为xml格式的明文
 </span>        <span class="c1"># TODO: 对明文的处理
-</span>        <span class="n">xml_tree</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">sMsg</span><span class="p">)</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"Content"</span><span class="p">).</span><span class="n">text</span>
-        <span class="n">ToUserName</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"ToUserName"</span><span class="p">).</span><span class="n">text</span>
-        <span class="n">FromUserName</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"FromUserName"</span><span class="p">).</span><span class="n">text</span>
-        <span class="n">CreateTime</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"CreateTime"</span><span class="p">).</span><span class="n">text</span>
-        <span class="n">MsgId</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"MsgId"</span><span class="p">).</span><span class="n">text</span>
-        <span class="n">AgentID</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">"AgentID"</span><span class="p">).</span><span class="n">text</span>
-        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'content:</span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s">'</span><span class="p">,</span> <span class="sa">f</span><span class="s">'ToUserName:</span><span class="si">{</span><span class="n">ToUserName</span><span class="si">}</span><span class="s">'</span><span class="p">,</span>
-              <span class="sa">f</span><span class="s">'FromUserName:</span><span class="si">{</span><span class="n">FromUserName</span><span class="si">}</span><span class="s">'</span><span class="p">,)</span>
+</span>        <span class="n">xml_tree</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="nf">fromstring</span><span class="p">(</span><span class="n">sMsg</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">"</span><span class="s">Content</span><span class="sh">"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">ToUserName</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">"</span><span class="s">ToUserName</span><span class="sh">"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">FromUserName</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">"</span><span class="s">FromUserName</span><span class="sh">"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">CreateTime</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">"</span><span class="s">CreateTime</span><span class="sh">"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">MsgId</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">"</span><span class="s">MsgId</span><span class="sh">"</span><span class="p">).</span><span class="n">text</span>
+        <span class="n">AgentID</span> <span class="o">=</span> <span class="n">xml_tree</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">"</span><span class="s">AgentID</span><span class="sh">"</span><span class="p">).</span><span class="n">text</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">content:</span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="sh">'</span><span class="p">,</span> <span class="sa">f</span><span class="sh">'</span><span class="s">ToUserName:</span><span class="si">{</span><span class="n">ToUserName</span><span class="si">}</span><span class="sh">'</span><span class="p">,</span>
+              <span class="sa">f</span><span class="sh">'</span><span class="s">FromUserName:</span><span class="si">{</span><span class="n">FromUserName</span><span class="si">}</span><span class="sh">'</span><span class="p">,)</span>
 
         <span class="c1"># 构造回复消息结构体
-</span>        <span class="n">sRespData</span> <span class="o">=</span> <span class="sa">f</span><span class="s">'''
+</span>        <span class="n">sRespData</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">'''</span><span class="s">
         &lt;xml&gt;
         &lt;ToUserName&gt;</span><span class="si">{</span><span class="n">ToUserName</span><span class="si">}</span><span class="s">&lt;/ToUserName&gt;
         &lt;FromUserName&gt;</span><span class="si">{</span><span class="n">FromUserName</span><span class="si">}</span><span class="s">&lt;/FromUserName&gt;
@@ -237,29 +236,29 @@
         &lt;MsgId&gt;</span><span class="si">{</span><span class="n">MsgId</span><span class="si">}</span><span class="s">&lt;/MsgId&gt;
         &lt;AgentID&gt;</span><span class="si">{</span><span class="n">AgentID</span><span class="si">}</span><span class="s">&lt;/AgentID&gt;
         &lt;/xml&gt;
-        '''</span>
-        <span class="n">ret</span><span class="p">,</span> <span class="n">sEncryptMsg</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">wxcpt</span><span class="p">.</span><span class="n">EncryptMsg</span><span class="p">(</span><span class="n">sRespData</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">"ERR: EncryptMsg ret: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
-            <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        </span><span class="sh">'''</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">sEncryptMsg</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">wxcpt</span><span class="p">.</span><span class="nc">EncryptMsg</span><span class="p">(</span><span class="n">sRespData</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+        <span class="nf">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">ERR: EncryptMsg ret: </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
+            <span class="n">sys</span><span class="p">.</span><span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># ret == 0 加密成功，企业需要将sEncryptMsg返回给企业号
 </span>        <span class="c1"># 假如企业无法保证在五秒内处理并回复，或者不想回复任何内容，可以直接返回200（即以空串为返回包）。
 </span>        <span class="c1"># 企业后续可以使用主动发消息接口进行异步回复。
-</span>        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">sEncryptMsg</span><span class="p">)</span>
+</span>        <span class="k">return</span> <span class="nc">HttpResponse</span><span class="p">(</span><span class="n">sEncryptMsg</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>python版本有个坑的地方在于使用了<code class="language-plaintext highlighter-rouge">pycrypto</code>第三方库</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
 
-关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案
+关于Crypto.Cipher模块，ImportError: No module named </span><span class="sh">'</span><span class="s">Crypto</span><span class="sh">'</span><span class="s">解决方案
 
 请到官方网站 https://www.dlitz.net/software/pycrypto/ 下载pycrypto。
 
 下载后，按照README中的“Installation”小节的提示进行pycrypto安装。
 
 pip install pycryptodome
-"""</span>
+</span><span class="sh">"""</span>
 </code></pre></div></div>
 
 <h2 id="3-效果">3. 效果</h2>

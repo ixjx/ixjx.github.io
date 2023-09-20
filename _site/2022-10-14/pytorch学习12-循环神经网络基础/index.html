@@ -10,6 +10,7 @@
     <meta name="keywords" content="pytorch学习12-循环神经网络基础, pytorch, AI, CodeShurrik" />
     <meta name="description" content="pytorch学习12-循环神经网络基础, pytorch, AI, 循环神经网络 RNN" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2022-10-14/pytorch%E5%AD%A6%E4%B9%A012-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -210,13 +209,13 @@
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#说明input维度，hidden维度，以及RNN层数
 #RNN计算耗时大，不建议层数过深
-</span><span class="n">rnn</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">RNN</span><span class="p">(</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span><span class="p">)</span>
+</span><span class="n">rnn</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">RNN</span><span class="p">(</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span><span class="p">)</span>
 
 <span class="c1">#inputs指的是X1……Xn的整个输入序列
 #hidden指的是前置条件H0
 #out指的是每一次迭代的H1……Hn隐藏层序列
 #hidden_out指的是最后一次迭代得到输出Hn
-</span><span class="n">out</span><span class="p">,</span> <span class="n">hidden_out</span> <span class="o">=</span> <span class="n">rnn</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+</span><span class="n">out</span><span class="p">,</span> <span class="n">hidden_out</span> <span class="o">=</span> <span class="nf">rnn</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
 <span class="c1">#其他参数
 #batch_first=True inputs维度从(SeqLen*Batch*input_size)变为（Batch*SeqLen*input_size）
 </span></code></pre></div></div>

@@ -10,6 +10,7 @@
     <meta name="keywords" content="Nornir番外篇-3.5, 随编, nornir, CodeShurrik" />
     <meta name="description" content="Nornir番外篇-3.5, 随编, nornir, 本篇比较水，只是参照官方文档做一个progress bar，说明如何将nornir与tqdm集成，以添加一种跟踪脚本进度的好方法，而无需在屏幕上打印结果。" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2021-09-27/Nornir%E7%95%AA%E5%A4%96%E7%AF%87-3.5/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -133,60 +132,60 @@
 <img src="https://camo.githubusercontent.com/51c344f1fc65ad1b76809fc864d2d673c2bda9b21185ec991b1ccff8b7ed331a/68747470733a2f2f6e6f726e69722e72656164746865646f63732e696f2f656e2f6c61746573742f5f696d616765732f64656d6f2e676966" alt="nornir" /></p>
 
 <p><code class="language-plaintext highlighter-rouge">demo.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">runtime</span>
-<span class="kn">from</span> <span class="nn">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
-<span class="kn">from</span> <span class="nn">nornir.core.plugins.inventory</span> <span class="kn">import</span> <span class="n">InventoryPluginRegister</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">typing_extensions</span> <span class="kn">import</span> <span class="n">runtime</span>
+<span class="kn">from</span> <span class="n">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
+<span class="kn">from</span> <span class="n">nornir.core.plugins.inventory</span> <span class="kn">import</span> <span class="n">InventoryPluginRegister</span>
 <span class="c1"># from nornir_netmiko import netmiko_send_command, netmiko_send_config
-</span><span class="kn">from</span> <span class="nn">nornir_paramiko.plugins.tasks</span> <span class="kn">import</span> <span class="n">paramiko_command</span><span class="p">,</span> <span class="n">paramiko_commands</span>
-<span class="kn">from</span> <span class="nn">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
-<span class="kn">from</span> <span class="nn">lab2.cmdb</span> <span class="kn">import</span> <span class="n">CMDBInventory</span>
+</span><span class="kn">from</span> <span class="n">nornir_paramiko.plugins.tasks</span> <span class="kn">import</span> <span class="n">paramiko_command</span><span class="p">,</span> <span class="n">paramiko_commands</span>
+<span class="kn">from</span> <span class="n">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
+<span class="kn">from</span> <span class="n">lab2.cmdb</span> <span class="kn">import</span> <span class="n">CMDBInventory</span>
 
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="n">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="n">InventoryPluginRegister</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"CMDBInventory"</span><span class="p">,</span> <span class="n">CMDBInventory</span><span class="p">)</span>
+<span class="n">InventoryPluginRegister</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="sh">"</span><span class="s">CMDBInventory</span><span class="sh">"</span><span class="p">,</span> <span class="n">CMDBInventory</span><span class="p">)</span>
 
 <span class="c1"># device_type改为platform也是兼容的
 </span><span class="n">devices</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.11'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span>
-        <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'device_type'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span>
-    <span class="p">{</span><span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.12'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span>
-        <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'platform'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span>
-    <span class="p">{</span><span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.13'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span>
-        <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'platform'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span>
+    <span class="p">{</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.11</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span>
+    <span class="p">{</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.12</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">platform</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span>
+    <span class="p">{</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.13</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">platform</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span>
 <span class="p">]</span>
 
-<span class="n">nr</span> <span class="o">=</span> <span class="n">InitNornir</span><span class="p">(</span>
+<span class="n">nr</span> <span class="o">=</span> <span class="nc">InitNornir</span><span class="p">(</span>
     <span class="n">runner</span><span class="o">=</span><span class="p">{</span>
-        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"threaded"</span><span class="p">,</span>
-        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">"num_workers"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">plugin</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">threaded</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">options</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">num_workers</span><span class="sh">"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">},</span>
     <span class="n">inventory</span><span class="o">=</span><span class="p">{</span>
-        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"CMDBInventory"</span><span class="p">,</span>
-        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">"devices"</span><span class="p">:</span> <span class="n">devices</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">plugin</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">CMDBInventory</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">options</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">devices</span><span class="sh">"</span><span class="p">:</span> <span class="n">devices</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">},</span>
 <span class="p">)</span>
 
 
-<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="s">'sys'</span><span class="p">,</span> <span class="s">'dis this'</span><span class="p">,</span> <span class="s">'return'</span><span class="p">,</span> <span class="s">'quit'</span><span class="p">]</span>
+<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">sys</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">dis this</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">return</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">quit</span><span class="sh">'</span><span class="p">]</span>
 
 <span class="c1"># 一个task也可以调用其他task
 </span><span class="k">def</span> <span class="nf">multiple_progress_bar</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">current_bar</span><span class="p">,</span> <span class="n">other_bar</span><span class="p">):</span>
-    <span class="n">task</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">paramiko_commands</span><span class="p">,</span> <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">)</span>
+    <span class="n">task</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">paramiko_commands</span><span class="p">,</span> <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">)</span>
 
-    <span class="n">current_bar</span><span class="p">.</span><span class="n">update</span><span class="p">()</span>
-    <span class="n">tqdm</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="si">}</span><span class="s">: processing..."</span><span class="p">)</span>
+    <span class="n">current_bar</span><span class="p">.</span><span class="nf">update</span><span class="p">()</span>
+    <span class="n">tqdm</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="si">}</span><span class="s">: processing...</span><span class="sh">"</span><span class="p">)</span>
 
-    <span class="n">other_bar</span><span class="p">.</span><span class="n">update</span><span class="p">()</span>
-    <span class="n">tqdm</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="si">}</span><span class="s">: done!"</span><span class="p">)</span>
+    <span class="n">other_bar</span><span class="p">.</span><span class="nf">update</span><span class="p">()</span>
+    <span class="n">tqdm</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">host</span><span class="si">}</span><span class="s">: done!</span><span class="sh">"</span><span class="p">)</span>
 
 
-<span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">nr</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">hosts</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s">'processing'</span><span class="p">)</span> <span class="k">as</span> <span class="n">current_bar</span><span class="p">:</span>
-    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">nr</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">hosts</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s">'other action'</span><span class="p">)</span> <span class="k">as</span> <span class="n">other_bar</span><span class="p">:</span>
-        <span class="n">nr</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">multiple_progress_bar</span><span class="p">,</span>
+<span class="k">with</span> <span class="nf">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nf">len</span><span class="p">(</span><span class="n">nr</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">hosts</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sh">'</span><span class="s">processing</span><span class="sh">'</span><span class="p">)</span> <span class="k">as</span> <span class="n">current_bar</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nf">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nf">len</span><span class="p">(</span><span class="n">nr</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">hosts</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sh">'</span><span class="s">other action</span><span class="sh">'</span><span class="p">)</span> <span class="k">as</span> <span class="n">other_bar</span><span class="p">:</span>
+        <span class="n">nr</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">multiple_progress_bar</span><span class="p">,</span>
                <span class="n">current_bar</span><span class="o">=</span><span class="n">current_bar</span><span class="p">,</span> <span class="n">other_bar</span><span class="o">=</span><span class="n">other_bar</span><span class="p">)</span>
 
 </code></pre></div></div>

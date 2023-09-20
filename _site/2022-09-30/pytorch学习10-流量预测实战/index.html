@@ -10,6 +10,7 @@
     <meta name="keywords" content="pytorch学习10-流量预测实战, pytorch, AI, CodeShurrik" />
     <meta name="description" content="pytorch学习10-流量预测实战, pytorch, AI, 理论结合实际，目前做了一个神经网络在流量预测和告警分析中的应用。利用预测流量与实际流量对比，可以分析出是否发生故障以及预知流量发展趋势，从而提前扩容等等等等。" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2022-09-30/pytorch%E5%AD%A6%E4%B9%A010-%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B%E5%AE%9E%E6%88%98/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -151,18 +150,18 @@
 <p>更新1： 增加一个BN层做标准化(虽然对不深的神经网络没啥用)</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">linear1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">bn1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">linear2</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">linear1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">bn1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">BatchNorm1d</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">linear2</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="c1"># self.linear3 = torch.nn.Linear(2, 1)
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">()</span>
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">()</span>
         
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">bn1</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">linear1</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">linear2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">relu</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="nf">bn1</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="nf">linear1</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">relu</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="nf">linear2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="c1"># x = self.sigmoid(self.linear3(x))
 </span>        <span class="k">return</span> <span class="n">x</span>
 </code></pre></div></div>
@@ -183,35 +182,35 @@
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">thpdataset_lines</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="c1"># 数据载入预处理
-</span>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thpdataset_lines</span><span class="p">,</span> <span class="n">QuerySet</span><span class="p">),</span> <span class="s">'原始数据需传入QuerySet'</span>
+</span>    <span class="k">assert</span> <span class="nf">isinstance</span><span class="p">(</span><span class="n">thpdataset_lines</span><span class="p">,</span> <span class="n">QuerySet</span><span class="p">),</span> <span class="sh">'</span><span class="s">原始数据需传入QuerySet</span><span class="sh">'</span>
     <span class="c1"># 组装原始数据，列表
 </span>    <span class="n">src_data</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">thpdataset_line</span> <span class="ow">in</span> <span class="n">thpdataset_lines</span><span class="p">:</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">device_num</span><span class="p">)</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">dxcc_usage</span><span class="p">)</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp_2</span><span class="p">)</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp_1</span><span class="p">)</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">created_at</span><span class="p">.</span><span class="n">hour</span><span class="o">*</span><span class="mi">3600</span> <span class="o">+</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">device_num</span><span class="p">)</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">dxcc_usage</span><span class="p">)</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp_2</span><span class="p">)</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp_1</span><span class="p">)</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">created_at</span><span class="p">.</span><span class="n">hour</span><span class="o">*</span><span class="mi">3600</span> <span class="o">+</span>
                         <span class="n">thpdataset_line</span><span class="p">.</span><span class="n">created_at</span><span class="p">.</span><span class="n">minute</span><span class="o">*</span><span class="mi">60</span> <span class="o">+</span> <span class="n">thpdataset_line</span><span class="p">.</span><span class="n">created_at</span><span class="p">.</span><span class="n">second</span><span class="p">)</span>  <span class="c1"># 当天的时间戳
-</span>        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp</span><span class="p">)</span>
+</span>        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp</span><span class="p">)</span>
 
     <span class="c1"># 列表转换为数组
-</span>    <span class="n">np_data</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">src_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
-    <span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">'device_num'</span><span class="p">,</span> <span class="s">'dxcc_usage'</span><span class="p">,</span>
-                     <span class="s">'thp_2'</span><span class="p">,</span> <span class="s">'thp_1'</span><span class="p">,</span> <span class="s">'hour'</span><span class="p">,</span> <span class="s">'thp'</span><span class="p">]</span>
+</span>    <span class="n">np_data</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">(</span><span class="n">src_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">device_num</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">dxcc_usage</span><span class="sh">'</span><span class="p">,</span>
+                     <span class="sh">'</span><span class="s">thp_2</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">thp_1</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">hour</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">thp</span><span class="sh">'</span><span class="p">]</span>
 
     <span class="c1"># 一维数组数组转换为矩阵, N行6列
-</span>    <span class="n">np_data</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_names</span><span class="p">))</span>
+</span>    <span class="n">np_data</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">feature_names</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">train</span><span class="p">:</span>
         <span class="c1"># 划分训练测试集
-</span>        <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np_data</span><span class="p">)</span><span class="o">*</span><span class="n">RATIO</span><span class="p">)</span>
+</span>        <span class="n">offset</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">np_data</span><span class="p">)</span><span class="o">*</span><span class="n">RATIO</span><span class="p">)</span>
         <span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">[:</span><span class="n">offset</span><span class="p">],</span> <span class="n">np_data</span><span class="p">[</span><span class="n">offset</span><span class="p">:]</span>
             
         <span class="c1"># 计算训练数据集的最大最小值
-</span>        <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">.</span><span class="nb">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">train_data</span><span class="p">.</span><span class="nb">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span>        <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">.</span><span class="nf">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">train_data</span><span class="p">.</span><span class="nf">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="c1"># 记录训练数据的归一化参数，在预测时对数据做反归一化
-</span>        <span class="n">np</span><span class="p">.</span><span class="n">savez</span><span class="p">(</span><span class="s">'deeplearn/st_train_param.npz'</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="nb">max</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="nb">min</span><span class="p">)</span>
+</span>        <span class="n">np</span><span class="p">.</span><span class="nf">savez</span><span class="p">(</span><span class="sh">'</span><span class="s">deeplearn/st_train_param.npz</span><span class="sh">'</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="nb">max</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="nb">min</span><span class="p">)</span>
 
         <span class="c1"># 对数据进行归一化处理
 </span>        <span class="n">np_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np_data</span> <span class="o">-</span> <span class="nb">min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">max</span> <span class="o">-</span> <span class="nb">min</span><span class="p">)</span>
@@ -220,8 +219,8 @@
         <span class="k">return</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># 加载训练数据的最大最小值
-</span>        <span class="n">train_param</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="s">'deeplearn/st_train_param.npz'</span><span class="p">)</span>
-        <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">train_param</span><span class="p">[</span><span class="s">'max'</span><span class="p">],</span> <span class="n">train_param</span><span class="p">[</span><span class="s">'min'</span><span class="p">]</span>
+</span>        <span class="n">train_param</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="sh">'</span><span class="s">deeplearn/st_train_param.npz</span><span class="sh">'</span><span class="p">)</span>
+        <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">train_param</span><span class="p">[</span><span class="sh">'</span><span class="s">max</span><span class="sh">'</span><span class="p">],</span> <span class="n">train_param</span><span class="p">[</span><span class="sh">'</span><span class="s">min</span><span class="sh">'</span><span class="p">]</span>
         <span class="c1"># 对数据进行归一化处理
 </span>        <span class="n">np_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np_data</span> <span class="o">-</span> <span class="nb">min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">max</span> <span class="o">-</span> <span class="nb">min</span><span class="p">)</span>
 
@@ -229,20 +228,20 @@
 
 
 <span class="k">class</span> <span class="nc">TrainDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">np_data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np_data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>     <span class="c1"># -1列不取
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np_data</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>    <span class="c1"># 取-1列(矩阵)
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">np_data</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">from_numpy</span><span class="p">(</span><span class="n">np_data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>     <span class="c1"># -1列不取
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">from_numpy</span><span class="p">(</span><span class="n">np_data</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>    <span class="c1"># 取-1列(矩阵)
 </span>
         <span class="c1"># 获得数据集行数
-</span>        <span class="bp">self</span><span class="p">.</span><span class="nb">len</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span>        <span class="n">self</span><span class="p">.</span><span class="nb">len</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># 获得索引方法
-</span>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">x_data</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">y_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+</span>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">x_data</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">self</span><span class="p">.</span><span class="n">y_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
 
     <span class="c1"># 获得数据集长度
-</span>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="nb">len</span>
+</span>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="nb">len</span>
 </code></pre></div></div>
 
 <h3 id="训练"><strong>训练</strong></h3>
@@ -255,61 +254,61 @@
 
 <p>整体代码</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">django.db.models.query</span> <span class="kn">import</span> <span class="n">QuerySet</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">ThpDataset</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="n">torch</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="n">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="n">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="n">django.db.models.query</span> <span class="kn">import</span> <span class="n">QuerySet</span>
+<span class="kn">from</span> <span class="n">.models</span> <span class="kn">import</span> <span class="n">ThpDataset</span>
 
 
 <span class="c1"># plt.style.use('seaborn-whitegrid')
 # 显示中文
-</span><span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'font.sans-serif'</span><span class="p">]</span> <span class="o">=</span> <span class="s">'SimHei'</span>
-<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'axes.unicode_minus'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="sh">'</span><span class="s">font.sans-serif</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">'</span><span class="s">SimHei</span><span class="sh">'</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">rcParams</span><span class="p">[</span><span class="sh">'</span><span class="s">axes.unicode_minus</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
 
 <span class="c1"># 训练参数
 </span><span class="n">EPOCH</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">LR</span> <span class="o">=</span> <span class="mf">0.001</span>
 <span class="n">RATIO</span> <span class="o">=</span> <span class="mf">0.9</span>
 
-<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">device</span><span class="p">(</span><span class="s">'cuda:0'</span> <span class="k">if</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s">'cpu'</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">device</span><span class="p">(</span><span class="sh">'</span><span class="s">cuda:0</span><span class="sh">'</span> <span class="k">if</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="nf">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="sh">'</span><span class="s">cpu</span><span class="sh">'</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">thpdataset_lines</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="c1"># 数据载入预处理
-</span>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thpdataset_lines</span><span class="p">,</span> <span class="n">QuerySet</span><span class="p">),</span> <span class="s">'原始数据需传入QuerySet'</span>
+</span>    <span class="k">assert</span> <span class="nf">isinstance</span><span class="p">(</span><span class="n">thpdataset_lines</span><span class="p">,</span> <span class="n">QuerySet</span><span class="p">),</span> <span class="sh">'</span><span class="s">原始数据需传入QuerySet</span><span class="sh">'</span>
     <span class="c1"># 组装原始数据，列表
 </span>    <span class="n">src_data</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">thpdataset_line</span> <span class="ow">in</span> <span class="n">thpdataset_lines</span><span class="p">:</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">device_num</span><span class="p">)</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">dxcc_usage</span><span class="p">)</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp_2</span><span class="p">)</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp_1</span><span class="p">)</span>
-        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">created_at</span><span class="p">.</span><span class="n">hour</span><span class="o">*</span><span class="mi">3600</span> <span class="o">+</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">device_num</span><span class="p">)</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">dxcc_usage</span><span class="p">)</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp_2</span><span class="p">)</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp_1</span><span class="p">)</span>
+        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">created_at</span><span class="p">.</span><span class="n">hour</span><span class="o">*</span><span class="mi">3600</span> <span class="o">+</span>
                         <span class="n">thpdataset_line</span><span class="p">.</span><span class="n">created_at</span><span class="p">.</span><span class="n">minute</span><span class="o">*</span><span class="mi">60</span> <span class="o">+</span> <span class="n">thpdataset_line</span><span class="p">.</span><span class="n">created_at</span><span class="p">.</span><span class="n">second</span><span class="p">)</span>  <span class="c1"># 当天的时间戳
-</span>        <span class="n">src_data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp</span><span class="p">)</span>
+</span>        <span class="n">src_data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">thpdataset_line</span><span class="p">.</span><span class="n">thp</span><span class="p">)</span>
 
     <span class="c1"># 列表转换为数组
-</span>    <span class="n">np_data</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">src_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
-    <span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">'device_num'</span><span class="p">,</span> <span class="s">'dxcc_usage'</span><span class="p">,</span>
-                     <span class="s">'thp_2'</span><span class="p">,</span> <span class="s">'thp_1'</span><span class="p">,</span> <span class="s">'hour'</span><span class="p">,</span> <span class="s">'thp'</span><span class="p">]</span>
+</span>    <span class="n">np_data</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">(</span><span class="n">src_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">device_num</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">dxcc_usage</span><span class="sh">'</span><span class="p">,</span>
+                     <span class="sh">'</span><span class="s">thp_2</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">thp_1</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">hour</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">thp</span><span class="sh">'</span><span class="p">]</span>
 
     <span class="c1"># 一维数组数组转换为矩阵, N行6列
-</span>    <span class="n">np_data</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_names</span><span class="p">))</span>
+</span>    <span class="n">np_data</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">feature_names</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">train</span><span class="p">:</span>
         <span class="c1"># 划分训练测试集
-</span>        <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np_data</span><span class="p">)</span><span class="o">*</span><span class="n">RATIO</span><span class="p">)</span>
+</span>        <span class="n">offset</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">np_data</span><span class="p">)</span><span class="o">*</span><span class="n">RATIO</span><span class="p">)</span>
         <span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">[:</span><span class="n">offset</span><span class="p">],</span> <span class="n">np_data</span><span class="p">[</span><span class="n">offset</span><span class="p">:]</span>
             
         <span class="c1"># 计算训练数据集的最大最小值
-</span>        <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">.</span><span class="nb">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">train_data</span><span class="p">.</span><span class="nb">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span>        <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">.</span><span class="nf">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">train_data</span><span class="p">.</span><span class="nf">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="c1"># 记录训练数据的归一化参数，在预测时对数据做反归一化
-</span>        <span class="n">np</span><span class="p">.</span><span class="n">savez</span><span class="p">(</span><span class="s">'deeplearn/st_train_param.npz'</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="nb">max</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="nb">min</span><span class="p">)</span>
+</span>        <span class="n">np</span><span class="p">.</span><span class="nf">savez</span><span class="p">(</span><span class="sh">'</span><span class="s">deeplearn/st_train_param.npz</span><span class="sh">'</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="nb">max</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="nb">min</span><span class="p">)</span>
 
         <span class="c1"># 对数据进行归一化处理
 </span>        <span class="n">np_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np_data</span> <span class="o">-</span> <span class="nb">min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">max</span> <span class="o">-</span> <span class="nb">min</span><span class="p">)</span>
@@ -318,8 +317,8 @@
         <span class="k">return</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># 加载训练数据的最大最小值
-</span>        <span class="n">train_param</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="s">'deeplearn/st_train_param.npz'</span><span class="p">)</span>
-        <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">train_param</span><span class="p">[</span><span class="s">'max'</span><span class="p">],</span> <span class="n">train_param</span><span class="p">[</span><span class="s">'min'</span><span class="p">]</span>
+</span>        <span class="n">train_param</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="sh">'</span><span class="s">deeplearn/st_train_param.npz</span><span class="sh">'</span><span class="p">)</span>
+        <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">train_param</span><span class="p">[</span><span class="sh">'</span><span class="s">max</span><span class="sh">'</span><span class="p">],</span> <span class="n">train_param</span><span class="p">[</span><span class="sh">'</span><span class="s">min</span><span class="sh">'</span><span class="p">]</span>
         <span class="c1"># 对数据进行归一化处理
 </span>        <span class="n">np_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np_data</span> <span class="o">-</span> <span class="nb">min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">max</span> <span class="o">-</span> <span class="nb">min</span><span class="p">)</span>
 
@@ -327,148 +326,148 @@
 
 
 <span class="k">class</span> <span class="nc">TrainDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">np_data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np_data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>     <span class="c1"># -1列不取
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np_data</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>    <span class="c1"># 取-1列(矩阵)
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">np_data</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">x_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">from_numpy</span><span class="p">(</span><span class="n">np_data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>     <span class="c1"># -1列不取
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">from_numpy</span><span class="p">(</span><span class="n">np_data</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>    <span class="c1"># 取-1列(矩阵)
 </span>
         <span class="c1"># 获得数据集行数
-</span>        <span class="bp">self</span><span class="p">.</span><span class="nb">len</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span>        <span class="n">self</span><span class="p">.</span><span class="nb">len</span> <span class="o">=</span> <span class="n">np_data</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># 获得索引方法
-</span>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">x_data</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">y_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+</span>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">x_data</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">self</span><span class="p">.</span><span class="n">y_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
 
     <span class="c1"># 获得数据集长度
-</span>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="nb">len</span>
+</span>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="nb">len</span>
 
 
 <span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">linear1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">bn1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">linear2</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">linear1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">bn1</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">BatchNorm1d</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">linear2</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="c1"># self.linear3 = torch.nn.Linear(2, 1)   #隐藏层数和大小也是超参数
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">()</span>
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">()</span>
         
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">bn1</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">linear1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">linear2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">bn1</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="nf">linear1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">relu</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="nf">linear2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="c1"># x = self.sigmoid(self.linear3(x))
 </span>        <span class="k">return</span> <span class="n">x</span>
 
 
 <span class="c1"># 模型
-</span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+</span><span class="n">model</span> <span class="o">=</span> <span class="nc">Model</span><span class="p">()</span>
 <span class="c1"># 损失函数
-</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">MSELoss</span><span class="p">()</span>
+</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">MSELoss</span><span class="p">()</span>
 <span class="c1"># 优化器
-</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">LR</span><span class="p">)</span>
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="nc">Adam</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="nf">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">LR</span><span class="p">)</span>
 <span class="c1"># 学习率调整器
-</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">lr_scheduler</span><span class="p">.</span><span class="n">ReduceLROnPlateau</span><span class="p">(</span>
+</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">lr_scheduler</span><span class="p">.</span><span class="nc">ReduceLROnPlateau</span><span class="p">(</span>
     <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">train</span><span class="p">():</span>
     <span class="c1"># 读取训练数据并划分训练集和测试集
-</span>    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">()</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">datetime</span><span class="p">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-    <span class="n">thpdataset_lines</span> <span class="o">=</span> <span class="n">ThpDataset</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">filter</span><span class="p">(</span>
-        <span class="n">created_at__gte</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">created_at__lte</span><span class="o">=</span><span class="n">now</span><span class="p">,</span> <span class="n">perf_name</span><span class="o">=</span><span class="s">'水土'</span><span class="p">)</span>
+</span>    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">.</span><span class="nf">now</span><span class="p">()</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">datetime</span><span class="p">.</span><span class="nf">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">thpdataset_lines</span> <span class="o">=</span> <span class="n">ThpDataset</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span>
+        <span class="n">created_at__gte</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">created_at__lte</span><span class="o">=</span><span class="n">now</span><span class="p">,</span> <span class="n">perf_name</span><span class="o">=</span><span class="sh">'</span><span class="s">水土</span><span class="sh">'</span><span class="p">)</span>
 
-    <span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">thpdataset_lines</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="nb">min</span> <span class="o">=</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">thpdataset_lines</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">TrainDataset</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
-    <span class="n">test_dataset</span> <span class="o">=</span> <span class="n">TrainDataset</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+    <span class="n">train_dataset</span> <span class="o">=</span> <span class="nc">TrainDataset</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+    <span class="n">test_dataset</span> <span class="o">=</span> <span class="nc">TrainDataset</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
 
-    <span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">train_loader</span> <span class="o">=</span> <span class="nc">DataLoader</span><span class="p">(</span>
         <span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">test_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">test_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+    <span class="n">test_loader</span> <span class="o">=</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">test_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
                              <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'[</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s">]训练开始, 训练集长度为:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">)</span><span class="si">}</span><span class="s">, 测试集长度为:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">)</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s">]训练开始, 训练集长度为:</span><span class="si">{</span><span class="nf">len</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">)</span><span class="si">}</span><span class="s">, 测试集长度为:</span><span class="si">{</span><span class="nf">len</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
     <span class="c1"># 加载训练模型
 </span>    <span class="c1"># if os.path.exists('deeplearn/st_model_param.pkl'):
 </span>    <span class="c1">#     model.load_state_dict(torch.load('deeplearn/st_model_param.pkl'))
 </span>    <span class="n">train_loss_list</span><span class="p">,</span> <span class="n">test_loss_list</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
-    <span class="n">model</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">EPOCH</span><span class="p">):</span>
-        <span class="n">model</span><span class="p">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">model</span><span class="p">.</span><span class="nf">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">EPOCH</span><span class="p">):</span>
+        <span class="n">model</span><span class="p">.</span><span class="nf">train</span><span class="p">()</span>
         <span class="n">train_loss</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
             <span class="c1"># 准备数据dataloader会将按batch_size返回的数据整合成矩阵加载
 </span>            <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span>
-            <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">labels</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">.</span><span class="nf">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">labels</span><span class="p">.</span><span class="nf">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
             <span class="c1"># 前馈
-</span>            <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-            <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
-            <span class="n">train_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="p">.</span><span class="n">item</span><span class="p">()</span>
+</span>            <span class="n">y_pred</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="nf">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+            <span class="n">train_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="p">.</span><span class="nf">item</span><span class="p">()</span>
             <span class="c1"># if epoch % 100 == 0:
 </span>            <span class="c1">#     print(epoch, i, loss.item())
 </span>            <span class="c1"># 反向传播求梯度
-</span>            <span class="n">optimizer</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
-            <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+</span>            <span class="n">optimizer</span><span class="p">.</span><span class="nf">zero_grad</span><span class="p">()</span>
+            <span class="n">loss</span><span class="p">.</span><span class="nf">backward</span><span class="p">()</span>
             <span class="c1"># 更新
-</span>            <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+</span>            <span class="n">optimizer</span><span class="p">.</span><span class="nf">step</span><span class="p">()</span>
 
-        <span class="n">train_loss</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span>
-        <span class="n">train_loss_list</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_loss</span><span class="p">)</span>
+        <span class="n">train_loss</span> <span class="o">/=</span> <span class="nf">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span>
+        <span class="n">train_loss_list</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">train_loss</span><span class="p">)</span>
         <span class="c1"># 调整学习率
 </span>        <span class="c1"># scheduler.step(loss.item())
 </span>
         <span class="c1"># 测试
-</span>        <span class="n">model</span><span class="p">.</span><span class="nb">eval</span><span class="p">()</span>
-        <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+</span>        <span class="n">model</span><span class="p">.</span><span class="nf">eval</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="nf">no_grad</span><span class="p">():</span>
             <span class="n">test_loss</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_loader</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">test_loader</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
                 <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">labels</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-                <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-                <span class="n">test_loss</span> <span class="o">+=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">labels</span><span class="p">).</span><span class="n">item</span><span class="p">()</span>
+                <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">.</span><span class="nf">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">labels</span><span class="p">.</span><span class="nf">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">y_pred</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+                <span class="n">test_loss</span> <span class="o">+=</span> <span class="nf">criterion</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">labels</span><span class="p">).</span><span class="nf">item</span><span class="p">()</span>
 
-            <span class="n">test_loss</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="p">)</span>
-            <span class="n">test_loss_list</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_loss</span><span class="p">)</span>
+            <span class="n">test_loss</span> <span class="o">/=</span> <span class="nf">len</span><span class="p">(</span><span class="n">test_loader</span><span class="p">)</span>
+            <span class="n">test_loss_list</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">test_loss</span><span class="p">)</span>
             <span class="c1"># print(epoch, i, train_loss,test_loss)
 </span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'epoch:</span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="n">EPOCH</span><span class="si">}</span><span class="s">, train_loss:</span><span class="si">{</span><span class="n">train_loss</span><span class="si">}</span><span class="s">, test_loss:</span><span class="si">{</span><span class="n">test_loss</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+        <span class="nf">if </span><span class="p">(</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">epoch:</span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="n">EPOCH</span><span class="si">}</span><span class="s">, train_loss:</span><span class="si">{</span><span class="n">train_loss</span><span class="si">}</span><span class="s">, test_loss:</span><span class="si">{</span><span class="n">test_loss</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
 
     <span class="c1"># 保存模型参数
-</span>    <span class="n">model</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">device</span><span class="p">(</span><span class="s">'cpu'</span><span class="p">))</span>
-    <span class="n">torch</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s">'deeplearn/st_model_param.pkl'</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'[</span><span class="si">{</span><span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">()</span><span class="si">}</span><span class="s">]模型保存完毕!'</span><span class="p">)</span>
+</span>    <span class="n">model</span><span class="p">.</span><span class="nf">to</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="nf">device</span><span class="p">(</span><span class="sh">'</span><span class="s">cpu</span><span class="sh">'</span><span class="p">))</span>
+    <span class="n">torch</span><span class="p">.</span><span class="nf">save</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="nf">state_dict</span><span class="p">(),</span> <span class="sh">'</span><span class="s">deeplearn/st_model_param.pkl</span><span class="sh">'</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[</span><span class="si">{</span><span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">.</span><span class="nf">now</span><span class="p">()</span><span class="si">}</span><span class="s">]模型保存完毕!</span><span class="sh">'</span><span class="p">)</span>
 
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">test_dataset</span><span class="p">[:]</span>
-    <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
-        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="nf">no_grad</span><span class="p">():</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="c1"># 对测试结果做反归一化处理
-</span>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">.</span><span class="n">cpu</span><span class="p">().</span><span class="n">numpy</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="nb">max</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nb">min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="nb">min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">.</span><span class="n">cpu</span><span class="p">().</span><span class="n">numpy</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="nb">max</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nb">min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="nb">min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">.</span><span class="nf">cpu</span><span class="p">().</span><span class="nf">numpy</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="nb">max</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nb">min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="nb">min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">.</span><span class="nf">cpu</span><span class="p">().</span><span class="nf">numpy</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="nb">max</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nb">min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="nb">min</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">*</span><span class="mi">8</span><span class="o">/</span><span class="mi">1000</span><span class="o">/</span><span class="mi">1000</span><span class="o">/</span><span class="mi">1000</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">*</span><span class="mi">8</span><span class="o">/</span><span class="mi">1000</span><span class="o">/</span><span class="mi">1000</span><span class="o">/</span><span class="mi">1000</span>
     <span class="c1"># print("预测 = ", y_pred)
 </span>    <span class="c1"># print("实际 = ", y)
 </span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'训练数据'</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s">'实际流量'</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s">'预测流量'</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'流量,Gb/s'</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">title</span><span class="p">(</span><span class="sh">'</span><span class="s">训练数据</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">y</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sh">'</span><span class="s">实际流量</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sh">'</span><span class="s">预测流量</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">'</span><span class="s">流量,Gb/s</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
 
-    <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_loss_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'train_loss'</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">test_loss_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'test_loss'</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'误差值'</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">'deeplearn/st_test.png'</span><span class="p">)</span>
-    <span class="n">plt</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">train_loss_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">'</span><span class="s">train_loss</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">test_loss_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">'</span><span class="s">test_loss</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">'</span><span class="s">误差值</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">savefig</span><span class="p">(</span><span class="sh">'</span><span class="s">deeplearn/st_test.png</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p><img src="https://user-images.githubusercontent.com/4729226/193209129-4eef6e3d-2d2a-4441-9573-25998ef7a9c8.png" alt="微信截图_20220930145322" /></p>

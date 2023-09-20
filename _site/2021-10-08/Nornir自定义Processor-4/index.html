@@ -10,6 +10,7 @@
     <meta name="keywords" content="Nornir自定义Processor-4, 网络自动化, nornir, CodeShurrik" />
     <meta name="description" content="Nornir自定义Processor-4, 网络自动化, nornir, 到目前为止我们都是通过print_result打印执行结果，理所当然的我们可以自定义一个处理器(Processor)插件来达到相同的结果。" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2021-10-08/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Processor-4/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -136,44 +135,44 @@
 <p>参考官网文档，我们先写一个打印一些信息的processor：</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">PrintProcessor</span><span class="p">:</span>  <span class="c1"># 自定义processor
-</span>    <span class="k">def</span> <span class="nf">task_started</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="s">"""
+</span>    <span class="k">def</span> <span class="nf">task_started</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">
         This method is called right before starting the task
-        """</span>
-        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"&gt;&gt;&gt; starting task: </span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        </span><span class="sh">"""</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">&gt;&gt;&gt; starting task: </span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">task_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">AggregatedResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="s">"""
+    <span class="k">def</span> <span class="nf">task_completed</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">AggregatedResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">
         This method is called when all the hosts have completed executing their respective task
-        """</span>
-        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"&gt;&gt;&gt; completed task: </span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        </span><span class="sh">"""</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">&gt;&gt;&gt; completed task: </span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">task_instance_started</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="s">"""
+    <span class="k">def</span> <span class="nf">task_instance_started</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">
         This method is called before a host starts executing its instance of the task
-        """</span>
+        </span><span class="sh">"""</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">task_instance_completed</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">MultiResult</span>
+        <span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">MultiResult</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="s">"""
+        <span class="sh">"""</span><span class="s">
         This method is called when a host completes its instance of a task
-        """</span>
-        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"  - </span><span class="si">{</span><span class="n">host</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s">: - </span><span class="si">{</span><span class="n">result</span><span class="p">.</span><span class="n">result</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        </span><span class="sh">"""</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  - </span><span class="si">{</span><span class="n">host</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s">: - </span><span class="si">{</span><span class="n">result</span><span class="p">.</span><span class="n">result</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">subtask_instance_started</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="s">"""
+    <span class="k">def</span> <span class="nf">subtask_instance_started</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">
         This method is called before a host starts executing a subtask
-        """</span>
+        </span><span class="sh">"""</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">subtask_instance_completed</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">MultiResult</span>
+        <span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">MultiResult</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="s">"""
+        <span class="sh">"""</span><span class="s">
         This method is called when a host completes executing a subtask
-        """</span>
+        </span><span class="sh">"""</span>
         <span class="k">pass</span>
 </code></pre></div></div>
 
@@ -182,84 +181,84 @@
 <p>再来一个保存信息的processor：</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SaveResultToDict</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="bp">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="bp">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
 
-    <span class="k">def</span> <span class="nf">task_started</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">][</span><span class="s">"task started"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">def</span> <span class="nf">task_started</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">][</span><span class="sh">"</span><span class="s">task started</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="k">def</span> <span class="nf">task_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">AggregatedResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">][</span><span class="s">"task completed"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">def</span> <span class="nf">task_completed</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">AggregatedResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">][</span><span class="sh">"</span><span class="s">task completed</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="k">def</span> <span class="nf">task_instance_started</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">][</span><span class="n">host</span><span class="p">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">"host started"</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+    <span class="k">def</span> <span class="nf">task_instance_started</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">][</span><span class="n">host</span><span class="p">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="sh">"</span><span class="s">host started</span><span class="sh">"</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">task_instance_completed</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">MultiResult</span>
+        <span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">MultiResult</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">][</span><span class="n">host</span><span class="p">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">"host completed"</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
-            <span class="s">"host result"</span><span class="p">:</span> <span class="n">result</span><span class="p">.</span><span class="n">result</span><span class="p">,</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">task</span><span class="p">.</span><span class="n">name</span><span class="p">][</span><span class="n">host</span><span class="p">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">host completed</span><span class="sh">"</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">host result</span><span class="sh">"</span><span class="p">:</span> <span class="n">result</span><span class="p">.</span><span class="n">result</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">subtask_instance_started</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">subtask_instance_started</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">pass</span>  <span class="c1"># to keep example short and sweet we ignore subtasks
 </span>
     <span class="k">def</span> <span class="nf">subtask_instance_completed</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">MultiResult</span>
+        <span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">MultiResult</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">pass</span>  <span class="c1"># to keep example short and sweet we ignore subtasks
 </span></code></pre></div></div>
 
 <p><code class="language-plaintext highlighter-rouge">demo</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
-<span class="kn">from</span> <span class="nn">nornir.core.plugins.inventory</span> <span class="kn">import</span> <span class="n">InventoryPluginRegister</span>
-<span class="kn">from</span> <span class="nn">nornir_paramiko.plugins.tasks</span> <span class="kn">import</span> <span class="n">paramiko_command</span><span class="p">,</span> <span class="n">paramiko_commands</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">json</span>
+<span class="kn">from</span> <span class="n">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
+<span class="kn">from</span> <span class="n">nornir.core.plugins.inventory</span> <span class="kn">import</span> <span class="n">InventoryPluginRegister</span>
+<span class="kn">from</span> <span class="n">nornir_paramiko.plugins.tasks</span> <span class="kn">import</span> <span class="n">paramiko_command</span><span class="p">,</span> <span class="n">paramiko_commands</span>
 
-<span class="kn">from</span> <span class="nn">lab2.cmdb</span> <span class="kn">import</span> <span class="n">CMDBInventory</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="n">lab2.cmdb</span> <span class="kn">import</span> <span class="n">CMDBInventory</span>
+<span class="kn">from</span> <span class="n">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">from</span> <span class="nn">nornir.core.inventory</span> <span class="kn">import</span> <span class="n">Host</span>
-<span class="kn">from</span> <span class="nn">nornir.core.task</span> <span class="kn">import</span> <span class="n">AggregatedResult</span><span class="p">,</span> <span class="n">MultiResult</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="n">nornir.core.inventory</span> <span class="kn">import</span> <span class="n">Host</span>
+<span class="kn">from</span> <span class="n">nornir.core.task</span> <span class="kn">import</span> <span class="n">AggregatedResult</span><span class="p">,</span> <span class="n">MultiResult</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">Task</span>
 
-<span class="n">InventoryPluginRegister</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"CMDBInventory"</span><span class="p">,</span> <span class="n">CMDBInventory</span><span class="p">)</span>
+<span class="n">InventoryPluginRegister</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="sh">"</span><span class="s">CMDBInventory</span><span class="sh">"</span><span class="p">,</span> <span class="n">CMDBInventory</span><span class="p">)</span>
 
 <span class="c1"># device_type改为platform也是兼容的
 </span><span class="n">devices</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.11'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span>
-        <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'device_type'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span>
-    <span class="p">{</span><span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.12'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span>
-        <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'platform'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span>
-    <span class="p">{</span><span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.13'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span>
-        <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'platform'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span>
+    <span class="p">{</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.11</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span>
+    <span class="p">{</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.12</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">platform</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span>
+    <span class="p">{</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.13</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">platform</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span>
 <span class="p">]</span>
 
-<span class="n">nr</span> <span class="o">=</span> <span class="n">InitNornir</span><span class="p">(</span>
+<span class="n">nr</span> <span class="o">=</span> <span class="nc">InitNornir</span><span class="p">(</span>
     <span class="n">runner</span><span class="o">=</span><span class="p">{</span>
-        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"threaded"</span><span class="p">,</span>
-        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">"num_workers"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">plugin</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">threaded</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">options</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">num_workers</span><span class="sh">"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">},</span>
     <span class="n">inventory</span><span class="o">=</span><span class="p">{</span>
-        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"CMDBInventory"</span><span class="p">,</span>
-        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">"devices"</span><span class="p">:</span> <span class="n">devices</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">plugin</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">CMDBInventory</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">options</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">devices</span><span class="sh">"</span><span class="p">:</span> <span class="n">devices</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">},</span>
 <span class="p">)</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="s">'sys'</span><span class="p">,</span> <span class="s">'dis this'</span><span class="p">,</span> <span class="s">'return'</span><span class="p">,</span> <span class="s">'quit'</span><span class="p">]</span>
+<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">sys</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">dis this</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">return</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">quit</span><span class="sh">'</span><span class="p">]</span>
 
-<span class="n">nr_with_processors</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="n">with_processors</span><span class="p">([</span><span class="n">PrintProcessor</span><span class="p">(),</span> <span class="n">SaveResultToDict</span><span class="p">(</span><span class="n">data</span><span class="p">)])</span>
+<span class="n">nr_with_processors</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="nf">with_processors</span><span class="p">([</span><span class="nc">PrintProcessor</span><span class="p">(),</span> <span class="nc">SaveResultToDict</span><span class="p">(</span><span class="n">data</span><span class="p">)])</span>
 
-<span class="n">nr_with_processors</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">paramiko_commands</span><span class="p">,</span>
-                       <span class="n">name</span><span class="o">=</span><span class="s">'paramiko processors'</span><span class="p">,</span> <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">)</span>
+<span class="n">nr_with_processors</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">paramiko_commands</span><span class="p">,</span>
+                       <span class="n">name</span><span class="o">=</span><span class="sh">'</span><span class="s">paramiko processors</span><span class="sh">'</span><span class="p">,</span> <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">json</span><span class="p">.</span><span class="nf">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
 </code></pre></div></div>
 
           </article>

@@ -10,6 +10,7 @@
     <meta name="keywords" content="网络工程师的python之路, 网络自动化, python, CodeShurrik" />
     <meta name="description" content="网络工程师的python之路, 网络自动化, python, 　　最近有个需求，需要重复的对某几台防火墙进行某些操作，为了让不懂网络设备的同事也能一键操作，尝试了用python开发脚本，TODO：后续可以考虑弄个web界面，更友好。" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2020-08-27/%E7%BD%91%E7%BB%9C%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84python%E4%B9%8B%E8%B7%AF/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -135,87 +134,87 @@
 
 <p>　　没法异步，要提高处理速度只有多线程，<del>能异步当然还是异步快</del> 为了避免线程间数据同步以及复杂情况下线程锁的问题，最后用1个线程操作1台设备的方法，代码如下：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">netmiko</span> <span class="kn">import</span> <span class="n">ConnectHandler</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
-<span class="kn">import</span> <span class="nn">threading</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">netmiko</span> <span class="kn">import</span> <span class="n">ConnectHandler</span>
+<span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="n">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">import</span> <span class="n">threading</span>
 
 <span class="k">def</span> <span class="nf">fengdu_hw</span><span class="p">(</span><span class="n">device</span><span class="p">,</span><span class="n">output_q</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">net_connect</span> <span class="o">=</span> <span class="n">ConnectHandler</span><span class="p">(</span><span class="o">**</span><span class="n">device</span><span class="p">)</span>
-        <span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">'./ip_list.txt'</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">.</span><span class="n">readlines</span><span class="p">():</span>
-            <span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">net_connect</span> <span class="o">=</span> <span class="nc">ConnectHandler</span><span class="p">(</span><span class="o">**</span><span class="n">device</span><span class="p">)</span>
+        <span class="nb">file</span> <span class="o">=</span> <span class="nf">open</span><span class="p">(</span><span class="sh">'</span><span class="s">./ip_list.txt</span><span class="sh">'</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">.</span><span class="nf">readlines</span><span class="p">():</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span><span class="p">.</span><span class="nf">strip</span><span class="p">()</span>
             <span class="c1">#要配置的命令
-</span>            <span class="n">config_commands</span> <span class="o">=</span> <span class="p">[</span><span class="s">'ip address-set fengdu_20200821_1'</span><span class="p">,</span>
-                               <span class="s">'address '</span><span class="o">+</span><span class="n">ip</span><span class="o">+</span><span class="s">' 0'</span><span class="p">]</span>
+</span>            <span class="n">config_commands</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">ip address-set fengdu_20200821_1</span><span class="sh">'</span><span class="p">,</span>
+                               <span class="sh">'</span><span class="s">address </span><span class="sh">'</span><span class="o">+</span><span class="n">ip</span><span class="o">+</span><span class="sh">'</span><span class="s"> 0</span><span class="sh">'</span><span class="p">]</span>
             <span class="c1">#提交要配置的命令，input为提交的真实内容
-</span>            <span class="nb">input</span> <span class="o">=</span> <span class="n">net_connect</span><span class="p">.</span><span class="n">send_config_set</span><span class="p">(</span><span class="n">config_commands</span><span class="p">)</span>
+</span>            <span class="nb">input</span> <span class="o">=</span> <span class="n">net_connect</span><span class="p">.</span><span class="nf">send_config_set</span><span class="p">(</span><span class="n">config_commands</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s"> 操作失败，请检查！"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s"> 操作失败，请检查！</span><span class="sh">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s"> 操作成功！"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s"> 操作成功！</span><span class="sh">"</span><span class="p">)</span>
     <span class="k">return</span>
 
 <span class="k">def</span> <span class="nf">fengdu_h3c</span><span class="p">(</span><span class="n">device</span><span class="p">,</span><span class="n">output_q</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">net_connect</span> <span class="o">=</span> <span class="n">ConnectHandler</span><span class="p">(</span><span class="o">**</span><span class="n">device</span><span class="p">)</span>
-        <span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">'./ip_list.txt'</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">.</span><span class="n">readlines</span><span class="p">():</span>
-            <span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">net_connect</span> <span class="o">=</span> <span class="nc">ConnectHandler</span><span class="p">(</span><span class="o">**</span><span class="n">device</span><span class="p">)</span>
+        <span class="nb">file</span> <span class="o">=</span> <span class="nf">open</span><span class="p">(</span><span class="sh">'</span><span class="s">./ip_list.txt</span><span class="sh">'</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">.</span><span class="nf">readlines</span><span class="p">():</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span><span class="p">.</span><span class="nf">strip</span><span class="p">()</span>
             <span class="c1">#要配置的命令
-</span>            <span class="n">config_commands</span> <span class="o">=</span> <span class="p">[</span><span class="s">'object-group ip address fengdu_20200821_1'</span><span class="p">,</span>
-                               <span class="s">'network host address '</span><span class="o">+</span><span class="n">ip</span><span class="p">]</span>
+</span>            <span class="n">config_commands</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">object-group ip address fengdu_20200821_1</span><span class="sh">'</span><span class="p">,</span>
+                               <span class="sh">'</span><span class="s">network host address </span><span class="sh">'</span><span class="o">+</span><span class="n">ip</span><span class="p">]</span>
             <span class="c1">#提交要配置的命令，input为提交的真实内容
-</span>            <span class="nb">input</span> <span class="o">=</span> <span class="n">net_connect</span><span class="p">.</span><span class="n">send_config_set</span><span class="p">(</span><span class="n">config_commands</span><span class="p">)</span>
+</span>            <span class="nb">input</span> <span class="o">=</span> <span class="n">net_connect</span><span class="p">.</span><span class="nf">send_config_set</span><span class="p">(</span><span class="n">config_commands</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s"> 操作失败，请检查！"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s"> 操作失败，请检查！</span><span class="sh">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s"> 操作成功！"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s"> 操作成功！</span><span class="sh">"</span><span class="p">)</span>
     <span class="k">return</span>
 
 <span class="n">hw1</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">'device_type'</span><span class="p">:</span><span class="s">'huawei'</span><span class="p">,</span>
-    <span class="s">'host'</span><span class="p">:</span><span class="s">'X.X.X.X'</span><span class="p">,</span>
-    <span class="s">'username'</span><span class="p">:</span><span class="s">'xxxxx'</span><span class="p">,</span>
-    <span class="s">'password'</span><span class="p">:</span><span class="s">'xxxxx'</span>
+    <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">host</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">X.X.X.X</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">xxxxx</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">xxxxx</span><span class="sh">'</span>
 <span class="p">}</span>
 <span class="n">hw2</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">'device_type'</span><span class="p">:</span><span class="s">'huawei'</span><span class="p">,</span>
-    <span class="s">'host'</span><span class="p">:</span><span class="s">'X.X.X.X'</span><span class="p">,</span>
-    <span class="s">'username'</span><span class="p">:</span><span class="s">'xxxxx'</span><span class="p">,</span>
-    <span class="s">'password'</span><span class="p">:</span><span class="s">'xxxxx'</span>
+    <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">host</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">X.X.X.X</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">xxxxx</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">xxxxx</span><span class="sh">'</span>
 <span class="p">}</span>
 <span class="n">hw3</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">'device_type'</span><span class="p">:</span><span class="s">'huawei'</span><span class="p">,</span>
-    <span class="s">'host'</span><span class="p">:</span><span class="s">'X.X.X.X'</span><span class="p">,</span>
-    <span class="s">'username'</span><span class="p">:</span><span class="s">'xxxxx'</span><span class="p">,</span>
-    <span class="s">'password'</span><span class="p">:</span><span class="s">'xxxxx'</span>
+    <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">host</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">X.X.X.X</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">xxxxx</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">xxxxx</span><span class="sh">'</span>
 <span class="p">}</span>
 <span class="n">h3c</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">'device_type'</span><span class="p">:</span><span class="s">'hp_comware'</span><span class="p">,</span>
-    <span class="s">'host'</span><span class="p">:</span><span class="s">'X.X.X.X'</span><span class="p">,</span>
-    <span class="s">'username'</span><span class="p">:</span><span class="s">'xxxxx'</span><span class="p">,</span>
-    <span class="s">'password'</span><span class="p">:</span><span class="s">'xxxxx'</span>
+    <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">hp_comware</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">host</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">X.X.X.X</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">xxxxx</span><span class="sh">'</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span><span class="sh">'</span><span class="s">xxxxx</span><span class="sh">'</span>
 <span class="p">}</span>
 
 
-<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"操作于 </span><span class="si">{</span><span class="n">time</span><span class="p">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">'%X'</span><span class="p">)</span><span class="si">}</span><span class="s"> 开始执行</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">操作于 </span><span class="si">{</span><span class="n">time</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="sh">'</span><span class="s">%X</span><span class="sh">'</span><span class="p">)</span><span class="si">}</span><span class="s"> 开始执行</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
 
-<span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">fengdu_hw</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">hw1</span><span class="p">,</span><span class="n">Queue</span><span class="p">()))</span>
-<span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">fengdu_hw</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">hw2</span><span class="p">,</span><span class="n">Queue</span><span class="p">()))</span>
-<span class="n">t3</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">fengdu_hw</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">hw3</span><span class="p">,</span><span class="n">Queue</span><span class="p">()))</span>
-<span class="n">t4</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">fengdu_h3c</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">h3c</span><span class="p">,</span><span class="n">Queue</span><span class="p">()))</span>
+<span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="nc">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">fengdu_hw</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">hw1</span><span class="p">,</span><span class="nc">Queue</span><span class="p">()))</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="nc">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">fengdu_hw</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">hw2</span><span class="p">,</span><span class="nc">Queue</span><span class="p">()))</span>
+<span class="n">t3</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="nc">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">fengdu_hw</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">hw3</span><span class="p">,</span><span class="nc">Queue</span><span class="p">()))</span>
+<span class="n">t4</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="nc">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">fengdu_h3c</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">h3c</span><span class="p">,</span><span class="nc">Queue</span><span class="p">()))</span>
 
 <span class="n">threads</span> <span class="o">=</span> <span class="p">[</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="n">t3</span><span class="p">,</span><span class="n">t4</span><span class="p">]</span>
 
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
-    <span class="n">t</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">start</span><span class="p">()</span>
 
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
-    <span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">join</span><span class="p">()</span>
 
-<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="se">\n</span><span class="s">操作于 </span><span class="si">{</span><span class="n">time</span><span class="p">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">'%X'</span><span class="p">)</span><span class="si">}</span><span class="s"> 执行结束"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">操作于 </span><span class="si">{</span><span class="n">time</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="sh">'</span><span class="s">%X</span><span class="sh">'</span><span class="p">)</span><span class="si">}</span><span class="s"> 执行结束</span><span class="sh">"</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>　　<code class="language-plaintext highlighter-rouge">join</code>方法是个很tricky的东西，至今还不是很清楚地懂这是个什么玩意儿。<em>join([timeout])方法阻塞了主线程，直到调用此方法的子线程完成之后主线程才继续往下运行</em>。（之前我糊里糊涂地把join就紧紧接在start后面写了，如果这么写了的话那么多线程在速度上就毫无优势，和单线程一样了= =）。而像上面这个示例一样，先一个遍历把所有线程都启动起来，再用一个遍历把所有线程都join一遍似乎是比较通行的做法。</p>

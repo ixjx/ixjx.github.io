@@ -10,6 +10,7 @@
     <meta name="keywords" content="Nornir自定义Inventory插件-2, 网络自动化, nornir, CodeShurrik" />
     <meta name="description" content="Nornir自定义Inventory插件-2, 网络自动化, nornir, 之前学习了下Nornir这个NetDevops框架，实践中发现通过Nornir原生的yaml方式管理设备，实际工作量比较大，因为我们自身CMDB是做到Adminset里面的，通过数据库读写。一开始的思路是将设备信息从数据库读出来再写入yaml文件，然后Nornir再读取yaml文件，实际上这个需求就是自定义一个i..." />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2021-09-07/Nornir%E8%87%AA%E5%AE%9A%E4%B9%89Inventory%E6%8F%92%E4%BB%B6-2/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -132,10 +131,10 @@
 <p>Nornir作为一款自比Flask的网络自动化框架，灵活性，本身就是其主打的feature之一，网上找了一个基于Nornir原生<code class="language-plaintext highlighter-rouge">SimpleInventory</code>自定义的<code class="language-plaintext highlighter-rouge">CMDBInventory</code>，核心就是yaml与字典的转换，构建Host列表，从而构建Inventory对象（defaults与group暂时用处不大，可以按需构建）PS：threaded这个runner插件也一样，大概看了一下源码是用的<code class="language-plaintext highlighter-rouge">concurrent.futures</code>的<code class="language-plaintext highlighter-rouge">ThreadPoolExecutor</code>，甚至可以照着重写一个Processed runner插件。回归inventory正题，通过这种自定义插件很直观的体现了Nornir的灵活性，代码如下：</p>
 
 <p><code class="language-plaintext highlighter-rouge">cmdb.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Type</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">logging</span>
+<span class="kn">from</span> <span class="n">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Type</span>
 
-<span class="kn">from</span> <span class="nn">nornir.core.inventory</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="n">nornir.core.inventory</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Inventory</span><span class="p">,</span>
     <span class="n">Group</span><span class="p">,</span>
     <span class="n">Groups</span><span class="p">,</span>
@@ -147,152 +146,152 @@
     <span class="n">ParentGroups</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="nf">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_connection_options</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConnectionOptions</span><span class="p">]:</span>
     <span class="n">cp</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">cn</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">cp</span><span class="p">[</span><span class="n">cn</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConnectionOptions</span><span class="p">(</span>
-            <span class="n">hostname</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"hostname"</span><span class="p">),</span>
-            <span class="n">port</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"port"</span><span class="p">),</span>
-            <span class="n">username</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"username"</span><span class="p">),</span>
-            <span class="n">password</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"password"</span><span class="p">),</span>
-            <span class="n">platform</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"platform"</span><span class="p">),</span>
-            <span class="n">extras</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"extras"</span><span class="p">),</span>
+    <span class="k">for</span> <span class="n">cn</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data</span><span class="p">.</span><span class="nf">items</span><span class="p">():</span>
+        <span class="n">cp</span><span class="p">[</span><span class="n">cn</span><span class="p">]</span> <span class="o">=</span> <span class="nc">ConnectionOptions</span><span class="p">(</span>
+            <span class="n">hostname</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">hostname</span><span class="sh">"</span><span class="p">),</span>
+            <span class="n">port</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">port</span><span class="sh">"</span><span class="p">),</span>
+            <span class="n">username</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">username</span><span class="sh">"</span><span class="p">),</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">password</span><span class="sh">"</span><span class="p">),</span>
+            <span class="n">platform</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">platform</span><span class="sh">"</span><span class="p">),</span>
+            <span class="n">extras</span><span class="o">=</span><span class="n">c</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">extras</span><span class="sh">"</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">cp</span>
 
 
 <span class="k">def</span> <span class="nf">_get_defaults</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Defaults</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">Defaults</span><span class="p">(</span>
-        <span class="n">hostname</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"hostname"</span><span class="p">),</span>
-        <span class="n">port</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"port"</span><span class="p">),</span>
-        <span class="n">username</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"username"</span><span class="p">),</span>
-        <span class="n">password</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"password"</span><span class="p">),</span>
-        <span class="n">platform</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"platform"</span><span class="p">),</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"data"</span><span class="p">),</span>
-        <span class="n">connection_options</span><span class="o">=</span><span class="n">_get_connection_options</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"connection_options"</span><span class="p">,</span> <span class="p">{})),</span>
+    <span class="k">return</span> <span class="nc">Defaults</span><span class="p">(</span>
+        <span class="n">hostname</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">hostname</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">port</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">username</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">username</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">password</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">platform</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">platform</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">data</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">connection_options</span><span class="o">=</span><span class="nf">_get_connection_options</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">connection_options</span><span class="sh">"</span><span class="p">,</span> <span class="p">{})),</span>
     <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_inventory_element</span><span class="p">(</span>
     <span class="n">typ</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">HostOrGroup</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">defaults</span><span class="p">:</span> <span class="n">Defaults</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HostOrGroup</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">typ</span><span class="p">(</span>
+    <span class="k">return</span> <span class="nf">typ</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-        <span class="n">hostname</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"hostname"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"ip"</span><span class="p">),</span>
-        <span class="n">port</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"port"</span><span class="p">),</span>
-        <span class="n">username</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"username"</span><span class="p">),</span>
-        <span class="n">password</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"password"</span><span class="p">),</span>
-        <span class="n">platform</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"platform"</span><span class="p">),</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"data"</span><span class="p">),</span>
-        <span class="n">groups</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="s">"groups"</span>
+        <span class="n">hostname</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">hostname</span><span class="sh">"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">ip</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">port</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">username</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">username</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">password</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">platform</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">platform</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">data</span><span class="sh">"</span><span class="p">),</span>
+        <span class="n">groups</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span>
+            <span class="sh">"</span><span class="s">groups</span><span class="sh">"</span>
         <span class="p">),</span>  <span class="c1"># this is a hack, we will convert it later to the correct type
 </span>        <span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span><span class="p">,</span>
-        <span class="n">connection_options</span><span class="o">=</span><span class="n">_get_connection_options</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"connection_options"</span><span class="p">,</span> <span class="p">{})),</span>
+        <span class="n">connection_options</span><span class="o">=</span><span class="nf">_get_connection_options</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">connection_options</span><span class="sh">"</span><span class="p">,</span> <span class="p">{})),</span>
     <span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">CMDBInventory</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">devices</span><span class="p">):</span>
-        <span class="s">"""
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">devices</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">
         根据devices的字典列表加载所有网络主机
         Args:
           devices: 网络设备信息字典的列表，形如 [
-                    {'ip': '192.168.1.1',
-                    'username': 'admin',
-                    'password': '1!',
-                    'port': 8181,
-                    'platform': 'cisco_nxos',
-                    'vendor':'cisco',
-                    'region': 'XX园区'
+                    {</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="s">: </span><span class="sh">'</span><span class="s">192.168.1.1</span><span class="sh">'</span><span class="s">,
+                    </span><span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="s">: </span><span class="sh">'</span><span class="s">admin</span><span class="sh">'</span><span class="s">,
+                    </span><span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="s">: </span><span class="sh">'</span><span class="s">1!</span><span class="sh">'</span><span class="s">,
+                    </span><span class="sh">'</span><span class="s">port</span><span class="sh">'</span><span class="s">: 8181,
+                    </span><span class="sh">'</span><span class="s">platform</span><span class="sh">'</span><span class="s">: </span><span class="sh">'</span><span class="s">cisco_nxos</span><span class="sh">'</span><span class="s">,
+                    </span><span class="sh">'</span><span class="s">vendor</span><span class="sh">'</span><span class="s">:</span><span class="sh">'</span><span class="s">cisco</span><span class="sh">'</span><span class="s">,
+                    </span><span class="sh">'</span><span class="s">region</span><span class="sh">'</span><span class="s">: </span><span class="sh">'</span><span class="s">XX园区</span><span class="sh">'</span><span class="s">
                     },
             ]
-        """</span>
+        </span><span class="sh">"""</span>
         <span class="c1"># 将host_info中的字段的数据保留，其他的都放到序列化后的dict数据的data字段中去。
-</span>        <span class="n">host_info</span> <span class="o">=</span> <span class="p">[</span><span class="s">'hostname'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">,</span>
-                     <span class="s">'port'</span><span class="p">,</span> <span class="s">'platform'</span><span class="p">,</span> <span class="s">'ip'</span><span class="p">,</span> <span class="s">'secret'</span><span class="p">,</span> <span class="s">'device_type'</span><span class="p">]</span>
+</span>        <span class="n">host_info</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">hostname</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">,</span>
+                     <span class="sh">'</span><span class="s">port</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">platform</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">secret</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">]</span>
         <span class="n">reshape_devices</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
             <span class="c1"># 初始化一个序列化后的数据
 </span>            <span class="n">reshape_device</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s">'data'</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="sh">'</span><span class="s">data</span><span class="sh">'</span><span class="p">:</span> <span class="p">{}</span>
             <span class="p">}</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">device</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">device</span><span class="p">.</span><span class="nf">items</span><span class="p">():</span>
                 <span class="c1"># 数据在host_info中，则保留，对platform做一下处理，netmiko中是device_type，所以兼容了一下这个字段，将其转为platform
 </span>                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">host_info</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">'device_type'</span><span class="p">:</span>
-                        <span class="n">reshape_device</span><span class="p">[</span><span class="s">'platform'</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">:</span>
+                        <span class="n">reshape_device</span><span class="p">[</span><span class="sh">'</span><span class="s">platform</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">reshape_device</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
                 <span class="c1"># 数据不在host_info中，则放到data中去
 </span>                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">reshape_device</span><span class="p">[</span><span class="s">'data'</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-            <span class="n">reshape_devices</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">reshape_device</span><span class="p">)</span>
+                    <span class="n">reshape_device</span><span class="p">[</span><span class="sh">'</span><span class="s">data</span><span class="sh">'</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="n">reshape_devices</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">reshape_device</span><span class="p">)</span>
         <span class="c1"># self.deivces后续构建inventory对象
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">deivces</span> <span class="o">=</span> <span class="n">reshape_devices</span>
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">deivces</span> <span class="o">=</span> <span class="n">reshape_devices</span>
 
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
         <span class="c1"># 初始化三个对象，分别是Hosts、Groups和Defaults的实例
-</span>        <span class="n">hosts</span> <span class="o">=</span> <span class="n">Hosts</span><span class="p">()</span>
-        <span class="n">groups</span> <span class="o">=</span> <span class="n">Groups</span><span class="p">()</span>
-        <span class="n">defaults</span> <span class="o">=</span> <span class="n">Defaults</span><span class="p">()</span>
+</span>        <span class="n">hosts</span> <span class="o">=</span> <span class="nc">Hosts</span><span class="p">()</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="nc">Groups</span><span class="p">()</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="nc">Defaults</span><span class="p">()</span>
         <span class="c1"># 我们本例只使用了hosts，大家如果真有需要，按需去添加其他两个对象的属性
 </span>        <span class="c1"># 从原生的inventory我们实际能看出，inventory的hosts是一个类似dict的对象，所以我们通过dict的方式构建或添加设备。
 </span>        <span class="c1"># 所以我们将原有的列表进行了一层转化，用ip作为每个host的name，在这段就是用ip作为字典的key值，value是之前构建的字典
-</span>        <span class="n">hosts_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">[</span><span class="s">'ip'</span><span class="p">]:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">deivces</span><span class="p">}</span>
+</span>        <span class="n">hosts_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">[</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">]:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">self</span><span class="p">.</span><span class="n">deivces</span><span class="p">}</span>
         <span class="c1"># 以上这行代码等于以下三行代码
 </span>        <span class="c1"># hosts_dict = {}
 </span>        <span class="c1"># for i in self.deivces:
 </span>        <span class="c1">#     hosts_dict[i['ip']] = i
 </span>
         <span class="c1"># 我们准备好了添加网络设备的字典，然后在hosts中添加每个
-</span>        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">host_dict</span> <span class="ow">in</span> <span class="n">hosts_dict</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">hosts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_inventory_element</span><span class="p">(</span>
+</span>        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">host_dict</span> <span class="ow">in</span> <span class="n">hosts_dict</span><span class="p">.</span><span class="nf">items</span><span class="p">():</span>
+            <span class="n">hosts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nf">_get_inventory_element</span><span class="p">(</span>
                 <span class="n">Host</span><span class="p">,</span> <span class="n">host_dict</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Inventory</span><span class="p">(</span><span class="n">hosts</span><span class="o">=</span><span class="n">hosts</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nc">Inventory</span><span class="p">(</span><span class="n">hosts</span><span class="o">=</span><span class="n">hosts</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span><span class="p">)</span>
 
 </code></pre></div></div>
 
 <p><code class="language-plaintext highlighter-rouge">demo.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
-<span class="kn">from</span> <span class="nn">nornir.core.plugins.inventory</span> <span class="kn">import</span> <span class="n">InventoryPluginRegister</span>
-<span class="kn">from</span> <span class="nn">nornir_netmiko</span> <span class="kn">import</span> <span class="n">netmiko_send_command</span><span class="p">,</span> <span class="n">netmiko_send_config</span>
-<span class="kn">from</span> <span class="nn">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
-<span class="kn">from</span> <span class="nn">nornir.core.task</span> <span class="kn">import</span> <span class="n">Result</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
+<span class="kn">from</span> <span class="n">nornir.core.plugins.inventory</span> <span class="kn">import</span> <span class="n">InventoryPluginRegister</span>
+<span class="kn">from</span> <span class="n">nornir_netmiko</span> <span class="kn">import</span> <span class="n">netmiko_send_command</span><span class="p">,</span> <span class="n">netmiko_send_config</span>
+<span class="kn">from</span> <span class="n">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
+<span class="kn">from</span> <span class="n">nornir.core.task</span> <span class="kn">import</span> <span class="n">Result</span>
 
-<span class="kn">from</span> <span class="nn">cmdb</span> <span class="kn">import</span> <span class="n">CMDBInventory</span>
+<span class="kn">from</span> <span class="n">cmdb</span> <span class="kn">import</span> <span class="n">CMDBInventory</span>
 
-<span class="n">InventoryPluginRegister</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"CMDBInventory"</span><span class="p">,</span> <span class="n">CMDBInventory</span><span class="p">)</span>
+<span class="n">InventoryPluginRegister</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="sh">"</span><span class="s">CMDBInventory</span><span class="sh">"</span><span class="p">,</span> <span class="n">CMDBInventory</span><span class="p">)</span>
 
 <span class="c1"># device_type改为platform也是兼容的
 </span><span class="n">devices</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.11'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'device_type'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span> <span class="p">{</span>
-        <span class="s">'ip'</span><span class="p">:</span> <span class="s">'192.168.11.12'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'123'</span><span class="p">,</span> <span class="s">'platform'</span><span class="p">:</span> <span class="s">'huawei'</span><span class="p">},</span>
+    <span class="p">{</span><span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.11</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">device_type</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span> <span class="p">{</span>
+        <span class="sh">'</span><span class="s">ip</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">192.168.11.12</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">username</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">python</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">password</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">123</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">platform</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">huawei</span><span class="sh">'</span><span class="p">},</span>
 <span class="p">]</span>
 
-<span class="n">nr</span> <span class="o">=</span> <span class="n">InitNornir</span><span class="p">(</span>
+<span class="n">nr</span> <span class="o">=</span> <span class="nc">InitNornir</span><span class="p">(</span>
     <span class="n">runner</span><span class="o">=</span><span class="p">{</span>
-        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"threaded"</span><span class="p">,</span>
-        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">"num_workers"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">plugin</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">threaded</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">options</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">num_workers</span><span class="sh">"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">},</span>
     <span class="n">inventory</span><span class="o">=</span><span class="p">{</span>
-        <span class="s">"plugin"</span><span class="p">:</span> <span class="s">"CMDBInventory"</span><span class="p">,</span>
-        <span class="s">"options"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">"devices"</span><span class="p">:</span> <span class="n">devices</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">plugin</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">CMDBInventory</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">options</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">devices</span><span class="sh">"</span><span class="p">:</span> <span class="n">devices</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">},</span>
 <span class="p">)</span>
 
-<span class="n">results</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">netmiko_send_command</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'dis users'</span><span class="p">,</span>
-                 <span class="n">command_string</span><span class="o">=</span><span class="s">'dis users'</span><span class="p">)</span>
-<span class="n">print_result</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">netmiko_send_command</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sh">'</span><span class="s">dis users</span><span class="sh">'</span><span class="p">,</span>
+                 <span class="n">command_string</span><span class="o">=</span><span class="sh">'</span><span class="s">dis users</span><span class="sh">'</span><span class="p">)</span>
+<span class="nf">print_result</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
 </code></pre></div></div>
 

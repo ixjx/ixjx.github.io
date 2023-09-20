@@ -10,6 +10,7 @@
     <meta name="keywords" content="pytorch学习4-反向传播, pytorch, AI, CodeShurrik" />
     <meta name="description" content="pytorch学习4-反向传播, pytorch, AI, 在前篇的线性模型中" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2022-09-21/pytorch%E5%AD%A6%E4%B9%A04-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -202,46 +201,46 @@
 
 <p><img src="https://user-images.githubusercontent.com/4729226/191448706-e4935a34-2c1d-4c04-9415-760168b07e45.png" alt="image-20210301215917238" /></p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">torch</span>
 
 <span class="n">x_data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>
 <span class="n">y_data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]</span>
 
 <span class="c1">#赋予tensor中的data
-</span><span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
+</span><span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nc">Tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
 <span class="c1">#设定需要计算梯度grad
 </span><span class="n">w</span><span class="p">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="bp">True</span>
 
 <span class="c1">#模型y=x*w 建立计算图
 </span><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="s">'''
+    <span class="sh">'''</span><span class="s">
     w为Tensor类型
     x强制转换为Tensor类型
     通过这样的方式建立计算图
-    '''</span>
+    </span><span class="sh">'''</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">w</span>
 
 <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">y_pred</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="nf">return </span><span class="p">(</span><span class="n">y_pred</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
 
-<span class="k">print</span> <span class="p">(</span><span class="s">"predict  (before training)"</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">forward</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="n">item</span><span class="p">())</span>
+<span class="nf">print </span><span class="p">(</span><span class="sh">"</span><span class="s">predict  (before training)</span><span class="sh">"</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="nf">forward</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="nf">item</span><span class="p">())</span>
 
-<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span><span class="n">y_data</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nf">zip</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span><span class="n">y_data</span><span class="p">):</span>
         <span class="c1">#创建新的计算图
-</span>        <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+</span>        <span class="n">l</span> <span class="o">=</span> <span class="nf">loss</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
         <span class="c1">#进行反馈计算，此时才开始求梯度，此后计算图进行释放
-</span>        <span class="n">l</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+</span>        <span class="n">l</span><span class="p">.</span><span class="nf">backward</span><span class="p">()</span>
         <span class="c1">#grad.item()取grad中的值变成标量
-</span>        <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\t</span><span class="s">grad:'</span><span class="p">,</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">.</span><span class="n">grad</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+</span>        <span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="se">\t</span><span class="s">grad:</span><span class="sh">'</span><span class="p">,</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">.</span><span class="n">grad</span><span class="p">.</span><span class="nf">item</span><span class="p">())</span>
         <span class="c1">#单纯的数值计算要利用data，而不能用张量，否则会在内部创建新的计算图
 </span>        <span class="n">w</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">w</span><span class="p">.</span><span class="n">data</span> <span class="o">-</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">w</span><span class="p">.</span><span class="n">grad</span><span class="p">.</span><span class="n">data</span>
         <span class="c1">#把权重梯度里的数据清零
-</span>        <span class="n">w</span><span class="p">.</span><span class="n">grad</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">zero_</span><span class="p">()</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">"progress:"</span><span class="p">,</span><span class="n">epoch</span><span class="p">,</span> <span class="n">l</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+</span>        <span class="n">w</span><span class="p">.</span><span class="n">grad</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="nf">zero_</span><span class="p">()</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">progress:</span><span class="sh">"</span><span class="p">,</span><span class="n">epoch</span><span class="p">,</span> <span class="n">l</span><span class="p">.</span><span class="nf">item</span><span class="p">())</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s">"predict (after training)"</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">forward</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="n">item</span><span class="p">())</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">predict (after training)</span><span class="sh">"</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="nf">forward</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="nf">item</span><span class="p">())</span>
 </code></pre></div></div>
 
 <p>本文参考自<a href="https://www.bilibili.com/video/BV1Y7411d7Ys?p=4">B站《PyTorch深度学习实践》P4</a></p>

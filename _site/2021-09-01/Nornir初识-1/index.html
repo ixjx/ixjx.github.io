@@ -10,6 +10,7 @@
     <meta name="keywords" content="Nornir初识-1, 网络自动化, nornir, CodeShurrik" />
     <meta name="description" content="Nornir初识-1, 网络自动化, nornir, 大半年没更新blog了，最近关注了下NetDevops，也就是网络的Devops，从而了解到Nornir。" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2021-09-01/Nornir%E5%88%9D%E8%AF%86-1/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -175,15 +174,15 @@
 </code></pre></div></div>
 
 <p><code class="language-plaintext highlighter-rouge">playbook.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
-<span class="kn">from</span> <span class="nn">nornir_netmiko</span> <span class="kn">import</span> <span class="n">netmiko_send_command</span>
-<span class="kn">from</span> <span class="nn">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">nornir</span> <span class="kn">import</span> <span class="n">InitNornir</span>
+<span class="kn">from</span> <span class="n">nornir_netmiko</span> <span class="kn">import</span> <span class="n">netmiko_send_command</span>
+<span class="kn">from</span> <span class="n">nornir_utils.plugins.functions</span> <span class="kn">import</span> <span class="n">print_result</span>
 
-<span class="n">nr</span> <span class="o">=</span> <span class="n">InitNornir</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="s">"config.yaml"</span><span class="p">)</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">netmiko_send_command</span><span class="p">,</span> <span class="n">command_string</span><span class="o">=</span><span class="s">'display clock'</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-<span class="n">print_result</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="n">nr</span> <span class="o">=</span> <span class="nc">InitNornir</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="sh">"</span><span class="s">config.yaml</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">nr</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="n">netmiko_send_command</span><span class="p">,</span> <span class="n">command_string</span><span class="o">=</span><span class="sh">'</span><span class="s">display clock</span><span class="sh">'</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="nf">type</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="nf">print_result</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>虽然nr模块确实非常好用，但从实践的角度我发现一个问题，就是从现有的资料来看并不适合大规模跑批操作，因为网上分享的内容（包括官方案例）都有一个问题，就是nr模块强依赖<code class="language-plaintext highlighter-rouge">hosts.yaml</code>这个文件，看来接下来主要是需要将设备信息从数据库读出来再写入yaml文件。</p>

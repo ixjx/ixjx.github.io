@@ -10,6 +10,7 @@
     <meta name="keywords" content="PaddleOCR文字识别API搭建, 随编, OCR, CodeShurrik" />
     <meta name="description" content="PaddleOCR文字识别API搭建, 随编, OCR, 最近有个需求是进行验证码识别，之前一直用百度的开放OCR API。突然有一天应用报错，一看原来是免费API调用额度用光了。花钱是不可能花钱的，正好之前有用过PaddlePaddle飞桨这个深度学习框架 还是百度的，逮着薅羊毛呢，里面有个开源的PaddleOCR，测试下来文本识别效果不输于商用的开放API，那还不整一个?" />
     <meta name="theme-color" content="#2CA6CB"/>
+    <meta name="google-adsense-account" content="ca-pub-8989608156149583">
     <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
     <link rel="canonical" href="http://localhost:4000/2022-04-22/PaddleOCR%E6%96%87%E5%AD%97%E8%AF%86%E5%88%AB/" />
     <link rel="alternate" type="application/rss+xml" title="CodeShurrik" href="http://localhost:4000/feed.xml"  />
@@ -21,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
     <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8989608156149583"
-     crossorigin="anonymous"></script>
 </head>
 
 
@@ -75,7 +74,7 @@
                         
                         
                         <li>
-                            <a href="http://localhost:4000/fm/" class="word-keep"><span class="octicon octicon-unmute"></span>&nbsp;&nbsp;FM</a>
+                            <a href="http://localhost:4000/ref/" class="word-keep"><span class="octicon octicon-file-code"></span>&nbsp;&nbsp;Ref</a>
                         </li>
                         
                         
@@ -261,19 +260,19 @@ hub <span class="nb">install </span>deploy/hubserving/ocr_rec/
 
 <p>其中，<code class="language-plaintext highlighter-rouge">config.json</code>格式如下：</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
-    <span class="s">"modules_info"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s">"ocr_rec"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">"init_args"</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s">"version"</span><span class="p">:</span> <span class="s">"1.0.0"</span><span class="p">,</span>
-                <span class="s">"use_gpu"</span><span class="p">:</span> <span class="n">false</span>
+    <span class="sh">"</span><span class="s">modules_info</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">ocr_rec</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">init_args</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="sh">"</span><span class="s">version</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">1.0.0</span><span class="sh">"</span><span class="p">,</span>
+                <span class="sh">"</span><span class="s">use_gpu</span><span class="sh">"</span><span class="p">:</span> <span class="n">false</span>
             <span class="p">},</span>
-            <span class="s">"predict_args"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">predict_args</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span>
-    <span class="s">"port"</span><span class="p">:</span> <span class="mi">8867</span><span class="p">,</span>
-    <span class="s">"use_multiprocess"</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
-    <span class="s">"workers"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="sh">"</span><span class="s">port</span><span class="sh">"</span><span class="p">:</span> <span class="mi">8867</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">use_multiprocess</span><span class="sh">"</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">workers</span><span class="sh">"</span><span class="p">:</span> <span class="mi">2</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
