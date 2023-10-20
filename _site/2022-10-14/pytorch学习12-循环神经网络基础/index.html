@@ -209,13 +209,13 @@
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#说明input维度，hidden维度，以及RNN层数
 #RNN计算耗时大，不建议层数过深
-</span><span class="n">rnn</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">RNN</span><span class="p">(</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span><span class="p">)</span>
+</span><span class="n">rnn</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nc">RNN</span><span class="p">(</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span><span class="p">)</span>
 
 <span class="c1">#inputs指的是X1……Xn的整个输入序列
 #hidden指的是前置条件H0
 #out指的是每一次迭代的H1……Hn隐藏层序列
 #hidden_out指的是最后一次迭代得到输出Hn
-</span><span class="n">out</span><span class="p">,</span> <span class="n">hidden_out</span> <span class="o">=</span> <span class="n">rnn</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+</span><span class="n">out</span><span class="p">,</span> <span class="n">hidden_out</span> <span class="o">=</span> <span class="nf">rnn</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
 <span class="c1">#其他参数
 #batch_first=True inputs维度从(SeqLen*Batch*input_size)变为（Batch*SeqLen*input_size）
 </span></code></pre></div></div>
