@@ -134,7 +134,7 @@
 
 <p>之前组内一直使用的QQ机器人，直到某天大佬提桶跑路无人维护，机器人挂了就再也起不来了.</p>
 
-<p>没办法只有自己动手丰衣足食，github上搜到了这个库，对企业微信API简单封装了一层，使用起来也算方便.</p>
+<p>没办法只有自己动手丰衣足食，github上搜到了这个库，对企业微信API简单封装了一层，简单修改了一下，使用起来也算方便.</p>
 
 <p>TODO:
 后面有时间再研究一下接收信息吧，相比推送接收信息需要开公网映射，存在安全隐患. <del>当然推送也是用代理出的公网233</del></p>
@@ -174,7 +174,7 @@
 
     <p>创建完成后进入应用详情页，可以得到  <code class="language-plaintext highlighter-rouge">agent_id</code>，应用Secret( <code class="language-plaintext highlighter-rouge">secret</code> )。</p>
 
-    <p>注意：<code class="language-plaintext highlighter-rouge">secret</code>推送到手机端时，只能在<code class="language-plaintext highlighter-rouge">企业微信客户端</code>中查看。</p>
+    <p>注意：<code class="language-plaintext highlighter-rouge">secret</code>推送到手机端时，只能在 <code class="language-plaintext highlighter-rouge">企业微信客户端</code>中查看。</p>
 
     <p><a href="https://camo.githubusercontent.com/ec3ddd2dd460680f9fc61acc8a1bd215fcb947608102764539c4ce43bc1e0f26/68747470733a2f2f746865736576656e2e667471712e636f6d2f32303231303230383134333535332e706e67"><img src="https://camo.githubusercontent.com/ec3ddd2dd460680f9fc61acc8a1bd215fcb947608102764539c4ce43bc1e0f26/68747470733a2f2f746865736576656e2e667471712e636f6d2f32303231303230383134333535332e706e67" alt="img" /></a></p>
   </li>
@@ -192,7 +192,7 @@
 
     <p><a href="https://camo.githubusercontent.com/cada0b7dcec30ab707403c0cf22380a25442eddb44a4e173230cfab3e8e9b1b8/68747470733a2f2f746865736576656e2e667471712e636f6d2f32303231303230383134343830382e706e67"><img src="https://camo.githubusercontent.com/cada0b7dcec30ab707403c0cf22380a25442eddb44a4e173230cfab3e8e9b1b8/68747470733a2f2f746865736576656e2e667471712e636f6d2f32303231303230383134343830382e706e67" alt="img" /></a></p>
 
-    <p>PS：如果出现<code class="language-plaintext highlighter-rouge">接口请求正常，企业微信接受消息正常，个人微信无法收到消息</code>的情况：</p>
+    <p>PS：如果出现 <code class="language-plaintext highlighter-rouge">接口请求正常，企业微信接受消息正常，个人微信无法收到消息</code>的情况：</p>
 
     <p>进入「我的企业」 → 「<a href="https://work.weixin.qq.com/wework_admin/frame#profile/wxPlugin">微信插件</a>」，拉到最下方，勾选 “允许成员在微信插件中接收和回复聊天消息” <a href="https://camo.githubusercontent.com/e7f6132a7b2414f1b768124c994ae18374d078e5c7fe08b14d8e84c0947825de/68747470733a2f2f696d672e616d73312e696d676265642e78797a2f323032312f30362f30312f48504952552e6a7067"><img src="https://camo.githubusercontent.com/e7f6132a7b2414f1b768124c994ae18374d078e5c7fe08b14d8e84c0947825de/68747470733a2f2f696d672e616d73312e696d676265642e78797a2f323032312f30362f30312f48504952552e6a7067" alt="img" /></a></p>
 
@@ -202,12 +202,12 @@
 
 <h4 id="安装">安装</h4>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip3 <span class="nb">install </span>wechat_push
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip3 <span class="nb">install </span>wechatpush-fix
 </code></pre></div></div>
 
 <h4 id="示例">示例</h4>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="n">wechat_push</span> <span class="kn">import</span> <span class="n">WechatPush</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="n">wechatpush</span> <span class="kn">import</span> <span class="n">WechatPush</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">push</span> <span class="o">=</span> <span class="nc">WechatPush</span><span class="p">(</span><span class="sh">"</span><span class="s">你的corp_id</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">你的secret</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">你的agent_id</span><span class="sh">"</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">push</span><span class="p">.</span><span class="nf">send_text</span><span class="p">(</span><span class="sh">'</span><span class="s">Hello!</span><span class="se">\n</span><span class="s">文本支持换行</span><span class="se">\n</span><span class="s">&lt;a href=</span><span class="sh">"</span><span class="s">https://github.com</span><span class="sh">"</span><span class="s">&gt;文本支持超链接&lt;/a&gt;</span><span class="sh">'</span><span class="p">)</span>
 <span class="p">{</span><span class="sh">'</span><span class="s">errcode</span><span class="sh">'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="sh">'</span><span class="s">errmsg</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">ok</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">msgid</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">xxx</span><span class="sh">'</span><span class="p">}</span>
