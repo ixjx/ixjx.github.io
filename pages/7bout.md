@@ -4,7 +4,6 @@ title: About
 permalink: /about/
 icon: octicon-thumbsup
 isNavItem: true
-
 ---
 
 <a href="https://github.com/ixjx" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ixjx/ixjx/output/github-contribution-grid-snake-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ixjx/ixjx/output/github-contribution-grid-snake.svg"><img alt="github contribution grid snake animation" src="https://raw.githubusercontent.com/ixjx/ixjx/output/github-contribution-grid-snake.svg"></picture></a>
@@ -26,3 +25,5 @@ isNavItem: true
 当然还有QQ，不过不常上：
 
 > 371797442 ，用得不多，建议你也少用
+
+<img src="https://api.aws.d2-trade.com/api/query/open/tz_image" width="600" />
