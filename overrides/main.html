@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="post-meta">
+    {% if page and page.meta and page.meta.date %}
+      <span class="post-date">
+        <span class="md-icon">📅</span>
+        {{ page.meta.date }}
+      </span>
+    {% endif %}
+    {% if page and page.content %}
+      {% set words = page.content | length %}
+      {% set minutes = (words / 265) | round | int %}
+      {% if minutes > 0 %}
+        <span class="post-readtime">
+          <span class="md-icon">⏱️</span>
+          {{ minutes }} 分钟阅读
+        </span>
+      {% endif %}
+    {% endif %}
+  </div>
+  {{ super() }}
+{% endblock %}

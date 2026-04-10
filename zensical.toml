@@ -1,0 +1,115 @@
+[project]
+site_name = "CodeShurrik"
+site_description = "welcome to shurrik blog."
+site_author = "shurrik"
+site_url = "https://ixjx.github.io/"
+
+# ===== 仓库配置 =====
+#repo_name = "ixjx/ixjx.github.io"
+#repo_url = "https://github.com/ixjx/ixjx.github.io"
+
+copyright = """
+Copyright &copy; 2026 The shurrik
+"""
+# ===== 导航配置 [Navigation] =====
+nav = [
+
+]
+
+extra_css = ["stylesheets/extra.css"]
+#extra_javascript = ["javascripts/extra.js"]
+
+[project.theme]
+custom_dir = "overrides"
+#favicon = "images/favicon.png"
+language = "zh"
+
+features = [
+    "announce.dismiss",
+    #"content.action.edit",
+    #"content.action.view",
+    "content.code.annotate",
+    "content.code.copy",
+    "content.code.select",
+    "content.footnote.tooltips",
+    "content.tabs.link",
+    "content.tooltips",
+    # "header.autohide",
+    "navigation.footer",
+    "navigation.indexes",
+    "navigation.instant",
+    "navigation.instant.prefetch",
+    #"navigation.instant.progress",
+    "navigation.path",
+    #"navigation.sections",
+    "navigation.prune",
+    #"navigation.expand",
+    "navigation.tabs",
+    "navigation.tabs.sticky",
+    "navigation.top",
+    "navigation.tracking",
+    "search.highlight",
+    "search.suggest",
+    #"toc.follow",
+    #"toc.integrate",
+]
+#logo = "assets/logo.png"
+
+[project.markdown_extensions.toc]           # 目录生成
+#toc_depth = 3                               # 目录深度
+permalink = false                            # 标题锚点链接
+
+# ===== 图标配置 =====
+[project.theme.icon]
+logo = "lucide/house"
+repo = "fontawesome/brands/github"
+#[project.theme.font]
+#text = "Inter"
+#code = "Jetbrains Mono"
+
+# Palette toggle for automatic mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "切换到浅色模式"
+
+# Palette toggle for light mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "切换到深色模式"
+
+# Palette toggle for dark mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "切换到系统偏好模式"
+
+# ===== 状态标签 =====
+[project.extra.status]
+new = "最近添加"
+deprecated = "已弃用"
+draft = "草稿"
+
+# ===== 社交媒体链接 =====
+# 显示在页脚的社交媒体图标
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/ixjx/"
+
+
+# ===== 博客插件 =====
+[project.plugins.blog]
+post_date_format = "full"                    # 时间格式：完整日期
+draft = true                                  # 启用草稿功能
+draft_if_future_date = true                   # 自动将具有未来日期的帖子标记为草稿
+post_readtime = true                          # 显示阅读时间
+post_readtime_words_per_minute = 265          # 每分钟阅读字数（中文适配）
+post_url_format = "{date}/{slug}"             # 文章URL格式
+pagination_per_page = 5                       # 每页显示文章数
+pagination_url_format = "page/{page}"         # 分页URL格式
+
+# ===== 标签插件 =====
+[project.plugins.tags]

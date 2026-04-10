@@ -1,0 +1,34 @@
+/* body {
+    background-image: url(https://ixjx.github.io/static/bg.jpg);
+}
+
+.md-content  {
+    background-color: #fff;
+}
+.md-nav  {
+    background-color: #fff;
+} */
+
+
+.post-meta {
+  margin-bottom: 1.5em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  display: flex;
+  gap: 1.5em;
+  align-items: center;
+}
+
+.post-date,
+.post-readtime {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.85em;
+}
+
+.post-date .md-icon,
+.post-readtime .md-icon {
+  font-size: 1.1em;
+}
