@@ -21,7 +21,6 @@ extra_css = ["stylesheets/extra.css"]
 
 [project.theme]
 custom_dir = "overrides"
-#favicon = "images/favicon.png"
 language = "zh"
 
 features = [
@@ -54,6 +53,7 @@ features = [
     #"toc.integrate",
 ]
 #logo = "assets/logo.png"
+favicon = "images/favicon.ico"
 
 [project.markdown_extensions.toc]           # 目录生成
 #toc_depth = 3                               # 目录深度
@@ -84,6 +84,7 @@ toggle.name = "切换到深色模式"
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
 scheme = "slate"
+accent = "orange"
 toggle.icon = "lucide/moon"
 toggle.name = "切换到系统偏好模式"
 
